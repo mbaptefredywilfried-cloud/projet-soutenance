@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Click handler: set active and store
     links.forEach(link => {
         link.addEventListener('click', function (e) {
-            // If links navigate away, we still store active so it can be restored after reload.
             links.forEach(l => l.classList.remove('active'));
             this.classList.add('active');
             localStorage.setItem('activeSidebarLink', this.dataset.id);
@@ -25,40 +24,42 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Transaction functionality
-    const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+    let transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
     const transactionForm = document.getElementById('transactionForm');
     const transactionsContainer = document.getElementById('transactionsContainer');
+    
+    // --- Variables de contrôle ---
+    let currentFilter = 'all';
+    let showAll = false; 
 
     // Définir les catégories par type
-const categories = {
-    expense: ["Alimentation", "Transport", "Loisirs", "Logement", "Sante", "Education", "Autre"],
-    income: ["Salaire", "Revenus passifs", "Cadeaux", "Vente", "Autre"]
-};
+    const categories = {
+        expense: ["Alimentation", "Transport", "Loisirs", "Logement", "Sante", "Education", "Autre"],
+        income: ["Salaire", "Revenus passifs", "Cadeaux", "Vente", "Autre"]
+    };
 
-// Mettre à jour les options en fonction du type choisi
-const typeSelect = document.getElementById("transactionType");
-const categorySelect = document.getElementById("transactionCategory");
+    // Mettre à jour les options en fonction du type choisi
+    const typeSelect = document.getElementById("transactionType");
+    const categorySelect = document.getElementById("transactionCategory");
 
-typeSelect.addEventListener("change", () => {
-    const selectedType = typeSelect.value;
-
-    // Vider les options existantes
-    categorySelect.innerHTML = '<option value="">Sélectionner</option>';
-
-    // Ajouter les options correspondant au type
-    if (selectedType && categories[selectedType]) {
-        categories[selectedType].forEach(cat => {
-            const option = document.createElement("option");
-            option.value = cat.toLowerCase();
-            option.textContent = cat;
-            categorySelect.appendChild(option);
+    if (typeSelect) {
+        typeSelect.addEventListener("change", () => {
+            const selectedType = typeSelect.value;
+            categorySelect.innerHTML = '<option value="">Sélectionner</option>';
+            if (selectedType && categories[selectedType]) {
+                categories[selectedType].forEach(cat => {
+                    const option = document.createElement("option");
+                    option.value = cat.toLowerCase();
+                    option.textContent = cat;
+                    categorySelect.appendChild(option);
+                });
+            }
         });
     }
-});
 
     // Set default date
     const today = new Date().toISOString().split('T')[0];
-    document.getElementById('transactionDate').value = today;
+    if(document.getElementById('transactionDate')) document.getElementById('transactionDate').value = today;
 
     // Apply accent color to sidebar
     const accentColor = localStorage.getItem('accentColor') || '#2563eb';
@@ -68,38 +69,113 @@ typeSelect.addEventListener("change", () => {
         aside.style.background = `linear-gradient(180deg, ${accentColor} 0%, ${darkerColor} 100%)`;
     }
 
-    // Form submission
-    transactionForm.addEventListener('submit', function(e) {
-        e.preventDefault();
+    // --- Logique des boutons de Filtre + COULEUR D'ACCENT AU SURVOL ---
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    
+    function updateFilterStyles() {
+        filterBtns.forEach(btn => {
+            const isActive = btn.getAttribute('data-filter') === currentFilter;
+            
+            if (isActive) {
+                btn.style.backgroundColor = accentColor;
+                btn.style.color = 'white';
+                btn.style.borderColor = accentColor;
+            } else {
+                btn.style.backgroundColor = 'transparent';
+                btn.style.color = 'inherit';
+                btn.style.borderColor = '#ddd';
+            }
 
-        const formData = new FormData(transactionForm);
-        const transaction = {
-            id: Date.now(),
-            type: formData.get('transactionType'),
-            category: formData.get('transactionCategory'),
-            amount: parseFloat(formData.get('transactionAmount')),
-            date: formData.get('transactionDate'),
-            description: formData.get('transactionDescription') || ''
-        };
+            btn.onmouseenter = () => {
+                btn.style.backgroundColor = accentColor;
+                btn.style.color = 'white';
+                btn.style.borderColor = accentColor;
+            };
 
-        if (transaction.type && transaction.category && transaction.amount > 0 && transaction.date) {
-            transactions.push(transaction);
-            localStorage.setItem('transactions', JSON.stringify(transactions));
+            btn.onmouseleave = () => {
+                if (!isActive) {
+                    btn.style.backgroundColor = 'transparent';
+                    btn.style.color = 'inherit';
+                    btn.style.borderColor = '#ddd';
+                }
+            };
+        });
+    }
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            currentFilter = this.getAttribute('data-filter');
+            showAll = false; 
+            updateFilterStyles();
             renderTransactions();
-            transactionForm.reset();
-            document.getElementById('transactionDate').value = today;
-            alert('Transaction ajoutée avec succès !');
-        } else {
-            alert('Veuillez remplir tous les champs correctement.');
-        }
+        });
     });
+    updateFilterStyles(); 
+
+    // --- Bouton Tout Supprimer ---
+    const deleteAllBtn = document.getElementById('deleteAllBtn');
+    if (deleteAllBtn) {
+        deleteAllBtn.addEventListener('click', function() {
+            if (confirm('Voulez-vous vraiment supprimer tout l\'historique ?')) {
+                transactions = [];
+                localStorage.setItem('transactions', JSON.stringify([]));
+                renderTransactions();
+            }
+        });
+    }
+
+    // Form submission
+    if (transactionForm) {
+        transactionForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(transactionForm);
+            const transaction = {
+                id: Date.now(),
+                type: formData.get('transactionType'),
+                category: formData.get('transactionCategory'),
+                amount: parseFloat(formData.get('transactionAmount')),
+                date: formData.get('transactionDate'),
+                description: formData.get('transactionDescription') || ''
+            };
+
+            if (transaction.type && transaction.category && transaction.amount > 0 && transaction.date) {
+                transactions.push(transaction);
+                localStorage.setItem('transactions', JSON.stringify(transactions));
+                renderTransactions();
+                transactionForm.reset();
+                document.getElementById('transactionDate').value = today;
+            } else {
+                alert('Veuillez remplir tous les champs correctement.');
+            }
+        });
+    }
+
+    // --- Fonction de formatage des montants ---
+    function formatAmount(amount) {
+        // Formate en entier avec des espaces pour les milliers (ex: 90 000)
+        return Math.floor(amount).toLocaleString('fr-FR').replace(/\u00a0/g, ' ');
+    }
 
     // Render transactions
     function renderTransactions() {
+        if (!transactionsContainer) return;
         transactionsContainer.innerHTML = '';
-        transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        let filteredTransactions = [...transactions];
+        if (currentFilter !== 'all') {
+            filteredTransactions = transactions.filter(t => t.type === currentFilter);
+        }
 
-        transactions.forEach(transaction => {
+        // CLASSEMENT CHRONOLOGIQUE
+        filteredTransactions.sort((a, b) => (new Date(b.date) - new Date(a.date)) || (b.id - a.id));
+
+        // LOGIQUE D'AFFICHAGE LIMITÉ (3 MAX)
+        const limit = 3;
+        const toDisplay = showAll ? filteredTransactions : filteredTransactions.slice(0, limit);
+
+        const currencySymbol = localStorage.getItem('appCurrency') || '€';
+
+        toDisplay.forEach(transaction => {
             const transactionItem = document.createElement('div');
             transactionItem.className = 'transaction-item';
 
@@ -119,7 +195,9 @@ typeSelect.addEventListener("change", () => {
                     </div>
                 </div>
                 <div style="display: inline-flex; gap: 35px; align-items: center;">
-                    <div class="transaction-amount ${transaction.type === 'income' ? 'income' : 'expense'}" style="font-size: 18px; font-weight: 700;">${sign}${transaction.amount.toFixed(2)} €</div>
+                    <div class="transaction-amount ${transaction.type === 'income' ? 'income' : 'expense'}" style="font-size: 18px; font-weight: 700;">
+                        ${sign}${formatAmount(transaction.amount)} ${currencySymbol}
+                    </div>
                     <div style="padding: 0px 10px 0px;">
                         <button class="edit-btn" data-id="${transaction.id}" style="background-color: #3498db; border: none; color: white; cursor: pointer; margin-right: 10px; padding: 7px; border-radius: 4px;">
                             <i class="fa-solid fa-pen-to-square"></i>
@@ -130,31 +208,47 @@ typeSelect.addEventListener("change", () => {
                     </div>
                 </div>
             `;
-
             transactionsContainer.appendChild(transactionItem);
         });
 
-        // Add event listeners for edit and delete
-        document.querySelectorAll('.edit-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const id = parseInt(this.getAttribute('data-id'));
-                editTransaction(id);
-            });
-        });
+        // BASCULE "VOIR PLUS / MOINS"
+        if (filteredTransactions.length > limit) {
+            const toggleBtn = document.createElement('button');
+            
+            if (!showAll) {
+                toggleBtn.textContent = `Voir plus (${filteredTransactions.length - limit})`;
+                toggleBtn.onclick = () => { showAll = true; renderTransactions(); };
+            } else {
+                toggleBtn.textContent = `Voir moins`;
+                toggleBtn.onclick = () => { showAll = false; renderTransactions(); };
+            }
 
+            toggleBtn.style.cssText = `width: 100%; padding: 10px; margin-top: 10px; background: none; border: 1px dashed ${accentColor}; color: ${accentColor}; cursor: pointer; border-radius: 8px; font-weight: bold;`;
+            
+            toggleBtn.onmouseenter = () => {
+                toggleBtn.style.backgroundColor = accentColor;
+                toggleBtn.style.color = 'white';
+            };
+            toggleBtn.onmouseleave = () => {
+                toggleBtn.style.backgroundColor = 'transparent';
+                toggleBtn.style.color = accentColor;
+            };
+
+            transactionsContainer.appendChild(toggleBtn);
+        }
+
+        // Re-binding des boutons
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', function() { editTransaction(parseInt(this.getAttribute('data-id'))); });
+        });
         document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const id = parseInt(this.getAttribute('data-id'));
-                deleteTransaction(id);
-            });
+            btn.addEventListener('click', function() { deleteTransaction(parseInt(this.getAttribute('data-id'))); });
         });
     }
 
     function editTransaction(id) {
         const transaction = transactions.find(t => t.id === id);
         if (!transaction) return;
-
-        // Simple edit: prompt for new amount
         const newAmount = prompt('Nouveau montant:', transaction.amount);
         if (newAmount && !isNaN(newAmount) && parseFloat(newAmount) > 0) {
             transaction.amount = parseFloat(newAmount);
@@ -164,51 +258,26 @@ typeSelect.addEventListener("change", () => {
     }
 
     function deleteTransaction(id) {
-        if (confirm('Êtes-vous sûr de vouloir supprimer cette transaction ?')) {
-            const index = transactions.findIndex(t => t.id === id);
-            if (index > -1) {
-                transactions.splice(index, 1);
-                localStorage.setItem('transactions', JSON.stringify(transactions));
-                renderTransactions();
-            }
+        if (confirm('Supprimer ?')) {
+            transactions = transactions.filter(t => t.id !== id);
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+            renderTransactions();
         }
     }
 
     function getCategoryIcon(category) {
-        const icons = {
-            alimentation: 'fas fa-utensils',
-            transport: 'fas fa-car',
-            loisirs: 'fas fa-gamepad',
-            logement: 'fas fa-home',
-            sante: 'fas fa-heartbeat',
-            education: 'fas fa-graduation-cap',
-            salaire: 'fas fa-money-bill-wave',
-            autre: 'fas fa-ellipsis-h'
-        };
+        const icons = { alimentation: 'fas fa-utensils', transport: 'fas fa-car', loisirs: 'fas fa-gamepad', logement: 'fas fa-home', sante: 'fas fa-heartbeat', education: 'fas fa-graduation-cap', salaire: 'fas fa-money-bill-wave', autre: 'fas fa-ellipsis-h' };
         return icons[category] || 'fas fa-question';
     }
 
     function getCategoryName(category) {
-        const names = {
-            alimentation: 'Alimentation',
-            transport: 'Transport',
-            loisirs: 'Loisirs',
-            logement: 'Logement',
-            sante: 'Santé',
-            education: 'Éducation',
-            salaire: 'Salaire',
-            autre: 'Autre'
-        };
+        const names = { alimentation: 'Alimentation', transport: 'Transport', loisirs: 'Loisirs', logement: 'Logement', sante: 'Santé', education: 'Éducation', salaire: 'Salaire', autre: 'Autre' };
         return names[category] || category;
     }
 
     function formatDate(dateString) {
         const date = new Date(dateString);
-        return date.toLocaleDateString('fr-FR', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric'
-        });
+        return date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
     }
 
     function darkenColor(color, percent) {
@@ -217,12 +286,8 @@ typeSelect.addEventListener("change", () => {
         const R = (num >> 16) - amt;
         const G = (num >> 8 & 0x00FF) - amt;
         const B = (num & 0x0000FF) - amt;
-        return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
-            (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
-            (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+        return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 + (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 + (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
     }
 
-    // Initial render
     renderTransactions();
 });
-

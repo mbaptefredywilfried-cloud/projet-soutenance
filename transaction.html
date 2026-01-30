@@ -74,7 +74,8 @@
                     <!-- montant de la transaction -->
                     <div class="form-group">
                         <label for="transactionAmount">Montant (€)</label>
-                        <input type="number" id="transactionAmount" name="transactionAmount" placeholder="Veuillez inserez un montant... " required>
+                        <input type="number" id="transactionAmount" name="transactionAmount"
+                            placeholder="Veuillez inserez un montant... " required>
                     </div>
 
                     <!-- Date de la transaction -->
@@ -92,11 +93,24 @@
                 <!-- description de la transaction -->
                 <div class="description">
                     <label for="transactionDescription">Description (optionnel)</label>
-                    <input type="text" id="transactionDescription" name="transactionDescription" placeholder="Description de la transaction...">
+                    <input type="text" id="transactionDescription" name="transactionDescription"
+                        placeholder="Description de la transaction...">
                 </div>
             </div>
 
+            <div class="history-controls">
+                <div class="filters">
+                    <button class="filter-btn active" data-filter="all">Tout</button>
+                    <button class="filter-btn" data-filter="income">Revenus</button>
+                    <button class="filter-btn" data-filter="expense">Dépenses</button>
+                </div>
+                <button id="deleteAllBtn" class="btn-danger-outline">
+                    <i class="fas fa-trash-sweep"></i> Tout supprimer
+                </button>
+            </div>
 
+            <div id="transactionsContainer">
+            </div>
             <!-- historique des transactions  -->
             <div id="transactionsContainer">
                 <!-- Transactions will be added here dynamically -->
@@ -106,6 +120,39 @@
         <script src="./js/transaction.js"></script>
         <script src="./js/common.js"></script>
     </div>
+
+    <div id="editModal" class="custom-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Modifier le montant</h3>
+            <p>Ajustez la valeur de votre transaction</p>
+        </div>
+        <div class="modal-body">
+            <div class="input-group">
+                <input type="number" id="editAmountInput" placeholder="0" step="any">
+                <span class="currency-label">€</span>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="cancelEdit" class="btn-secondary">Annuler</button>
+            <button id="confirmEdit" class="btn-primary">Enregistrer</button>
+        </div>
+    </div>
+</div>
+
+<div id="deleteModal" class="custom-modal">
+    <div class="modal-content">
+        <div class="modal-icon-warning">
+            <i class="fa-solid fa-trash-can"></i>
+        </div>
+        <h3>Supprimer ?</h3>
+        <p>Voulez-vous vraiment retirer cette transaction de votre historique ?</p>
+        <div class="modal-footer">
+            <button id="cancelDelete" class="btn-secondary">Annuler</button>
+            <button id="confirmDelete" class="btn-danger">Supprimer définitivement</button>
+        </div>
+    </div>
+</div>
 </body>
 
 </html>
