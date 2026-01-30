@@ -1,0 +1,672 @@
+/* CSS Variables for Professional Theming */
+:root {
+    --primary-color: #2563eb;
+    --primary-dark: #1d4ed8;
+    --secondary-color: #64748b;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --danger-color: #ef4444;
+    --background-color: #f8fafc;
+    --card-background: #ffffff;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --border-color: #e2e8f0;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --border-radius: 8px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-primary);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+
+.content{
+    gap: 20px;
+    min-height: 100vh;
+    align-items: start;
+}
+
+/* Sidebar Styles */
+aside {
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    height: 100vh;
+    justify-content: space-between;
+    font-weight: 600;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 24px 20px;
+    color: #ffffff;
+    box-shadow: var(--shadow);
+    width: 280px;
+    z-index: 1000;
+}
+
+.side {
+    display: flex;
+    flex-direction: column;
+}
+
+.img {
+    width: 100%;
+    height: 80px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-left: 8px;
+}
+
+.img svg {
+    color: #ffffff;
+}
+
+.img p {
+    font-size: 20px;
+    font-weight: 700;
+    -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.3);
+}
+
+.separed {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    margin: 20px 0;
+    border-radius: 1px;
+}
+
+.nav {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.side .nav a {
+    font-size: 16px;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.9);
+    padding: 12px 16px;
+    margin: 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+    position: relative;
+}
+
+.side .nav a:hover:not(.active) {
+    background-color: rgba(255, 255, 255, 0.15);
+    transform: translateX(4px);
+}
+
+.side .nav a.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    box-shadow: inset 4px 0 0 rgba(255, 255, 255, 0.8);
+}
+
+.side .nav i {
+    width: 20px;
+    text-align: center;
+    font-size: 18px;
+}
+
+main{
+    display: flex;
+    flex-direction: column;
+    margin-left: 280px; 
+    overflow: auto;
+    animation: fadeInUp 0.6s ease-out;
+    
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+main .containt{
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin: 20px;
+    border-radius: 15px;
+}
+
+
+
+main .containt h3{
+    font-size: 28px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-left: 20px;
+    
+}
+
+main .containt .current{
+    display: inline-flex;
+    width: 100%;
+    padding: 18px;
+    justify-content: space-between; 
+
+}
+
+main .containt .current .card{
+    padding: 22px;
+    width: 373px;
+    border-radius: 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in;
+}
+main .containt .current .card .item{
+    display: flex;
+    justify-content: space-between;
+}
+
+main .containt .current .card p {
+    font-size: 15px;
+    cursor: default;
+}
+
+main .containt .current .card i{
+    font-size: 25px;
+}
+main .containt .current .card .stats-value{
+    font-size: 25px;
+    font-family: Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: bold;
+    cursor: default;
+}
+
+
+main .containt .current .card:nth-child(1) {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: #fff;
+    border: none;
+}
+
+main .containt .current .card:nth-child(2) {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #fff;
+    border: none;
+}
+
+main .containt .current .card:nth-child(3) {
+    
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: #fff;
+    border: none;
+}
+
+/* Ensure text inside cards is readable */
+main .containt .current .card p,
+main .containt .current .card .stats-value{
+    color: #fff;
+}
+
+main .graphic{
+    display: inline-flex;
+    justify-content: space-between;
+    padding: 20px;
+    gap: 30px;
+}
+
+main .graphic .graph{
+    width: 50%;
+    border: none;
+    border-radius: 13px;
+    height: 400px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+}
+
+main .graphic .graph .text{
+    display: inline-flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 25px;
+}
+main .graphic .graph .text p{
+    width: 70%;
+    background-color: #fff;
+    font-size: 18px;
+    font-weight: 600;
+    color: #64748b;
+}
+
+main .graphic .graph .text .button{
+    display: inline-flex;
+
+    gap: 6px;
+}
+main .graphic .graph .text .button button{
+    width: 43px;
+    padding: 2px;
+    border-radius: 5px;
+    border: 1px solid rgb(112, 112, 112);
+}
+
+main .graphic .graph .text .button button:hover{
+    cursor: pointer;
+    background-color: #3372F0;
+    color: #fff;
+}
+
+main .graphic .graph .dashed{
+    margin-left: 25px;
+    margin-right: 25px;
+    height: 300px;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 15px;
+}
+
+main .category {
+    border: none;
+    width: 50%;
+    border-radius: 13px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+    padding: 20px;
+}
+
+main .category .budget-card{
+    display: flex;
+    justify-content: space-between;
+    background-color: #fff;
+    border-radius: inherit;
+    margin-bottom: 20px;
+    cursor: pointer;
+    color: #64748b;
+    font-size: 18px;
+    font-weight: 600;
+
+}
+
+/* --- Styles pour la section Transactions Récentes --- */
+
+.recent {
+    margin: 20px;
+    padding: 24px;
+    background-color: var(--card-background);
+    border-radius: 13px;
+    box-shadow: var(--shadow);
+}
+
+.recent-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.recent p {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+/* Styles des Filtres */
+.filters {
+    display: flex;
+    gap: 12px;
+}
+
+.filters select {
+    padding: 8px 12px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    background-color: var(--background-color);
+    color: var(--text-primary);
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.filters select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+/* Styles du Tableau */
+.table-container {
+    width: 100%;
+    overflow-x: auto; /* Pour le responsive */
+}
+
+.transaction-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+
+
+
+/* 1. Reset des titres : Alignement à gauche par défaut pour tout le monde */
+.transaction-table th {
+    text-align: left; /* On remet tout à gauche proprement */
+    padding: 16px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--border-color);
+}
+
+/* 2. Colonne TYPE : On centre le titre et les badges pour l'esthétique */
+.transaction-table th:nth-child(4),
+.transaction-table td:nth-child(4) {
+    text-align: left;
+}
+
+.transaction-table th:nth-child(5),
+.transaction-table td:nth-child(5) {
+    text-align: center;
+}
+
+/* 3. Colonne MONTANT : On aligne le titre ET la donnée à droite */
+.transaction-table th:last-child,
+.transaction-table td:last-child {
+    text-align: right !important;
+    padding-right: 40px;
+}
+
+/* 4. Ajustement spécifique des cellules de données */
+.transaction-table td {
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 14px;
+    color: var(--text-primary);
+    vertical-align: middle;
+}
+
+/* 5. Style des montants (Taille et Gras) */
+.transaction-table td:last-child {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+
+
+
+
+
+
+
+
+
+
+/* Badges de Type (Revenu / Dépense) */
+.badge {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.badge-expense {
+    background-color: #fee2e2; /* Rouge clair */
+    color: var(--danger-color);
+}
+
+.badge-income {
+    background-color: #dcfce7; /* Vert clair */
+    color: var(--success-color);
+}
+
+/* Couleurs strictes pour les montants */
+.amount-expense {
+    color: var(--danger-color) !important; /* Rouge (#ef4444) */
+    font-weight: 700;
+}
+
+.amount-income {
+    color: var(--success-color) !important; /* Vert (#10b981) */
+    font-weight: 700;
+}
+
+
+
+
+
+/* On ajuste aussi les classes spécifiques pour être sûr du résultat */
+.amount-expense, .amount-income {
+    font-size: 18px !important;
+    font-weight: 700 !important; /* Un peu plus gras pour l'emphase */
+}
+
+
+.active-time {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+
+/* Conteneur pour centrer et espacer */
+.toggle-container {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+    border-top: 1px solid var(--border-color); /* Optionnel : sépare discrètement du tableau */
+}
+
+/* Style du bouton principal */
+.btn-view-more {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: white;
+    color: var(--primary-color);
+    border: 1.5px solid var(--primary-color);
+    padding: 10px 24px;
+    border-radius: 50px; /* Effet pilule très moderne */
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* Effet au survol (Hover) */
+.btn-view-more:hover {
+    background-color: var(--primary-color);
+    color: white;
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3); /* Ombre colorée */
+    transform: translateY(-2px);
+}
+
+/* Animation de l'icône */
+.btn-view-more i {
+    transition: transform 0.3s ease;
+}
+
+.btn-view-more.active i {
+    transform: rotate(180deg); /* L'icône se retourne quand c'est ouvert */
+}
+
+
+/* Animation pour les nouvelles lignes du tableau */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* On applique l'animation aux lignes du corps du tableau */
+#dashboardTransactionBody tr {
+    animation: slideIn 0.4s ease forwards;
+}
+
+/* Optionnel : transition pour le bouton lui-même */
+.toggle-container {
+    transition: all 0.3s ease;
+}
+
+.filters {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-tout-supprimer {
+    background-color: #f44336; /* Le rouge de ton image */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px; /* Bords arrondis comme sur la photo */
+    cursor: pointer;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-tout-supprimer i {
+    font-size: 16px;
+}
+
+.btn-tout-supprimer:hover {
+    background-color: #d32f2f; /* Un rouge un peu plus sombre au survol */
+}
+
+.btn-tout-supprimer:active {
+    transform: translateY(0);
+}
+
+
+/* Arrière-plan sombre */
+.modal-overlay {
+    display: none; /* Caché par défaut */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Boîte blanche */
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    animation: modalIn 0.3s ease-out;
+}
+
+@keyframes modalIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.modal-icon {
+    font-size: 50px;
+    color: #f44336;
+    margin-bottom: 15px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.btn-secondary {
+    background: #eee;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-danger {
+    background: #f44336;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* Style pour la barre du haut */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+#userNameDisplay {
+    font-weight: 600;
+    color: #4a5568;
+}
+
+.profile-circle {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 2px solid #3182ce; /* Ta bordure bleue */
+    overflow: hidden;
+    background-color: #edf2f7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

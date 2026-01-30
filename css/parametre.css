@@ -1,0 +1,465 @@
+/* CSS Variables for Professional Theming */
+:root {
+    --primary-color: #2563eb;
+    --primary-dark: #1d4ed8;
+    --secondary-color: #64748b;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --danger-color: #ef4444;
+    --background-color: #f8fafc;
+    --card-background: #ffffff;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --border-color: #e2e8f0;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --border-radius: 8px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-primary);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.content {
+    gap: 20px;
+    min-height: 100vh;
+    align-items: start;
+}
+
+/* Sidebar Styles */
+aside {
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    height: 100vh;
+    justify-content: space-between;
+    font-weight: 600;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 24px 20px;
+    color: #ffffff;
+    box-shadow: var(--shadow);
+    width: 280px;
+    z-index: 1000;
+}
+
+.side {
+    display: flex;
+    flex-direction: column;
+}
+
+.img {
+    width: 100%;
+    height: 80px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-left: 8px;
+}
+
+.img svg {
+    color: #ffffff;
+}
+
+.img p {
+    font-size: 20px;
+    font-weight: 700;
+    -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.3);
+}
+
+.separed {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    margin: 20px 0;
+    border-radius: 1px;
+}
+
+.nav {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.side .nav a {
+    font-size: 16px;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.9);
+    padding: 12px 16px;
+    margin: 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+    position: relative;
+}
+
+.side .nav a:hover:not(.active) {
+    background-color: rgba(255, 255, 255, 0.15);
+    transform: translateX(4px);
+}
+
+.side .nav a.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    box-shadow: inset 4px 0 0 rgba(255, 255, 255, 0.8);
+}
+
+.side .nav i {
+    width: 20px;
+    text-align: center;
+    font-size: 18px;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    margin-left: 280px; 
+    overflow: auto;
+    padding: 10px 0px 0px 16px; 
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+main h1 {
+    margin-bottom: 20px;
+    padding-top: 20px;
+    font-size: 30px;
+}
+
+.card {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 24px;
+    margin: 0px 40px 25px 0px;
+}
+
+.card-item {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+/* --- MODIFICATION ICI : Style des headers avec Icon-Box --- */
+.card .card-item .header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.icon-box {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px; /* Style comme sur ta capture */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: var(--transition);
+    background: var(--primary-color); /* Couleur par défaut */
+}
+
+.icon-box i {
+    color: #ffffff !important; /* L'icône doit rester blanche */
+    font-size: 18px;
+}
+/* ------------------------------------------------------- */
+
+.card .card-item .setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.card .card-item .label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.card .card-item .setting-item .switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.card .card-item .setting-item .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.card .card-item .setting-item .switch .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #e0e0e0;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.card .card-item .setting-item .switch .slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+.card .card-item .setting-item .switch input:checked + .slider {
+    background-color: #4ade80;
+}
+
+.card .card-item .setting-item .switch input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.setting-color {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.color {
+    display: flex;
+    gap: 12px;
+}
+
+.color-option {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.2s;
+}
+
+.vue-theme {
+    margin-top: 16px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 2px solid #e0e0e0;
+}
+
+.vue-theme .text {
+    font-size: 13px;
+    color: #6c757d;
+    margin-bottom: 8px;
+}
+
+.vue-element {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.preview-box {
+    width: 60px;
+    height: 40px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+}
+
+.card-item .form-group {
+    margin-bottom: 16px;
+}
+
+.card-item .form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.card-item .form-group select, input[type="text"], input[type="password"], input[type="file"], textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: #f8f9fa;
+    color: #1a1a1a;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.password-input {
+    position: relative;
+    margin-top: 8px;
+}
+
+.password-input .toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6c757d;
+    padding: 4px;
+}
+
+.card-item .btn-primary {
+    background: #3b82f6;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-item .btn-danger {
+    background: #ef4444;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.card-item .btn-danger:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.info {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    font-size: 14px;
+}
+
+.info strong {
+    color: #1a1a1a;
+}
+
+.info span {
+    color: #6c757d;
+}
+
+/* --- CONFIGURATION MODE SOMBRE TOTAL --- */
+body.dark-mode {
+    --background-color: #1a1a1a;
+    --card-background: #2d2d2d;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --border-color: #334155;
+}
+
+body.dark-mode aside {
+    background: #2d2d2d !important; 
+    border-right: 1px solid var(--border-color);
+}
+
+body.dark-mode .card-item {
+    background: var(--card-background);
+}
+
+body.dark-mode .card-item strong,
+body.dark-mode .card-item h3,
+body.dark-mode .card-item h4,
+body.dark-mode .card-item label {
+    color: #ffffff !important;
+}
+
+body.dark-mode .info span,
+body.dark-mode .card-item p {
+    color: var(--text-secondary) !important;
+}
+
+body.dark-mode input, body.dark-mode select, body.dark-mode textarea {
+    background: #1a1a1a !important;
+    color: white !important;
+    border-color: var(--border-color) !important;
+}
+
+body.dark-mode .vue-theme {
+    background: #1a1a1a !important;
+    border: 2px solid #404040 !important;
+}
+
+body.dark-mode .preview-box:nth-child(1) {
+    background: #2d2d2d !important;
+}
+
+body.dark-mode .preview-box:nth-child(3) {
+    background: #404040 !important;
+}
+
+body.dark-mode .slider {
+    background-color: #334155 !important;
+}
+
+body.dark-mode .slider:before {
+    background-color: #ffffff !important;
+}
+
+body.dark-mode .switch input:checked + .slider {
+    background-color: transparent; 
+}
+
+body.dark-mode .card .card-item .header,
+body.dark-mode .card .card-item .setting-item,
+body.dark-mode .setting-color,
+body.dark-mode .info {
+    border-bottom: 1px solid var(--border-color);
+}

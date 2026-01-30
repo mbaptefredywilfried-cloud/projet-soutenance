@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction</title>
+    <link rel="stylesheet" href="./css/transaction.css">
+    <link rel="stylesheet" href="../fontawesome-free-6.7.2-web/fontawesome-free-6.7.2-web/css/all.css">
+</head>
+
+<body>
+
+    <div class="content">
+        <aside>
+
+            <div class="side">
+                <div class="img">
+                    <svg width="52" height="52" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="currentColor"></path>
+                        <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2"></path>
+                        <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2"></path>
+                    </svg>
+                    <p>AppName</p>
+                </div>
+                <div class="separed"></div>
+                <div class="nav">
+                    <a href="./dasboard.html"><i class="fas fa-home"></i>Dashboard</a>
+                    <a href="./transaction.html"><i class="fas fa-exchange-alt"></i>Transaction</a>
+                    <a href="./budget.html"><i class="fas fa-piggy-bank"></i>Budget</a>
+                    <a href="./profil.html"><i class="fas fa-user"></i>Profil</a>
+                </div>
+            </div>
+
+
+            <div class="side">
+                <div class="separed"></div>
+                <div class="nav">
+                    <a href="./parametre.html"><i class="fas fa-cog"></i>Parametres</a>
+                    <a href="./deconnexion.html"><i class="fas fa-right-from-bracket"></i>Deconnexion</a>
+                </div>
+            </div>
+
+        </aside>
+
+
+        <main>
+
+            <!-- ajouter une transaction -->
+            <h1>Transactions</h1>
+            <div class="card">
+                <h3>Ajouter une transaction</h3>
+                <form id="transactionForm">
+
+                    <!-- type de la transaction -->
+                    <div class="form-group">
+                        <label for="transactionType">Type</label>
+                        <select name="transactionType" id="transactionType" required>
+                            <option value="">Sélectionner</option>
+                            <option value="expense">Dépense</option>
+                            <option value="income">Revenu</option>
+                        </select>
+                    </div>
+
+                    <!-- categorie de la transaction -->
+                    <div class="form-group">
+                        <label for="transactionCategory">Catégorie</label>
+                        <select name="transactionCategory" id="transactionCategory" required>
+                            <option value="">Selectionner</option>
+                        </select>
+                    </div>
+
+
+                    <!-- montant de la transaction -->
+                    <div class="form-group">
+                        <label for="transactionAmount">Montant (€)</label>
+                        <input type="number" id="transactionAmount" name="transactionAmount" placeholder="Veuillez inserez un montant... " required>
+                    </div>
+
+                    <!-- Date de la transaction -->
+                    <div class="form-group">
+                        <label for="transactionDate">Date</label>
+                        <input type="date" id="transactionDate" name="transactionDate" required>
+                    </div>
+
+                    <!-- bouton ajouter -->
+                    <div class="form-group">
+                        <button type="submit" class="btn-primary"><i class="fas fa-plus-circle"></i>Ajouter</button>
+                    </div>
+                </form>
+
+                <!-- description de la transaction -->
+                <div class="description">
+                    <label for="transactionDescription">Description (optionnel)</label>
+                    <input type="text" id="transactionDescription" name="transactionDescription" placeholder="Description de la transaction...">
+                </div>
+            </div>
+
+
+            <!-- historique des transactions  -->
+            <div id="transactionsContainer">
+                <!-- Transactions will be added here dynamically -->
+            </div>
+        </main>
+
+        <script src="./js/transaction.js"></script>
+        <script src="./js/common.js"></script>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/profil.css">
+    <link rel="stylesheet" href="../fontawesome-free-6.7.2-web/fontawesome-free-6.7.2-web/css/all.css">
+    <title>Profil</title>
+</head>
+
+<body>
+    <div class="content">
+
+        <aside>
+            <div class="side">
+                <div class="img">
+                    <svg width="52" height="52" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="currentColor"></path>
+                        <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2"></path>
+                        <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2"></path>
+                    </svg>
+                    <p>AppName</p>
+                </div>
+                <div class="separed"></div>
+                <div class="nav">
+                    <a href="./dasboard.html"><i class="fas fa-home"></i>Dashboard</a>
+                    <a href="./transaction.html"><i class="fas fa-exchange-alt"></i>Transaction</a>
+                    <a href="./budget.html"><i class="fas fa-piggy-bank"></i>Budget</a>
+                    <a href="./profil.html" class="active"><i class="fas fa-user"></i>Profil</a>
+                </div>
+            </div>
+
+            <div class="side">
+                <div class="separed"></div>
+                <div class="nav">
+                    <a href="./parametre.html"><i class="fas fa-cog"></i>Parametres</a>
+                    <a href="./deconnexion.html"><i class="fas fa-right-from-bracket"></i>Deconnexion</a>
+                </div>
+            </div>
+        </aside>
+
+        <main>
+            <header>Profil</header>
+
+            <div class="container">
+                <div class="card">
+                    <div class="side-header">
+                        <div class="avatar-wrapper">
+                            <img class="avatar-image" src="./assets/default-avatar.png" alt="Photo de profil">
+                            <label class="avatar-upload-btn" for="avatarInput" aria-label="Changer la photo de profil">
+                                <i class="fas fa-camera"></i>
+                            </label>
+                            <input id="avatarInput" class="avatar-input" type="file" accept=".png,.jpg,.jpeg">
+                        </div>
+                        <h3>Fredy 2.0</h3>
+                        <p class="statut-actif">Compte Actif</p>
+                    </div>
+
+                    <nav class="navigation">
+                        <h4>Navigation rapide</h4>
+                        <ul>
+                            <li><i class="fas fa-home"></i><a href="./dasboard.html">Accéder au dashboard</a></li>
+                            <li><i class="fas fa-wallet"></i><a href="./budget.html">Gérer vos budgets</a></li>
+                            <li><i class="fas fa-right-from-bracket"></i><a href="./deconnexion.html">Déconnexion</a></li>
+                        </ul>
+                    </nav>
+                </div>
+
+                <div class="card2">
+                    <h2>Informations Personnelles</h2>
+                    <div class="info">
+                        <div class="profil-detail-group">
+                            <label>Nom complet</label>
+                            <p id="display-name">Fredy 2.0</p>
+                        </div>
+                        <div class="profil-detail-group">
+                            <label>Email</label>
+                            <p id="display-email">Fredy2.0@gmail.com</p>
+                        </div>
+                        <div class="profil-detail-group">
+                            <label>Téléphone</label>
+                            <p id="display-phone">Non spécifié</p>
+                        </div>
+                    </div>
+                    <button class="btn-primary" id="openEditModal">
+                        <i class="fas fa-edit"></i><span>Modifier le profil</span>
+                    </button>
+                </div>
+
+                <div class="card3">
+                    <h2>Aperçu Budgétaire</h2>
+                    <div class="stat-budget">
+                        <div class="stat-card color-warning">
+                            <i class="fas fa-percent"></i>
+                            <span class="stat-label">Utilisé</span>
+                            <div class="stat-value">--</div>
+                        </div>
+
+                        <div class="stat-card color-info">
+                            <i class="fas fa-hand-holding-usd"></i>
+                            <span class="stat-label">Restant</span>
+                            <div class="stat-value">--</div>
+                        </div>
+
+                        <div class="stat-card color-danger">
+                            <i class="fas fa-shopping-basket"></i>
+                            <span class="stat-label">Dépensé</span>
+                            <div class="stat-value">--</div>
+                        </div>
+                    </div>
+                    <p class="budget-tip">
+                        <i class="fas fa-info-circle"></i> Votre budget est sous contrôle.
+                    </p>
+                </div>
+
+                <div class="card4">
+                    <h2>Informations de compte</h2>
+                    <div class="group">
+                        <div class="profil-detail-group">
+                            <label>Identifiant Utilisateur</label>
+                            <span>AD_565</span>
+                        </div>
+                        <div class="profil-detail-group">
+                            <label>Date de création</label>
+                            <span>2023-01-01</span>
+                        </div>
+                        <div class="profil-detail-group">
+                            <label>Dernière connexion</label>
+                            <span>21-01-2026 19:45</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card5">
+                    <h2>Sécurité et Données</h2>
+                    <p>Gérez vos données de compte, exportez vos transactions ou supprimez votre profil.</p>
+
+                    <div class="button">
+                        <button class="btn-primary" id="exportDataBtn">
+                            <i class="fas fa-file-export"></i>Exporter les données
+                        </button>
+                        <button class="btn-danger" id="deleteAccountBtn">
+                            <i class="fas fa-trash"></i>Supprimer le compte
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="editModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Modifier les informations</h2>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <form id="editProfileForm">
+                <div class="input-group">
+                    <label for="editName">Nom complet</label>
+                    <input type="text" id="editName" value="Fredy 2.0" required>
+                </div>
+                <div class="input-group">
+                    <label for="editEmail">Email</label>
+                    <input type="email" id="editEmail" value="Fredy2.0@gmail.com" required>
+                </div>
+                <div class="input-group">
+                    <label for="editPhone">Téléphone</label>
+                    <input type="text" id="editPhone" placeholder="Non spécifié">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="cancelBtn">Annuler</button>
+                    <button type="submit" class="btn-primary">Enregistrer les modifications</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="./js/profil.js"></script>
+    <script src="./js/common.js"></script>
+</body>
+</html>

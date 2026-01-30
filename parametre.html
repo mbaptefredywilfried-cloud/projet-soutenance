@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paramètres</title>
+    <link rel="stylesheet" href="../fontawesome-free-6.7.2-web/fontawesome-free-6.7.2-web/css/all.css">
+    <link rel="stylesheet" href="./css/parametre.css">
+</head>
+
+<body>
+
+    <div class="content">
+        <aside>
+            <div class="side">
+                <div class="img">
+                    <svg width="52" height="52" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="currentColor"></path>
+                        <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2"></path>
+                        <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2"></path>
+                    </svg>
+                    <p>AppName</p>
+                </div>
+                <div class="separed"></div>
+                <div class="nav">
+                    <a href="./dasboard.html"><i class="fas fa-home"></i>Dashboard</a>
+                    <a href="./transaction.html"><i class="fas fa-exchange-alt"></i>Transaction</a>
+                    <a href="./budget.html"><i class="fas fa-piggy-bank"></i>Budget</a>
+                    <a href="./profil.html"><i class="fas fa-user"></i>Profil</a>
+                </div>
+            </div>
+
+            <div class="side">
+                <div class="separed"></div>
+                <div class="nav">
+                    <a href="./parametre.html"><i class="fas fa-cog"></i>Parametres</a>
+                    <a href="./deconnexion.html"><i class="fas fa-right-from-bracket"></i>Deconnexion</a>
+                </div>
+            </div>
+        </aside>
+
+        <main>
+            <h1>Paramètres</h1>
+            <div class="card">
+
+                <div class="card-item">
+                    <div class="header">
+                        <div class="icon-box">
+                            <i class="fas fa-sun"></i>
+                        </div>
+                        <h3>Apparence</h3>
+                    </div>
+                    <div class="setting-item">
+                        <div class="label">
+                            <strong>Mode sombre</strong>
+                            <small>Réduire la fatigue oculaire</small>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="darkModeToggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-color">
+                        <div class="label">
+                            <strong>Couleur d'accent</strong>
+                            <small>Personnaliser l'interface</small>
+                        </div>
+                        <div class="color">
+                            <div class="color-option" data-color="#2563eb"
+                                style="background: linear-gradient(180deg, #2563eb 0%, #1e40af 100%);"></div>
+                            <div class="color-option" data-color="#10b981"
+                                style="background: linear-gradient(180deg, #10b981 0%, #059669 100%);"></div>
+                            <div class="color-option" data-color="#8b5cf6"
+                                style="background: linear-gradient(180deg, #8b5cf6 0%, #7c3aed 100%);"></div>
+                            <div class="color-option" data-color="#06B6D4"
+                                style="background: linear-gradient(180deg, #06B6D4 0%, #0891B2 100%);"></div>
+                        </div>
+                    </div>
+
+                    <div class="vue-theme">
+                        <div class="text">Aperçu du thème</div>
+                        <div class="vue-element">
+                            <div class="preview-box bg-preview" style="background: #ffffff; color: #333;">BG</div>
+                            <div class="preview-box accent-box" style="background-color: #2563eb; color: white;">Accent
+                            </div>
+                            <div class="preview-box border-preview" style="background: #e0e0e0; color: #333;">Border
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-item">
+                    <div class="header">
+                        <div class="icon-box">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <h3>Préférences générales</h3>
+                    </div>
+                    <div class="form-group">
+                        <label>Langue</label>
+                        <select>
+                            <option value="fr">Français</option>
+                            <option value="en">Anglais</option>
+                            <option value="es">Espagnol</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-key="currency_label">Devise principale</label>
+                        <select id="currencySelect">
+                            <option value="FCFA">FCFA (XAF)</option>
+                            <option value="€">Euro (€)</option>
+                            <option value="$">Dollar US ($)</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <div class="label">
+                            <strong>Notifications de dépassement</strong>
+                            <small>Alertes en cas de dépassement de budget</small>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="notifyToggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="card-item">
+                    <div class="header">
+                        <div class="icon-box">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <h3>Sécurité</h3>
+                    </div>
+                    <div class="form-group">
+                        <label>Modifier le mot de passe</label>
+                        <div class="password-input">
+                            <input type="password" placeholder="Nouveau mot de passe">
+                            <button class="toggle-password"><i class="fas fa-eye-slash"></i></button>
+                        </div>
+                    </div>
+                    <button class="btn-primary" style="width: 100%; margin-bottom: 16px;">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Enregistrer le mot de passe</span>
+                    </button>
+                    <div class="setting-item">
+                        <div class="label">
+                            <strong>Double Authentification</strong>
+                            <small>Sécurité renforcée</small>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="authToggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <button class="btn-danger" style="width: 100%;">
+                        <i class="fas fa-trash"></i>
+                        <span>Réinitialiser les données locales</span>
+                    </button>
+                </div>
+
+                <div class="card-item">
+                    <div class="header">
+                        <div class="icon-box">
+                            <i class="fas fa-rotate-right"></i>
+                        </div>
+                        <h3>Synchronisation</h3>
+                    </div>
+                    <div class="info">
+                        <strong>Dernière sauvegarde</strong>
+                        <span>01/01/2000 09:30:45</span>
+                    </div>
+                    <button class="btn-primary" style="width: 100%; margin: 16px 0;">
+                        <i class="fas fa-file-export"></i>
+                        <span>Exporter les données</span>
+                    </button>
+                    <div class="form-group">
+                        <label>Importer un fichier</label>
+                        <input type="file">
+                    </div>
+                </div>
+
+                <div class="card-item">
+                    <div class="header">
+                        <div class="icon-box">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <h3>À propos</h3>
+                    </div>
+                    <div class="info">
+                        <strong>Version</strong>
+                        <span>v2.0</span>
+                    </div>
+                    <div class="info">
+                        <strong>Crédits</strong>
+                        <span>nom de l'app</span>
+                    </div>
+                    <div class="info" style="border-bottom: 1px solid var(--border-color);">
+                        <strong>Confidentialité</strong>
+                        <a href="#" style="color: var(--primary-color); text-decoration: none;">Lire la politique</a>
+                    </div>
+                    <div class="form-group">
+                        <label style="margin-top: 16px;">Envoyer un retour</label>
+                        <textarea rows="3" placeholder="Partager vos suggestions..."></textarea>
+                    </div>
+                    <button class="btn-primary" style="width: 100%; margin-top: 16px; justify-content: center;">
+                        <i class="far fa-paper-plane"></i>
+                        <span>Envoyer</span>
+                    </button>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="./js/common.js"></script>
+    <script src="./js/parametre.js"></script>
+</body>
+
+</html>
