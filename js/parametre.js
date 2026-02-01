@@ -71,6 +71,61 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     }
+
+    // --- 7. NOUVEAU : EXPORTATION DES DONNÉES (CSV) ---
+    const exportBtn = document.getElementById('exportCSVBtn');
+    if (exportBtn) {
+        exportBtn.addEventListener('click', function() {
+            const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+            
+            if (transactions.length === 0) {
+                alert("Aucune donnée à exporter.");
+                return;
+            }
+
+            // BOM pour les accents sous Excel + En-têtes
+            let csvContent = "\uFEFFDate,Description,Catégorie,Type,Montant\n";
+
+            transactions.forEach(t => {
+                const date = new Date(t.date).toLocaleDateString('fr-FR');
+                const desc = t.description ? `"${t.description.replace(/"/g, '""')}"` : "";
+                const type = t.type === 'income' ? 'Revenu' : 'Dépense';
+                const row = [date, desc, t.category, type, t.amount].join(",");
+                csvContent += row + "\n";
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `Spend2_Export_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Mise à jour de la date de sauvegarde dans l'interface
+            const lastBackupSpan = document.getElementById('lastBackupSpan');
+            if (lastBackupSpan) {
+                lastBackupSpan.textContent = new Date().toLocaleString('fr-FR');
+            }
+        });
+    }
+
+    // --- 8. NOUVEAU : RÉINITIALISATION DES DONNÉES ---
+    const resetBtn = document.getElementById('resetDataBtn');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', function() {
+            const confirmation = confirm("Êtes-vous sûr de vouloir supprimer TOUTES vos transactions ? Cette action est irréversible.");
+            
+            if (confirmation) {
+                localStorage.removeItem('transactions');
+                // On peut aussi réinitialiser les budgets si tu en as
+                localStorage.removeItem('budgets'); 
+                alert("Toutes les données locales ont été supprimées.");
+                window.location.reload(); // Recharge la page pour actualiser l'affichage
+            }
+        });
+    }
 });
 
 // --- 5. FONCTION D'APPLICATION GLOBALE DE L'ACCENT ---
@@ -84,17 +139,16 @@ function applyAccentColor(color) {
     // A. Gestion de la Sidebar (Aside)
     const aside = document.querySelector('aside');
     if (aside) {
-        // En mode sombre, l'aside reste neutre (Midnight), en clair il prend le dégradé
         aside.style.background = isDark ? '#2d2d2d' : gradient;
     }
 
-    // B. Gestion des Boutons Primaires
+    // B. Gestion des Boutons Primaires (Inclut le bouton Exportation)
     document.querySelectorAll('.btn-primary').forEach(btn => {
         btn.style.background = gradient;
         btn.style.borderColor = color;
     });
 
-    // C. MISE À JOUR : Gestion des Icon-Boxes dans les cartes
+    // C. Gestion des Icon-Boxes dans les cartes
     document.querySelectorAll('.icon-box').forEach(box => {
         box.style.background = gradient;
     });
@@ -105,7 +159,7 @@ function applyAccentColor(color) {
         accentPreview.style.backgroundColor = color;
     }
 
-    // E. Styles dynamiques (Switches, Hovers, etc.)
+    // E. Styles dynamiques
     let dynamicStyle = document.getElementById('dynamic-accent-style');
     if (!dynamicStyle) {
         dynamicStyle = document.createElement('style');

@@ -463,3 +463,65 @@ body.dark-mode .setting-color,
 body.dark-mode .info {
     border-bottom: 1px solid var(--border-color);
 }
+
+/* --- Styles pour le Modal de Déconnexion (custom-modal2) --- */
+.custom-modal2 {
+    display: none; /* Piloté par le JS */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Fond sombre */
+    backdrop-filter: blur(5px); /* Flou d'arrière-plan */
+    z-index: 9999; /* Supérieur au z-index de l'aside (1000) */
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content2 {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+    animation: modalScaleIn 0.3s ease-out;
+}
+
+@keyframes modalScaleIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.modal-icon-warning {
+    font-size: 50px;
+    margin-bottom: 15px;
+}
+
+.modal-content2 h3 {
+    font-size: 22px;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+}
+
+.modal-content2 p {
+    color: var(--text-secondary);
+    margin-bottom: 25px;
+}
+
+.btn-cancel {
+    background-color: #f1f5f9;
+    color: #64748b;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.btn-cancel:hover {
+    background-color: #e2e8f0;
+}

@@ -184,3 +184,47 @@ document.addEventListener('DOMContentLoaded', function () {
 
     loadUserData();
 });
+
+// --- LOGIQUE DU POP-UP DE RAPPEL ---
+function checkExpenseReminder() {
+    const lastEntry = localStorage.getItem('lastExpenseDate');
+    const now = new Date().getTime();
+    const oneDay = 24 * 60 * 60 * 1000; 
+
+    // Si aucune dépense n'a jamais été saisie ou si ça fait plus de 24h
+    if (!lastEntry || (now - lastEntry) > oneDay) {
+        createReminderPopup();
+    }
+}
+
+function createReminderPopup() {
+    // Création de la structure du pop-up
+    const popup = document.createElement('div');
+    popup.className = 'reminder-popup';
+    
+    popup.innerHTML = `
+        <div class="popup-content">
+            <div class="popup-header">
+                <i class="fas fa-bell"></i>
+                <span>Rappel de saisie</span>
+                <button class="close-popup-btn">&times;</button>
+            </div>
+            <div class="popup-body">
+                <p>Vous n'avez pas encore saisi vos dépenses aujourd'hui !</p>
+                <button class="action-btn" onclick="window.location.href='budget.html'">Saisir maintenant</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(popup);
+
+    // Gestion de la fermeture manuelle
+    const closeBtn = popup.querySelector('.close-popup-btn');
+    closeBtn.addEventListener('click', () => {
+        popup.classList.add('fade-out');
+        setTimeout(() => popup.remove(), 500);
+    });
+}
+
+// Lancer la vérification
+checkExpenseReminder();

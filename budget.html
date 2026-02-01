@@ -11,9 +11,7 @@
 
 <body>
 
-
     <div class="content">
-
 
         <aside>
             <div class="side">
@@ -38,7 +36,8 @@
                 <div class="separed"></div>
                 <div class="nav">
                     <a href="./parametre.html"><i class="fas fa-cog"></i>Parametres</a>
-                    <a href="./deconnexion.html"><i class="fas fa-right-from-bracket"></i>Deconnexion</a>
+                    <a href="./deconnexion.html" id="logoutLink"><i
+                            class="fas fa-right-from-bracket"></i>Deconnexion</a>
                 </div>
             </div>
         </aside>
@@ -51,6 +50,7 @@
 
             <section class="budget-summary" aria-labelledby="summary-heading">
                 <h2 id="summary-heading" class="sr-only">Résumé des Budgets</h2>
+
                 <div class="summary-cards">
                     <div class="summary-card">
                         <i class="fas fa-euro-sign"></i>
@@ -71,6 +71,33 @@
                         <div>
                             <h3>Équilibre</h3>
                             <p id="balance">0 €</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="summary-cards" style="margin-top: 20px;">
+                    <div class="summary-card stat-card">
+                        <div class="stat-info"
+                            style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+                            <h3>Budgets Actifs</h3>
+                            <span id="activeBudgetsCount"
+                                style="font-size: 1.5rem; font-weight: bold; color: #10b981;">0</span>
+                        </div>
+                    </div>
+                    <div class="summary-card stat-card">
+                        <div class="stat-info"
+                            style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+                            <h3>Budgets Dépassés</h3>
+                            <span id="overspentBudgetsCount"
+                                style="font-size: 1.5rem; font-weight: bold; color: #ef4444;">0</span>
+                        </div>
+                    </div>
+                    <div class="summary-card stat-card">
+                        <div class="stat-info"
+                            style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+                            <h3>Total Budgets</h3>
+                            <span id="totalBudgetsCount"
+                                style="font-size: 1.5rem; font-weight: bold; color: #1e293b;">0</span>
                         </div>
                     </div>
                 </div>
@@ -146,7 +173,6 @@
                     </div>
                 </div>
                 <div class="budgets-container" id="budgetsContainer" role="list">
-                    <!-- Budgets will be dynamically added here -->
                 </div>
                 <div id="noBudgetsMessage" class="no-data">
                     <i class="fas fa-inbox"></i>
@@ -156,7 +182,6 @@
         </main>
     </div>
 
-    <!-- Modal for editing budget -->
     <div class="modal" id="editModal" role="dialog" aria-labelledby="editModalTitle" aria-hidden="true">
         <div class="modal-content">
             <div class="modal-header">
@@ -180,20 +205,38 @@
             </form>
         </div>
     </div>
+
     <div id="confirmModal" class="modal">
-    <div class="modal-content confirm-box">
-        <i class="fas fa-exclamation-triangle warning-icon"></i>
-        <h2>Confirmation</h2>
-        <p>Es-tu sûr de vouloir supprimer ce budget ? Cette action est irréversible.</p>
-        <div class="confirm-btns">
-            <button id="cancelDelete" class="btn-secondary">Annuler</button>
-            <button id="confirmDelete" class="btn-danger">Supprimer</button>
+        <div class="modal-content confirm-box">
+            <i class="fas fa-exclamation-triangle warning-icon"></i>
+            <h2>Confirmation</h2>
+            <p>Es-tu sûr de vouloir supprimer ce budget ? Cette action est irréversible.</p>
+            <div class="confirm-btns">
+                <button id="cancelDelete" class="btn-secondary">Annuler</button>
+                <button id="confirmDelete" class="btn-danger">Supprimer</button>
+            </div>
         </div>
     </div>
-</div>
+
+    <div id="logoutModal" class="custom-modal2">
+        <div class="modal-content2">
+            <div class="modal-icon-warning" style="color: var(--primary-color);">
+                <i class="fas fa-sign-out-alt"></i>
+            </div>
+            <h3>Déconnexion</h3>
+            <p>Êtes-vous sûr de vouloir quitter votre session ?</p>
+            <div class="modal-buttons">
+                <button id="confirmLogoutBtn" class="btn-primary"
+                    style="background-color: var(--primary-color); border:none; padding: 10px 24px; border-radius: 8px; color: white; cursor: pointer; font-weight: 600;">Oui,
+                    me déconnecter</button>
+                <button id="cancelLogoutBtn" class="btn-cancel">Annuler</button>
+            </div>
+        </div>
+    </div>
 
     <script src="./js/common.js"></script>
     <script src="./js/budget.js"></script>
+    <script src="./js/notifications.js"></script>
 </body>
 
 </html>

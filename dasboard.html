@@ -34,7 +34,7 @@
                 <div class="separed"></div>
                 <div class="nav">
                     <a href="./parametre.html" data-id="4"><i class="fas fa-cog"></i>Paramètres</a>
-                    <a href="./deconnexion.html" data-id="5"><i class="fas fa-right-from-bracket"></i>Déconnexion</a>
+                    <a href="./deconnexion.html" data-id="5" id="logoutLink"><i class="fas fa-right-from-bracket"></i>Déconnexion</a>
                 </div>
             </div>
         </aside>
@@ -112,10 +112,6 @@
                             <select id="filterCategory">
                                 <option value="all">Toutes les catégories</option>
                             </select>
-
-                            <button id="clearDashboardBtn" class="btn-tout-supprimer">
-                                <i class="fas fa-trash-can"></i> Tout supprimer
-                            </button>
                         </div>
                     </div>
 
@@ -128,17 +124,16 @@
                                     <th>CATÉGORIE</th>
                                     <th>TYPE</th>
                                     <th>MONTANT</th>
-                                    <th>ACTIONS</th>
                                 </tr>
                             </thead>
                             <tbody id="dashboardTransactionBody">
-                                </tbody>
+                            </tbody>
                         </table>
                         <div class="toggle-container">
-                            <button id="toggleTransactions" class="btn-view-more">
+                            <a href="./transaction.html" id="toggleTransactions" class="btn-view-more" style="text-decoration: none;">
                                 <span class="btn-text">Voir plus</span>
-                                <i class="fas fa-chevron-down"></i>
-                            </button>
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -146,21 +141,22 @@
         </main>
     </div>
 
-    <div id="confirmModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-icon">
-                <i class="fas fa-exclamation-triangle"></i>
+    <div id="logoutModal" class="custom-modal2">
+        <div class="modal-content2">
+            <div class="modal-icon-warning" style="color: var(--primary-color);">
+                <i class="fas fa-sign-out-alt"></i>
             </div>
-            <h2>Confirmation</h2>
-            <p>Voulez-vous vraiment masquer tout l'historique du dashboard ?</p>
+            <h3>Déconnexion</h3>
+            <p>Êtes-vous sûr de vouloir quitter votre session ?</p>
             <div class="modal-buttons">
-                <button id="cancelBtn" class="btn-secondary">Annuler</button>
-                <button id="confirmDeleteBtn" class="btn-danger">Confirmer</button>
+                <button id="confirmLogoutBtn" class="btn-primary" style="background-color: var(--primary-color); border:none; padding: 10px 24px; border-radius: 8px; color: white; cursor: pointer; font-weight: 600;">Oui, me déconnecter</button>
+                <button id="cancelLogoutBtn" class="btn-cancel">Annuler</button>
             </div>
         </div>
     </div>
 
-    <script src="./js/dasboard.js"></script>
     <script src="./js/common.js"></script>
+    <script src="./js/dasboard.js"></script>
+    <script src="./js/notifications.js"></script>
 </body>
 </html>

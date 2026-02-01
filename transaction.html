@@ -37,7 +37,7 @@
                 <div class="separed"></div>
                 <div class="nav">
                     <a href="./parametre.html"><i class="fas fa-cog"></i>Parametres</a>
-                    <a href="./deconnexion.html"><i class="fas fa-right-from-bracket"></i>Deconnexion</a>
+                    <a href="./deconnexion.html" id="logoutLink"><i class="fas fa-right-from-bracket"></i>Deconnexion</a>
                 </div>
             </div>
 
@@ -105,7 +105,7 @@
                     <button class="filter-btn" data-filter="expense">Dépenses</button>
                 </div>
                 <button id="deleteAllBtn" class="btn-danger-outline">
-                    <i class="fas fa-trash-sweep"></i> Tout supprimer
+                    <i class="fas fa-trash-can"></i> Tout supprimer
                 </button>
             </div>
 
@@ -117,42 +117,90 @@
             </div>
         </main>
 
-        <script src="./js/transaction.js"></script>
-        <script src="./js/common.js"></script>
+    
     </div>
 
     <div id="editModal" class="custom-modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Modifier le montant</h3>
-            <p>Ajustez la valeur de votre transaction</p>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Modifier la transaction</h3>
+                <p>Mettez à jour les détails de votre opération</p>
+            </div>
+            <form id="editTransactionForm">
+                <input type="hidden" id="editTransactionId">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="editTransactionType">Type</label>
+                        <select id="editTransactionType" required>
+                            <option value="expense">Dépense</option>
+                            <option value="income">Revenu</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editTransactionCategory">Catégorie</label>
+                        <select id="editTransactionCategory" required>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editTransactionAmount">Montant (€)</label>
+                        <div class="input-group">
+                            <input type="number" id="editTransactionAmount" step="0.01" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editTransactionDate">Date</label>
+                        <input type="date" id="editTransactionDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editTransactionDescription">Description (optionnel)</label>
+                        <input type="text" id="editTransactionDescription" placeholder="Notez un détail...">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="cancelEdit" class="btn-secondary">Annuler</button>
+                    <button type="submit" class="btn-primary">Enregistrer les modifications</button>
+                </div>
+            </form>
         </div>
-        <div class="modal-body">
-            <div class="input-group">
-                <input type="number" id="editAmountInput" placeholder="0" step="any">
-                <span class="currency-label">€</span>
+    </div>
+    <div id="toast-container"></div>
+    
+    <div id="deleteModal" class="custom-modal2">
+        <div class="modal-content2">
+            <div class="modal-icon-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3>Supprimer la transaction ?</h3>
+            <p>Cette action est irréversible.</p>
+            <div class="modal-buttons">
+                <button id="confirmDeleteBtn" class="btn-confirm">Supprimer</button>
+                <button id="cancelDeleteBtn" class="btn-cancel">Annuler</button>
             </div>
         </div>
-        <div class="modal-footer">
-            <button id="cancelEdit" class="btn-secondary">Annuler</button>
-            <button id="confirmEdit" class="btn-primary">Enregistrer</button>
-        </div>
     </div>
-</div>
 
-<div id="deleteModal" class="custom-modal">
-    <div class="modal-content">
-        <div class="modal-icon-warning">
-            <i class="fa-solid fa-trash-can"></i>
+    <div id="toast-container"></div>
+    <div id="logoutModal" class="custom-modal2">
+    <div class="modal-content2">
+        <div class="modal-icon-warning" style="color: var(--primary-color);">
+            <i class="fas fa-sign-out-alt"></i>
         </div>
-        <h3>Supprimer ?</h3>
-        <p>Voulez-vous vraiment retirer cette transaction de votre historique ?</p>
-        <div class="modal-footer">
-            <button id="cancelDelete" class="btn-secondary">Annuler</button>
-            <button id="confirmDelete" class="btn-danger">Supprimer définitivement</button>
+        <h3>Déconnexion</h3>
+        <p>Êtes-vous sûr de vouloir quitter votre session ?</p>
+        <div class="modal-buttons">
+            <button id="confirmLogoutBtn" class="btn-primary" style="background-color: var(--primary-color); border:none; padding: 10px 24px; border-radius: 8px; color: white; cursor: pointer; font-weight: 600;">Oui, me déconnecter</button>
+            <button id="cancelLogoutBtn" class="btn-cancel">Annuler</button>
         </div>
     </div>
 </div>
+    <script src="./js/common.js"></script>
+    <script src="./js/transaction.js"></script>
+    <script src="./js/notifications.js"></script>
+    
 </body>
 
 </html>

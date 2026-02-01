@@ -2,6 +2,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const links = document.querySelectorAll('aside .nav a');
     if (!links.length) return;
 
+    // --- VARIABLES POUR LA SUPPRESSION (AJOUTÉ) ---
+    let transactionToDelete = null;
+    const deleteModal = document.getElementById('deleteModal');
+
     // Assign stable data-id if not present
     links.forEach((link, i) => {
         if (!link.dataset.id) link.dataset.id = i;
@@ -38,24 +42,116 @@ document.addEventListener('DOMContentLoaded', function () {
         income: ["Salaire", "Revenus passifs", "Cadeaux", "Vente", "Autre"]
     };
 
-    // Mettre à jour les options en fonction du type choisi
+    // --- FONCTION TOAST (AJOUTÉ - BAS DROITE) ---
+    function showSuccessToast(message) {
+        let container = document.getElementById('toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            document.body.appendChild(container);
+        }
+        const toast = document.createElement('div');
+        toast.className = 'toast-custom';
+        toast.innerHTML = `
+            <div class="toast-icon" style="background:white; color:#10b981; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center;">
+                <i class="fas fa-check" style="font-size:12px;"></i>
+            </div>
+            <div class="toast-message">${message}</div>
+        `;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.classList.add('fade-out');
+            setTimeout(() => toast.remove(), 400);
+        }, 3000);
+    }
+
+    // --- LOGIQUE COMMUNE POUR LES CATEGORIES ---
+    function updateCategoryOptions(typeSelect, targetCategorySelect) {
+        const selectedType = typeSelect.value;
+        targetCategorySelect.innerHTML = '<option value="">Sélectionner</option>';
+        if (selectedType && categories[selectedType]) {
+            categories[selectedType].forEach(cat => {
+                const option = document.createElement("option");
+                option.value = cat.toLowerCase();
+                option.textContent = cat;
+                targetCategorySelect.appendChild(option);
+            });
+        }
+    }
+
+    // Mettre à jour les options en fonction du type choisi (Formulaire principal)
     const typeSelect = document.getElementById("transactionType");
     const categorySelect = document.getElementById("transactionCategory");
 
     if (typeSelect) {
-        typeSelect.addEventListener("change", () => {
-            const selectedType = typeSelect.value;
-            categorySelect.innerHTML = '<option value="">Sélectionner</option>';
-            if (selectedType && categories[selectedType]) {
-                categories[selectedType].forEach(cat => {
-                    const option = document.createElement("option");
-                    option.value = cat.toLowerCase();
-                    option.textContent = cat;
-                    categorySelect.appendChild(option);
-                });
+        typeSelect.addEventListener("change", () => updateCategoryOptions(typeSelect, categorySelect));
+    }
+
+    // --- GESTION DU MODAL DE MODIFICATION ---
+    const editModal = document.getElementById('editModal');
+    const editForm = document.getElementById('editTransactionForm');
+    const editTypeSelect = document.getElementById('editTransactionType');
+    const editCategorySelect = document.getElementById('editTransactionCategory');
+
+    // Mise à jour dynamique des catégories dans le modal
+    if (editTypeSelect) {
+        editTypeSelect.addEventListener('change', () => updateCategoryOptions(editTypeSelect, editCategorySelect));
+    }
+
+    // Ouvrir le modal et remplir les champs
+    window.editTransaction = function(id) {
+        const transaction = transactions.find(t => t.id === id);
+        if (!transaction) return;
+
+        document.getElementById('editTransactionId').value = transaction.id;
+        document.getElementById('editTransactionType').value = transaction.type;
+        
+        // Charger les catégories correspondantes au type avant de sélectionner la valeur
+        updateCategoryOptions(editTypeSelect, editCategorySelect);
+        editCategorySelect.value = transaction.category;
+        
+        document.getElementById('editTransactionAmount').value = transaction.amount;
+        document.getElementById('editTransactionDate').value = transaction.date;
+        document.getElementById('editTransactionDescription').value = transaction.description || '';
+
+        editModal.style.display = 'flex'; // Affiche le modal
+    };
+
+    // Fermer le modal
+    document.getElementById('cancelEdit')?.addEventListener('click', () => {
+        editModal.style.display = 'none';
+    });
+
+    // Enregistrer les modifications
+    if (editForm) {
+        editForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const id = parseInt(document.getElementById('editTransactionId').value);
+            const index = transactions.findIndex(t => t.id === id);
+
+            if (index !== -1) {
+                transactions[index] = {
+                    id: id,
+                    type: document.getElementById('editTransactionType').value,
+                    category: document.getElementById('editTransactionCategory').value,
+                    amount: parseFloat(document.getElementById('editTransactionAmount').value),
+                    date: document.getElementById('editTransactionDate').value,
+                    description: document.getElementById('editTransactionDescription').value
+                };
+
+                localStorage.setItem('transactions', JSON.stringify(transactions));
+                renderTransactions();
+                editModal.style.display = 'none';
+                showSuccessToast("Transaction modifié !");
             }
         });
     }
+
+    // --- GESTION DU MODAL DE SUPPRESSION (LOGIQUE BOUTONS) ---
+    document.getElementById('cancelDeleteBtn')?.addEventListener('click', () => {
+        if(deleteModal) deleteModal.style.display = 'none';
+        transactionToDelete = null;
+    });
 
     // Set default date
     const today = new Date().toISOString().split('T')[0];
@@ -69,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function () {
         aside.style.background = `linear-gradient(180deg, ${accentColor} 0%, ${darkerColor} 100%)`;
     }
 
-    // --- Logique des boutons de Filtre + COULEUR D'ACCENT AU SURVOL ---
+    // --- Logique des filtres + COULEUR D'ACCENT AU SURVOL ---
     const filterBtns = document.querySelectorAll('.filter-btn');
     
     function updateFilterStyles() {
@@ -112,19 +208,23 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     updateFilterStyles(); 
 
-    // --- Bouton Tout Supprimer ---
+    // --- MODIF : Bouton Tout Supprimer avec Modal ---
     const deleteAllBtn = document.getElementById('deleteAllBtn');
     if (deleteAllBtn) {
         deleteAllBtn.addEventListener('click', function() {
-            if (confirm('Voulez-vous vraiment supprimer tout l\'historique ?')) {
+            if (deleteModal) deleteModal.style.display = 'flex';
+            
+            document.getElementById('confirmDeleteBtn').onclick = function() {
                 transactions = [];
                 localStorage.setItem('transactions', JSON.stringify([]));
                 renderTransactions();
-            }
+                if (deleteModal) deleteModal.style.display = 'none';
+                showSuccessToast("Historique vidé !");
+            };
         });
     }
 
-    // Form submission
+    // Form submission principal
     if (transactionForm) {
         transactionForm.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -135,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 category: formData.get('transactionCategory'),
                 amount: parseFloat(formData.get('transactionAmount')),
                 date: formData.get('transactionDate'),
-                description: formData.get('transactionDescription') || ''
+                description: document.getElementById('transactionDescription').value || ''
             };
 
             if (transaction.type && transaction.category && transaction.amount > 0 && transaction.date) {
@@ -144,6 +244,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 renderTransactions();
                 transactionForm.reset();
                 document.getElementById('transactionDate').value = today;
+                showSuccessToast("Transaction ajoutée !");
             } else {
                 alert('Veuillez remplir tous les champs correctement.');
             }
@@ -152,7 +253,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- Fonction de formatage des montants ---
     function formatAmount(amount) {
-        // Formate en entier avec des espaces pour les milliers (ex: 90 000)
         return Math.floor(amount).toLocaleString('fr-FR').replace(/\u00a0/g, ' ');
     }
 
@@ -166,13 +266,20 @@ document.addEventListener('DOMContentLoaded', function () {
             filteredTransactions = transactions.filter(t => t.type === currentFilter);
         }
 
-        // CLASSEMENT CHRONOLOGIQUE
+        if (filteredTransactions.length === 0) {
+        transactionsContainer.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-receipt"></i>
+                <p>Aucune transaction trouvée</p>
+            </div>
+        `;
+        return; // On arrête la fonction ici
+    }
+
         filteredTransactions.sort((a, b) => (new Date(b.date) - new Date(a.date)) || (b.id - a.id));
 
-        // LOGIQUE D'AFFICHAGE LIMITÉ (3 MAX)
         const limit = 3;
         const toDisplay = showAll ? filteredTransactions : filteredTransactions.slice(0, limit);
-
         const currencySymbol = localStorage.getItem('appCurrency') || '€';
 
         toDisplay.forEach(transaction => {
@@ -199,10 +306,10 @@ document.addEventListener('DOMContentLoaded', function () {
                         ${sign}${formatAmount(transaction.amount)} ${currencySymbol}
                     </div>
                     <div style="padding: 0px 10px 0px;">
-                        <button class="edit-btn" data-id="${transaction.id}" style="background-color: #3498db; border: none; color: white; cursor: pointer; margin-right: 10px; padding: 7px; border-radius: 4px;">
+                        <button class="edit-btn" onclick="editTransaction(${transaction.id})" style="background-color: #3498db; border: none; color: white; cursor: pointer; margin-right: 10px; padding: 7px; border-radius: 4px;">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </button>
-                        <button class="delete-btn" data-id="${transaction.id}" style="background-color: #e74c3c; border: none; color: white; cursor: pointer; padding: 7px; border-radius: 4px;">
+                        <button class="delete-btn" onclick="deleteTransaction(${transaction.id})" style="background-color: #e74c3c; border: none; color: white; cursor: pointer; padding: 7px; border-radius: 4px;">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </div>
@@ -214,14 +321,8 @@ document.addEventListener('DOMContentLoaded', function () {
         // BASCULE "VOIR PLUS / MOINS"
         if (filteredTransactions.length > limit) {
             const toggleBtn = document.createElement('button');
-            
-            if (!showAll) {
-                toggleBtn.textContent = `Voir plus (${filteredTransactions.length - limit})`;
-                toggleBtn.onclick = () => { showAll = true; renderTransactions(); };
-            } else {
-                toggleBtn.textContent = `Voir moins`;
-                toggleBtn.onclick = () => { showAll = false; renderTransactions(); };
-            }
+            toggleBtn.textContent = showAll ? `Voir moins` : `Voir plus (${filteredTransactions.length - limit})`;
+            toggleBtn.onclick = () => { showAll = !showAll; renderTransactions(); };
 
             toggleBtn.style.cssText = `width: 100%; padding: 10px; margin-top: 10px; background: none; border: 1px dashed ${accentColor}; color: ${accentColor}; cursor: pointer; border-radius: 8px; font-weight: bold;`;
             
@@ -233,36 +334,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 toggleBtn.style.backgroundColor = 'transparent';
                 toggleBtn.style.color = accentColor;
             };
-
             transactionsContainer.appendChild(toggleBtn);
         }
-
-        // Re-binding des boutons
-        document.querySelectorAll('.edit-btn').forEach(btn => {
-            btn.addEventListener('click', function() { editTransaction(parseInt(this.getAttribute('data-id'))); });
-        });
-        document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', function() { deleteTransaction(parseInt(this.getAttribute('data-id'))); });
-        });
     }
 
-    function editTransaction(id) {
-        const transaction = transactions.find(t => t.id === id);
-        if (!transaction) return;
-        const newAmount = prompt('Nouveau montant:', transaction.amount);
-        if (newAmount && !isNaN(newAmount) && parseFloat(newAmount) > 0) {
-            transaction.amount = parseFloat(newAmount);
-            localStorage.setItem('transactions', JSON.stringify(transactions));
-            renderTransactions();
-        }
-    }
+    // --- MODIF : Suppression simple avec Modal ---
+    window.deleteTransaction = function(id) {
+        transactionToDelete = id;
+        if(deleteModal) deleteModal.style.display = 'flex';
 
-    function deleteTransaction(id) {
-        if (confirm('Supprimer ?')) {
-            transactions = transactions.filter(t => t.id !== id);
-            localStorage.setItem('transactions', JSON.stringify(transactions));
-            renderTransactions();
-        }
+        document.getElementById('confirmDeleteBtn').onclick = function() {
+            if (transactionToDelete !== null) {
+                transactions = transactions.filter(t => t.id !== transactionToDelete);
+                localStorage.setItem('transactions', JSON.stringify(transactions));
+                renderTransactions();
+                if (deleteModal) deleteModal.style.display = 'none';
+                showSuccessToast("Transaction supprimée !");
+                transactionToDelete = null;
+            }
+        };
     }
 
     function getCategoryIcon(category) {

@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion</title>
+    <title>Connexion - SPEND 2.0</title>
     <link rel="stylesheet" href="./css/connexion.css">
     <link rel="stylesheet" href="../fontawesome-free-6.7.2-web/fontawesome-free-6.7.2-web/css/all.css">
 </head>
@@ -17,38 +16,29 @@
         </nav>
     </header>
 
-    
-    <form action="#">
+    <form id="loginForm">
         <h3>Connexion</h3>
         <div class="profil">
             <i class="fas fa-user"></i>
         </div>
 
-
-        
         <div class="input">
             <div class="input-box">
-                <i class="fas fa-user"></i>
-                <input type="text" placeholder="Entrez votre nom d'utilisateur" maxlength="20" required>
-            </div>
-
-            <div class="input-box">
                 <i class="fas fa-envelope"></i>
-                <input type="email" placeholder="Entrez votre adresse email " required>
+                <input type="email" id="loginEmail" placeholder="Entrez votre adresse email" required>
             </div>
 
             <div class="input-box">
                 <i class="fas fa-lock"></i>
-                <input type="password" minlength="8" placeholder="Mot de passe" required>
+                <input type="password" id="loginPass" placeholder="Mot de passe" required>
             </div>
         </div>
 
         <div class="value">
             <button type="submit">Se connecter</button>
-            <p>Vous n'avez pas de compte? <a href="./inscription.html">Créer un compte</a></p>
+            <p>Pas de compte ? <a href="./inscription.html">S'inscrire</a></p>
         </div>
     </form>
     <script src="./js/connexion.js"></script>
 </body>
-
 </html>

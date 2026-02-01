@@ -1,59 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Inscription - SPEND 2.0</title>
     <link rel="stylesheet" href="./css/inscription.css">
     <link rel="stylesheet" href="../fontawesome-free-6.7.2-web/fontawesome-free-6.7.2-web/css/all.css">
 </head>
-
 <body>
-
-
     <header>
         <nav>
             <img src="../logo 1.svg" alt="">
             <h2>LOGO-ALT</h2>
         </nav>
     </header>
-    <form action="">
+    <form id="signupForm">
         <div class="text">
             <h3>Bienvenue chez Dribbble</h3>
-            <h6>Créez votre compte et direction le chemin le plus court vers une meilleure santé financière.</h6>
+            <h6>Créez votre compte pour commencer votre gestion financière.</h6>
         </div>
         <div class="input">
-
             <div class="input-box">
-                <i class="fas fa-user"></i></I>
-                <input type="text" placeholder="Nom d'utilisateur" maxlength="20" required>
+                <i class="fas fa-user"></i>
+                <input type="text" id="nom_input" placeholder="Nom d'utilisateur" maxlength="20" required>
             </div>
-
             <div class="input-box">
                 <i class="fas fa-envelope"></i>
-                <input type="email" placeholder="Adresse email" required>
+                <input type="email" id="email_input" placeholder="Adresse email" required>
             </div>
-
             <div class="input-box">
                 <i class="fas fa-lock"></i>
-                <input type="password" placeholder="Mot de passe" minlength="8" maxlength="8" required>
+                <input type="password" id="password_input" placeholder="Mot de passe" minlength="8" required>
             </div>
-
             <div class="input-box">
                 <i class="fas fa-lock"></i>
-                <input type="password" placeholder="Confirmer votre mot de passe" minlength="8" maxlength="8" required>
-
+                <input type="password" id="confirm_password_input" placeholder="Confirmer mot de passe" minlength="8" required>
             </div>
         </div>
-
         <div class="submit">
             <button type="submit">Continue</button>
-            <p>Vous avez deja un compte ? <a href="./connexion.html">Connexion</a></p>
+            <p>Déjà un compte ? <a href="./connexion.html">Se connecter</a></p>
         </div>
-
     </form>
-
+    <script src="./js/inscription.js"></script>
 </body>
-
 </html>

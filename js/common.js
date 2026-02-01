@@ -117,3 +117,39 @@ function darkenColor(color, percent) {
 }
 
 
+document.addEventListener('DOMContentLoaded', () => {
+    const logoutLink = document.getElementById('logoutLink');
+    const logoutModal = document.getElementById('logoutModal');
+    const confirmLogoutBtn = document.getElementById('confirmLogoutBtn');
+    const cancelLogoutBtn = document.getElementById('cancelLogoutBtn');
+
+    // Vérifier si les éléments existent sur la page actuelle
+    if (logoutLink && logoutModal) {
+        
+        // 1. Afficher le modal au clic
+        logoutLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            logoutModal.style.display = 'flex';
+        });
+
+        // 2. Cacher le modal si on annule
+        cancelLogoutBtn.addEventListener('click', () => {
+            logoutModal.style.display = 'none';
+        });
+
+        // 3. Rediriger vers la connexion si on confirme
+        confirmLogoutBtn.addEventListener('click', () => {
+            // Optionnel : Nettoyer les données de session ici
+            // localStorage.removeItem('userToken'); 
+            
+            window.location.href = "inscription.html"; // Remplace par ton fichier (ex: login.html)
+        });
+
+        // 4. Fermer si on clique sur l'arrière-plan sombre
+        window.addEventListener('click', (e) => {
+            if (e.target === logoutModal) {
+                logoutModal.style.display = 'none';
+            }
+        });
+    }
+});

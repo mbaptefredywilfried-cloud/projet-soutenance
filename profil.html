@@ -27,7 +27,7 @@
                     <a href="./dasboard.html"><i class="fas fa-home"></i>Dashboard</a>
                     <a href="./transaction.html"><i class="fas fa-exchange-alt"></i>Transaction</a>
                     <a href="./budget.html"><i class="fas fa-piggy-bank"></i>Budget</a>
-                    <a href="./profil.html" class="active"><i class="fas fa-user"></i>Profil</a>
+                    <a href="./profil.html" ><i class="fas fa-user"></i>Profil</a>
                 </div>
             </div>
 
@@ -35,7 +35,8 @@
                 <div class="separed"></div>
                 <div class="nav">
                     <a href="./parametre.html"><i class="fas fa-cog"></i>Parametres</a>
-                    <a href="./deconnexion.html"><i class="fas fa-right-from-bracket"></i>Deconnexion</a>
+                    <a href="./deconnexion.html" id="logoutLink"><i
+                            class="fas fa-right-from-bracket"></i>Deconnexion</a>
                 </div>
             </div>
         </aside>
@@ -47,7 +48,7 @@
                 <div class="card">
                     <div class="side-header">
                         <div class="avatar-wrapper">
-                            <img class="avatar-image" src="./assets/default-avatar.png" alt="Photo de profil">
+                            <img class="avatar-image" src="./assets/default-avatar.png">
                             <label class="avatar-upload-btn" for="avatarInput" aria-label="Changer la photo de profil">
                                 <i class="fas fa-camera"></i>
                             </label>
@@ -61,8 +62,10 @@
                         <h4>Navigation rapide</h4>
                         <ul>
                             <li><i class="fas fa-home"></i><a href="./dasboard.html">Accéder au dashboard</a></li>
-                            <li><i class="fas fa-wallet"></i><a href="./budget.html">Gérer vos budgets</a></li>
-                            <li><i class="fas fa-right-from-bracket"></i><a href="./deconnexion.html">Déconnexion</a></li>
+                            <li><i class="fas fa-piggy-bank"></i><a href="./budget.html">Gérer vos budgets</a></li>
+                            <li><i class="fas fa-right-from-bracket"></i>
+                                <a href="./deconnexion.html" class="logout-trigger">Déconnexion</a>
+                            </li>
                         </ul>
                     </nav>
                 </div>
@@ -175,8 +178,25 @@
             </form>
         </div>
     </div>
+    <div id="logoutModal" class="custom-modal2">
+        <div class="modal-content2">
+            <div class="modal-icon-warning" style="color: var(--primary-color);">
+                <i class="fas fa-sign-out-alt"></i>
+            </div>
+            <h3>Déconnexion</h3>
+            <p>Êtes-vous sûr de vouloir quitter votre session ?</p>
+            <div class="modal-buttons">
+                <button id="confirmLogoutBtn" class="btn-primary"
+                    style="background-color: var(--primary-color); border:none; padding: 10px 24px; border-radius: 8px; color: white; cursor: pointer; font-weight: 600;">Oui,
+                    me déconnecter</button>
+                <button id="cancelLogoutBtn" class="btn-cancel">Annuler</button>
+            </div>
+        </div>
+    </div>
 
     <script src="./js/profil.js"></script>
     <script src="./js/common.js"></script>
+    <script src="./js/notifications.js"></script>
 </body>
+
 </html>

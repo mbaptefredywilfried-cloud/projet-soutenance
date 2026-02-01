@@ -328,14 +328,17 @@ main .card .description label {
 }
 
 .btn-danger-outline {
-    background: transparent;
-    color: #ef4444;
-    border: 1px solid #ef4444;
+    background: #ef4444;
+    color: white;
+    border: none;
     padding: 8px 15px;
     border-radius: 8px;
     cursor: pointer;
     transition: 0.3s;
+    font-weight: 600;
 }
+
+
 
 .btn-danger-outline:hover {
     background: #ef4444;
@@ -399,42 +402,321 @@ main .card .description label {
 }
 
 
+/* --- Style du Modal (Arrière-plan) --- */
 .custom-modal {
-    display: none;
+    display: none; /* Caché par défaut */
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px); /* Flou l'arrière-plan */
-    z-index: 10000;
-    align-items: center; justify-content: center;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fond sombre semi-transparent */
+    backdrop-filter: blur(4px); /* Effet de flou sur l'arrière-plan */
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
 }
 
+/* --- Conteneur de la boîte de dialogue --- */
 .modal-content {
-    background: white;
+    background-color: #fff;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 12px;
+    padding: 0;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.3s ease-out;
+    overflow: hidden;
+}
+
+/* --- Animation d'apparition --- */
+@keyframes slideIn {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* --- En-tête du Modal --- */
+.modal-header {
+    padding: 20px 25px;
+    border-bottom: 1px solid #eee;
+    background-color: #f8fafc;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #1e293b;
+    font-size: 1.25rem;
+}
+
+.modal-header p {
+    margin: 5px 0 0;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+/* --- Corps du Modal (Formulaire) --- */
+.modal-body {
     padding: 25px;
+}
+
+.modal-body .form-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.modal-body label {
+    font-weight: 600;
+    color: #475569;
+    font-size: 0.9rem;
+}
+
+.modal-body input, 
+.modal-body select {
+    padding: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.modal-body input:focus, 
+.modal-body select:focus {
+    border-color: #3b82f6; /* Couleur d'accent par défaut */
+}
+
+/* --- Pied de page (Boutons) --- */
+.modal-footer {
+    padding: 15px 25px;
+    background-color: #f8fafc;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.btn-secondary {
+    background-color: #64748b;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* On utilise .btn-primary car tu l'as déjà dans ton HTML */
+.modal-footer .btn-primary {
+    background-color: #10b981; /* Vert comme sur ton image de budget */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: filter 0.2s;
+}
+
+.modal-footer .btn-primary:hover {
+    filter: brightness(1.1);
+}
+
+.btn-secondary:hover {
+    background-color: #475569;
+}
+
+/* --- Style du Modal de Suppression (deleteModal) --- */
+
+.custom-modal2 {
+    display: none; /* Masqué par défaut, à passer en 'flex' via JS */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content2 {
+    background-color: #fff;
+    width: 90%;
+    max-width: 400px;
     border-radius: 15px;
-    width: 90%; max-width: 350px;
+    padding: 30px;
     text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    animation: modalPop 0.3s ease-out;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.3s ease-out;
 }
 
-@keyframes modalPop {
-    from { transform: scale(0.8); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
+.modal-icon-warning {
+    font-size: 50px;
+    color: var(--danger-color); /* Utilise ton rouge #ef4444 */
+    margin-bottom: 15px;
 }
 
-#editAmountInput {
-    width: 100%; padding: 12px; border: 2px solid #eee;
-    border-radius: 8px; font-size: 1.2rem; text-align: center;
-    margin: 15px 0; outline: none;
+.modal-content2 h3 {
+    margin-bottom: 10px;
+    color: var(--text-primary);
 }
 
-.modal-footer { display: flex; gap: 10px; margin-top: 20px; }
-.modal-footer button { 
-    flex: 1; padding: 12px; border: none; border-radius: 50px; 
-    font-weight: bold; cursor: pointer; transition: 0.2s; 
+.modal-content2 p {
+    color: var(--text-secondary);
+    margin-bottom: 25px;
 }
 
-.btn-secondary { background: #f0f0f0; color: #333; }
-.btn-secondary:hover { background: #e0e0e0; }
+.modal-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+/* Bouton Supprimer */
+.btn-confirm {
+    background-color: var(--danger-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-confirm:hover {
+    background-color: #dc2626;
+    transform: translateY(-2px);
+}
+
+/* Bouton Annuler */
+.btn-cancel {
+    background-color: #f1f5f9;
+    color: var(--text-secondary);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-cancel:hover {
+    background-color: #e2e8f0;
+}
+
+/* Animation */
+@keyframes slideIn {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+
+
+
+
+#toast-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px; /* Aligné à droite */
+    z-index: 10000;
+}
+
+.toast-custom {
+    background-color: #10b981;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    font-family: sans-serif;
+    font-weight: 500;
+    min-width: 250px;
+    animation: fadeInRight 0.4s ease-out; /* Animation venant de la droite */
+}
+
+.toast-icon {
+    background-color: white;
+    color: #10b981;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+/* Animation d'entrée par la droite */
+@keyframes fadeInRight {
+    from { 
+        opacity: 0; 
+        transform: translateX(20px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateX(0); 
+    }
+}
+
+/* Animation de sortie vers la droite */
+.fade-out {
+    animation: fadeOutRight 0.4s ease-in forwards;
+}
+
+@keyframes fadeOutRight {
+    from { 
+        opacity: 1; 
+        transform: translateX(0); 
+    }
+    to { 
+        opacity: 0; 
+        transform: translateX(20px); 
+    }
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    color: #94a3b8; /* Un gris doux */
+    text-align: center;
+}
+
+.empty-state i {
+    font-size: 48px;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+.empty-state p {
+    font-size: 16px;
+    font-weight: 500;
+}.custom-modal2 {
+    display: none; 
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content2 {
+    background-color: #fff;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: var(--shadow);
+}

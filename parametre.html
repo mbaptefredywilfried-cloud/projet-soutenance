@@ -20,7 +20,7 @@
                         <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2"></path>
                         <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2"></path>
                     </svg>
-                    <p>AppName</p>
+                    <p>SPEND 2.0</p>
                 </div>
                 <div class="separed"></div>
                 <div class="nav">
@@ -35,7 +35,7 @@
                 <div class="separed"></div>
                 <div class="nav">
                     <a href="./parametre.html"><i class="fas fa-cog"></i>Parametres</a>
-                    <a href="./deconnexion.html"><i class="fas fa-right-from-bracket"></i>Deconnexion</a>
+                    <a href="./deconnexion.html" id="logoutLink"><i class="fas fa-right-from-bracket"></i>Deconnexion</a>
                 </div>
             </div>
         </aside>
@@ -100,7 +100,7 @@
                     </div>
                     <div class="form-group">
                         <label>Langue</label>
-                        <select>
+                        <select id="languageSelect">
                             <option value="fr">Français</option>
                             <option value="en">Anglais</option>
                             <option value="es">Espagnol</option>
@@ -136,11 +136,11 @@
                     <div class="form-group">
                         <label>Modifier le mot de passe</label>
                         <div class="password-input">
-                            <input type="password" placeholder="Nouveau mot de passe">
+                            <input type="password" id="newPassword" placeholder="Nouveau mot de passe">
                             <button class="toggle-password"><i class="fas fa-eye-slash"></i></button>
                         </div>
                     </div>
-                    <button class="btn-primary" style="width: 100%; margin-bottom: 16px;">
+                    <button id="savePasswordBtn" class="btn-primary" style="width: 100%; margin-bottom: 16px;">
                         <i class="fas fa-check-circle"></i>
                         <span>Enregistrer le mot de passe</span>
                     </button>
@@ -154,7 +154,7 @@
                             <span class="slider"></span>
                         </label>
                     </div>
-                    <button class="btn-danger" style="width: 100%;">
+                    <button id="resetDataBtn" class="btn-danger" style="width: 100%;">
                         <i class="fas fa-trash"></i>
                         <span>Réinitialiser les données locales</span>
                     </button>
@@ -169,15 +169,15 @@
                     </div>
                     <div class="info">
                         <strong>Dernière sauvegarde</strong>
-                        <span>01/01/2000 09:30:45</span>
+                        <span id="lastBackupSpan">Aucune sauvegarde</span>
                     </div>
-                    <button class="btn-primary" style="width: 100%; margin: 16px 0;">
+                    <button id="exportCSVBtn" class="btn-primary" style="width: 100%; margin: 16px 0;">
                         <i class="fas fa-file-export"></i>
                         <span>Exporter les données</span>
                     </button>
                     <div class="form-group">
                         <label>Importer un fichier</label>
-                        <input type="file">
+                        <input type="file" id="importFile">
                     </div>
                 </div>
 
@@ -194,7 +194,7 @@
                     </div>
                     <div class="info">
                         <strong>Crédits</strong>
-                        <span>nom de l'app</span>
+                        <span>SPEND 2.0 Team</span>
                     </div>
                     <div class="info" style="border-bottom: 1px solid var(--border-color);">
                         <strong>Confidentialité</strong>
@@ -202,9 +202,9 @@
                     </div>
                     <div class="form-group">
                         <label style="margin-top: 16px;">Envoyer un retour</label>
-                        <textarea rows="3" placeholder="Partager vos suggestions..."></textarea>
+                        <textarea id="feedbackText" rows="3" placeholder="Partager vos suggestions..."></textarea>
                     </div>
-                    <button class="btn-primary" style="width: 100%; margin-top: 16px; justify-content: center;">
+                    <button id="sendFeedbackBtn" class="btn-primary" style="width: 100%; margin-top: 16px; justify-content: center;">
                         <i class="far fa-paper-plane"></i>
                         <span>Envoyer</span>
                     </button>
@@ -213,9 +213,23 @@
             </div>
         </main>
     </div>
+    <div id="logoutModal" class="custom-modal2">
+    <div class="modal-content2">
+        <div class="modal-icon-warning" style="color: var(--primary-color);">
+            <i class="fas fa-sign-out-alt"></i>
+        </div>
+        <h3>Déconnexion</h3>
+        <p>Êtes-vous sûr de vouloir quitter votre session ?</p>
+        <div class="modal-buttons">
+            <button id="confirmLogoutBtn" class="btn-primary" style="background-color: var(--primary-color); border:none; padding: 10px 24px; border-radius: 8px; color: white; cursor: pointer; font-weight: 600;">Oui, me déconnecter</button>
+            <button id="cancelLogoutBtn" class="btn-cancel">Annuler</button>
+        </div>
+    </div>
+</div>
 
     <script src="./js/common.js"></script>
     <script src="./js/parametre.js"></script>
+    <script src="./js/notifications.js"></script>
 </body>
 
 </html>
