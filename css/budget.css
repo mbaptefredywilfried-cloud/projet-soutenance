@@ -42,7 +42,7 @@ body {
 aside {
     display: flex;
     flex-direction: column;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    background: none;
     height: 100vh;
     justify-content: space-between;
     font-weight: 600;
@@ -76,7 +76,7 @@ aside {
 }
 
 .img p {
-    font-size: 20px;
+    font-size: 30px;
     font-weight: 700;
     -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.3);
 }
@@ -152,14 +152,11 @@ aside {
 }
 
 .page-header h1 {
-    font-size: 2.5rem;
+    font-size: 28px;
     font-weight: 700;
-    color: var(--text-primary);
+    color: black;
     margin-bottom: 8px;
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    text-align: left;
 }
 
 .page-header p {
@@ -199,7 +196,7 @@ aside {
 
 .summary-card i {
     font-size: 2rem;
-    color: var(--primary-color);
+    color: black;
     background: rgba(37, 99, 235, 0.1);
     padding: 12px;
     border-radius: 50%;
@@ -679,8 +676,38 @@ aside {
         grid-template-columns: 1fr;
     }
     .summary-cards {
-        grid-template-columns: 1fr;
+        display: inline-flex;
+        gap: 10px;
     }
+    .summary-card{
+        width: 200px;
+        height: 65px;
+        padding: 10px;
+    }
+
+
+    .summary-card div{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 5px;
+
+    }
+
+    .summary-card p {
+        font-size: 1rem;
+        font-weight: 600;
+    }
+    .summary-card i {
+        font-size: 1rem;
+        padding: 8px;
+    }
+
+    .summary-card h3 {
+        font-size: 0.75rem;
+    }
+
+
     .section-header {
         flex-direction: column;
         align-items: flex-start;

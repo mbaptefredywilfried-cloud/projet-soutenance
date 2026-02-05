@@ -211,7 +211,7 @@ function createReminderPopup() {
             </div>
             <div class="popup-body">
                 <p>Vous n'avez pas encore saisi vos dépenses aujourd'hui !</p>
-                <button class="action-btn" onclick="window.location.href='budget.html'">Saisir maintenant</button>
+                <button class="action-btn" onclick="window.location.href='transaction.html'">Saisir maintenant</button>
             </div>
         </div>
     `;

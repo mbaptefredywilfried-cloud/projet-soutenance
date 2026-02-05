@@ -20,23 +20,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // 2. GESTION DE LA NAVIGATION
-    const links = document.querySelectorAll('aside .nav a');
-    if (links.length) {
-        links.forEach((link, i) => { if (!link.dataset.id) link.dataset.id = i; });
-        const saved = localStorage.getItem('activeSidebarLink');
-        if (saved) {
-            const el = document.querySelector(`aside .nav a[data-id="${saved}"]`);
-            if (el) el.classList.add('active');
-        }
-        links.forEach(link => {
-            link.addEventListener('click', function () {
-                links.forEach(l => l.classList.remove('active'));
-                this.classList.add('active');
-                localStorage.setItem('activeSidebarLink', this.dataset.id);
-            });
-        });
-    }
 
     // 3. VARIABLES ET ÉLÉMENTS
     const tableBody = document.getElementById('dashboardTransactionBody');
@@ -268,3 +251,4 @@ function checkEmptyChart() {
 }
 
 document.addEventListener('DOMContentLoaded', checkEmptyChart);
+

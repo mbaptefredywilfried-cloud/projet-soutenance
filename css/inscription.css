@@ -1,241 +1,376 @@
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* --- VARIABLES --- */
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1e40af;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --bg-light: #f8fafc;
+  --navy-dark: #0f172a; /* Ta nouvelle couleur pro */
 }
 
-body{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    background: #247AEA;
-     height: 100vh;
-    background-color: #fff;
-    flex-direction: column;
-    top: 0;
+/* --- STRUCTURE SPLIT-SCREEN --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family:
+    "Inter",
+    -apple-system,
+    sans-serif;
 }
 
-header{
-  width: 100%;
-  padding: 10px 40px;
-  margin-top: -40px;
-  
+body {
+  min-height: 100vh;
+  display: flex;
+  background-color: white;
+  overflow-x: hidden;
 }
 
-nav{
-  width: 100%;
-  display: inline-flex;
-  gap: 20px;
+/* La colonne de gauche (Professionnelle Slate) */
+body::before {
+  content: "";
+  flex: 1;
+  background: var(--navy-dark);
+  display: block;
+}
+
+/* --- HEADER / LOGO --- */
+header {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  z-index: 10;
+  color: white;
+}
+
+nav {
+  display: flex;
   align-items: center;
+  gap: 12px;
 }
 
-nav img{
-  height: 50px;
-  width: 50px;
+nav h2 {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -1px;
 }
 
-nav h2{
-  font-family: century gothic;
+/* --- ZONE DU SLOGAN ANIMÉ (PARTIE BLEUE) --- */
+#slogan-container {
+  position: absolute;
+  bottom: 80px;
+  left: 40px;
+  width: 45%; /* On élargit un peu pour éviter les retours à la ligne brusques */
+  z-index: 5;
+  line-height: 1.4;
 }
 
-form{
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    width: 100%;
-    max-width: var(--form-width, 420px);
-    padding: 30px;
+#slogan-text {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  display: inline; /* FORCE LE TEXTE À ÊTRE EN LIGNE */
+  transition: color 0.3s ease;
 }
 
-.text{
+.cursor {
+  display: inline-block;
+  width: 18px;
+  height: 5px; /* S'adapte à la taille du texte */
+  background-color: white;
+  margin-left: 4px;
+  animation: blink 0.7s infinite;
+  vertical-align: middle; /* Aligne verticalement avec les lettres */
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* --- FORMULAIRE (PARTIE DROITE) --- */
+#signupForm {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  text-align: center;
-
+  justify-content: center;
+  padding: 0 10% 0 8%;
+  max-width: 750px;
+  background: white;
+  z-index: 1;
 }
 
-h3{
-    color: black;
-    text-align: center;
-    margin-top: 20px;
-    margin-bottom: 50px;
-    font-size: 30px;
+.text {
+  margin-bottom: 40px;
+}
+.text h3 {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 12px;
+}
+.text h6 {
+  font-size: 16px;
+  color: var(--text-muted);
+  font-weight: 400;
 }
 
-h6{
-    font-family: Arial, Helvetica, sans-serif;
-    color: #0d0c22;
-    text-align: center;
-    margin-top: -30px;
-    margin-bottom: 40px;
-    font-size: 14px;
-    font-weight: normal;
-}
-
-form .input{
-    display: flex;
-    flex-direction: column;
-    border-radius: 10px;
+.input {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .input-box {
-  position: relative; /* crée un contexte pour l’icône */
-  margin-bottom: 15px;
+  position: relative;
 }
-
-form .input .input-box i {
-  position: absolute; /* on peut la bouger sans toucher l’input */
-  left: 20px;         /* décalage depuis la gauche */
-  top: 50%;           /* centrage vertical */
-  transform: translateY(-50%); /* aligne parfaitement au centre */
-  color: #333333e6;
+.input-box i {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 14px;
 }
 
 .input-box input {
-  width: 350px;
-  border-radius: 60px;
-  outline: none;
- min-width: 350px;
- padding: 13px;
-  text-align: center;
   width: 100%;
-  border: 1px solid #bfbfc0e6;
+  padding: 16px 16px 16px 48px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: var(--bg-light);
+  font-size: 15px;
+  outline: none;
+  transition: all 0.3s ease;
 }
 
-.input-box input:hover{
-    border: 1px solid #585858e6;
+.input-box input:focus {
+  border-color: var(--primary);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
 }
 
-.input-box input:focus{
-    border: 1px solid #585858e6;
+.input-box input:focus + i {
+  color: var(--primary);
 }
 
-
-form input::placeholder{
-    text-align: center;
-    color: rgb(75, 75, 75);
-    font-family: century gothic;
-    font-size: 14px;
+.submit {
+  margin-top: 35px;
+}
+.submit button {
+  width: 100%;
+  padding: 16px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
 }
 
-form .submit{
-    display: flex;
-    flex-direction: column;
-
+.submit button:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px rgba(37, 99, 235, 0.2);
 }
 
-form .submit button{
-    padding: 13px 60px 10px 55px;
-    border-radius: 40px;
-    background-color: white;
-    color: rgba(0, 0, 0, 0.805);
-    font-size: 15px;
-    border: 2px solid black;
-    font-weight: bolder;
-    margin-top: 25px;
-    cursor: pointer;
-    width: 100%;
+.submit p {
+  text-align: center;
+  margin-top: 25px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+.submit a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 700;
 }
 
-form .submit button:hover{
-    background-color: black;
-    color: white;
-    transition: all 0.5s ease;
-}
-
-
-form .submit p {
-    text-align: center;
-    font-size: 13px;
-    margin-top: 35px;
-    color: #7b7194;
-}
-
-form .submit a{
-    text-decoration: none;
-    font-weight: bolder;
-    color: #7b7194;
-}
-
-form .submit a:hover{
-    text-decoration: underline;
-    color: black;
-}
-
-
-
-
-@media (max-width: 1100px) {
-  .container {
-    width: 95%;
-  }
-  .input-box input {
-    width: 100%;
-    min-width: unset;
-  }
-}
-
+/* --- RESPONSIVE --- */
 @media (max-width: 900px) {
-  .container {
+  body::before,
+  #slogan-container {
+    display: none; /* Cache la colonne sombre et le slogan */
+  }
+
+  body {
     flex-direction: column;
-    width: 98%;
-    min-width: 320px;
-    box-shadow: 0 0 8px rgba(0,0,0,0.15);
+    justify-content: center;
+    align-items: center;
+    background-color: var(--bg-light);
+    padding: 40px 20px;
   }
-  .left-content, .right-content {
-    width: 100%;
-    border-radius: 10px 10px 0 0;
-    margin: 0;
-  }
-  .left-content img {
-    position: static;
-    border-radius: 10px 10px 0 0;
-    width: 100%;
-    height: auto;
-    max-height: 250px;
-    object-fit: cover;
-  }
-  .right-content {
-    border-radius: 0 0 10px 10px;
-    padding: 20px 0;
-  }
-}
 
-@media (max-width: 600px) {
-  .container {
-    width: 100%;
-    min-width: unset;
-    border-radius: 0;
-    box-shadow: none;
-  }
-  .left-content img {
-    max-height: 150px;
-    border-radius: 0;
-  }
-  h3 {
-    font-size: 22px;
+  header {
+    position: relative;
+    top: 0;
+    left: 0;
     margin-bottom: 30px;
-  }
-  .input-box input {
-    width: 90%;
-    font-size: 15px;
-    padding: 10px;
-  }
-  form .submit button {
-    padding: 10px 0;
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 400px) {
-  .input-box input {
+    color: var(--text-main);
     width: 100%;
-    font-size: 13px;
-    padding: 8px;
+    max-width: 440px;
   }
-  h3 {
-    font-size: 18px;
+
+  header nav svg {
+    color: var(--primary);
+  }
+
+  #signupForm {
+    padding: 40px;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    max-width: 440px;
+    width: 100%;
   }
 }
 
+/* --- ANIMATION DE FADE IN --- */
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateY(
+      -30px
+    ); /* Le formulaire commence 30px plus à droite */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0); /* Il finit à sa position normale */
+  }
+}
+
+/* --- APPLICATION SUR LE FORMULAIRE --- */
+#signupForm {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 10% 0 8%;
+  max-width: 750px;
+  background: white;
+  z-index: 1;
+
+  /* On applique l'animation ici */
+  animation: fadeInRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Optionnel : on peut aussi faire apparaître les inputs un par un pour un effet "waouh" */
+.input-box {
+  opacity: 0;
+  animation: fadeInSimple 0.5s ease forwards;
+}
+
+/* Décalage pour chaque champ (Staggered animation) */
+.input-box:nth-child(1) {
+  animation-delay: 0.2s;
+}
+.input-box:nth-child(2) {
+  animation-delay: 0.3s;
+}
+.input-box:nth-child(3) {
+  animation-delay: 0.4s;
+}
+.input-box:nth-child(4) {
+  animation-delay: 0.5s;
+}
+
+@keyframes fadeInSimple {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- FIX POPUP SUCCÈS (MODAL) --- */
+.modal-confirm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(
+    0,
+    0,
+    0,
+    0.7
+  ); /* Fond plus sombre pour faire ressortir le blanc */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  backdrop-filter: blur(5px); /* Effet de flou moderne sur l'arrière-plan */
+}
+
+.modal-confirm-content {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  text-align: center;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-confirm-content i {
+  font-size: 60px;
+  color: #10b981; /* Vert succès */
+  margin-bottom: 20px;
+  display: block;
+}
+
+.modal-confirm-content h2 {
+  font-size: 26px;
+  margin-bottom: 15px;
+  color: #1e293b;
+  font-weight: 800;
+}
+
+.modal-confirm-content p {
+  color: #64748b;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.btn-confirm-ok {
+  background-color: #10b981;
+  color: white;
+  border: none;
+  padding: 14px 0;
+  width: 100%; /* Bouton large plus moderne */
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s;
+}
+
+.btn-confirm-ok:hover {
+  background-color: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+}
+
+@keyframes modalPop {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

@@ -1,151 +1,401 @@
+/* --- VARIABLES --- */
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1e40af;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --bg-light: #f8fafc;
+    --navy-dark: #0f172a;
+}
+
+/* --- STRUCTURE GÉNÉRALE --- */
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', -apple-system, sans-serif;
 }
 
 body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
-  height: 100vh;
-  background-color: #fff;
-  flex-direction: column;
+    min-height: 100vh;
+    display: flex;
+    background-color: white;
+    overflow-x: hidden;
 }
 
+/* Colonne de gauche (Design Statique) */
+body::before {
+    content: "";
+    flex: 1.1; 
+    background: var(--navy-dark);
+    display: block;
+}
+
+/* --- HEADER / LOGO --- */
 header {
-  width: 100%;
-  padding: 10px 40px;
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    z-index: 10;
+    color: white;
 }
 
 nav {
-  width: 100%;
-  display: inline-flex;
-  gap: 20px;
-  align-items: center;
-}
-
-nav img {
-  height: 50px;
-  width: 50px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 nav h2 {
-  font-family: century gothic;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -1px;
 }
 
-form {
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  width: 100%;
-  max-width: var(--form-width, 420px);
-  padding: 30px;
+/* --- FORMULAIRE (PARTIE DROITE) --- */
+#loginForm {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 10% 0 8%;
+    max-width: 650px;
+    /* Animation Fade In Right */
+    animation: fadeInRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-h3 {
-  font-size: 30px;
-  margin-top: 10px;
-  margin-bottom: 25px;
-  text-align: center;
+@keyframes fadeInRight {
+    from { opacity: 0; transform: translateX(40px); }
+    to { opacity: 1; transform: translateX(0); }
 }
 
+#loginForm h3 {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* Style de l'icône de profil centrale */
 .profil {
-  display: flex;
-  height: auto;
-  padding: 10px;
-  justify-content: center;
-  text-align: center;
-  align-items: center;
-  margin-bottom: 40px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px;
 }
 
 .profil i {
-  background-color: #898989;
-  padding: 30px 35px;
-  border-radius: 50%;
-  font-size: 30px;
-  color: white;
+    background-color: var(--bg-light);
+    color: var(--primary);
+    padding: 30px;
+    border-radius: 50%;
+    font-size: 32px;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
 }
 
+/* --- CHAMPS DE SAISIE --- */
 .input {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input-box {
+    position: relative;
 }
 
 .input-box i {
-  position: absolute;
-  padding-top: 14px;
-  padding-left: 19px;
-  color: #333333e6;
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 15px;
+    transition: color 0.3s;
 }
 
-input {
-  width: 350px;
-  border-radius: 60px;
-  outline: none;
-  min-width: 350px;
-  padding: 13px;
-  text-align: center;
-  width: 100%;
-  border: 1px solid #bfbfc0e6;
+.input-box input {
+    width: 100%;
+    padding: 16px 16px 16px 52px;
+    border-radius: 12px;
+    border: 1.5px solid var(--border);
+    background: var(--bg-light);
+    font-size: 15px;
+    outline: none;
+    transition: all 0.3s ease;
 }
 
-input:hover {
-  border: 1px solid #585858e6;
+.input-box input:focus {
+    border-color: var(--primary);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
 }
 
-input:focus {
-  border: 1px solid #585858e6;
+.input-box input:focus + i {
+    color: var(--primary);
 }
 
-input::placeholder {
-  text-align: center;
-  color: rgb(75, 75, 75);
-  font-family: century gothic;
-  font-size: 14px;
-}
-
+/* --- BOUTON ET FOOTER --- */
 .value {
-  display: flex;
-  flex-direction: column;
-  margin-top: 35px;
-  gap: 8px;
+    margin-top: 40px;
 }
 
-button {
-  padding: 13px 60px 10px 55px;
-  border-radius: 40px;
-  background-color: white;
-  color: rgba(0, 0, 0, 0.805);
-  font-size: 15px;
-  border: 2px solid black;
-  font-weight: bolder;
-  margin-top: 25px;
-  cursor: pointer;
-  width: 100%;
+.value button {
+    width: 100%;
+    padding: 16px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
 }
 
-button:hover {
-  background-color: #000000;
-  color: white;
-  transition: all 0.5s ease;
+.value button:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.4);
 }
 
-p {
-  text-align: center;
-  font-size: 13px;
-  margin-top: 35px;
-  color: #7b7194;
+.value p {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 14px;
+    color: var(--text-muted);
 }
-a {
-  text-decoration: none;
-  font-weight: bolder;
-  color: #7b7194;
+
+.value a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 700;
+    margin-left: 5px;
 }
-a:hover {
-  text-decoration: underline;
-  color: black;
+
+.value a:hover {
+    text-decoration: underline;
+}
+
+/* --- RESPONSIVE --- */
+
+/* Tablettes (On réduit la partie gauche) */
+@media (max-width: 1024px) {
+    body::before { flex: 0.7; }
+    #loginForm { padding: 0 5%; }
+}
+
+/* Mobiles (On passe en une seule colonne) */
+@media (max-width: 850px) {
+    body {
+        background-color: var(--bg-light);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    body::before { display: none; } /* On cache la colonne sombre */
+
+    header {
+        position: relative;
+        top: 0; left: 0;
+        margin-bottom: 30px;
+        color: var(--text-main);
+        width: 100%;
+        max-width: 440px;
+    }
+
+    header nav { justify-content: center; }
+    header nav svg { color: var(--primary); }
+
+    #loginForm {
+        padding: 40px 30px;
+        border-radius: 24px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        max-width: 440px;
+        width: 100%;
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    #loginForm h3 { text-align: center; }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+}
+
+/* Mobiles étroits */
+@media (max-width: 480px) {
+    #loginForm { padding: 30px 20px; }
+    #loginForm h3 { font-size: 26px; }
+    .profil i { padding: 25px; font-size: 24px; }
+}
+
+/* --- ANIMATIONS IDENTIQUES À INSCRIPTION --- */
+
+/* 1. Animation de base pour chaque champ */
+.input-box {
+    opacity: 0;
+    animation: fadeInSimple 0.5s ease forwards;
+}
+
+/* 2. Décalage (Delay) pour l'effet de cascade */
+.input-box:nth-child(1) { animation-delay: 0.3s; } /* Email */
+.input-box:nth-child(2) { animation-delay: 0.4s; } /* Mot de passe */
+
+/* 3. Animation du bloc de profil (optionnel, pour plus de style) */
+.profil {
+    opacity: 0;
+    animation: fadeInSimple 0.6s ease forwards;
+    animation-delay: 0.2s;
+}
+
+/* 4. Animation du bouton de connexion */
+.value button {
+    opacity: 0;
+    animation: fadeInSimple 0.5s ease forwards;
+    animation-delay: 0.5s;
+}
+
+/* 5. Keyframes partagées */
+@keyframes fadeInSimple {
+    from { 
+        opacity: 0; 
+        transform: translateY(-30px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+/* --- STYLE DU POPUP DE CONNEXION (TOAST) --- */
+.success-toast {
+    position: fixed;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%); /* Centre horizontalement */
+    background: #10b981; /* Vert succès */
+    color: white;
+    padding: 16px 32px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    z-index: 10000;
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+    font-weight: 600;
+    font-size: 16px;
+    animation: slideDownIn 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+}
+
+.success-toast i {
+    font-size: 20px;
+}
+
+/* Animation d'entrée (Glisse vers le bas) */
+@keyframes slideDownIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -40px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+/* Animation de sortie (Fade out) */
+.success-toast.fade-out {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+    transition: all 0.5s ease;
+}
+
+/* Responsive pour Mobile */
+@media (max-width: 480px) {
+    .success-toast {
+        width: 90%;
+        font-size: 14px;
+        padding: 12px 20px;
+        top: 20px;
+    }
+}
+
+
+
+
+
+
+/* --- POPUP ERREUR CONNEXION --- */
+.error-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.7); /* Fond navy-dark transparent */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10001;
+    backdrop-filter: blur(4px);
+}
+
+.error-popup-content {
+    background: white;
+    padding: 35px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; /* Effet de secousse */
+}
+
+.error-popup-content i {
+    font-size: 50px;
+    color: #ef4444; /* Rouge alerte */
+    margin-bottom: 20px;
+}
+
+.error-popup-content h2 {
+    color: #1e293b;
+    margin-bottom: 10px;
+    font-size: 22px;
+}
+
+.error-popup-content p {
+    color: #64748b;
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+.btn-error-close {
+    background: #1e293b;
+    color: white;
+    border: none;
+    padding: 14px 25px;
+    border-radius: 12px;
+    width: 100%;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-error-close:hover {
+    background: #0f172a;
+}
+
+/* Animation de secousse pour l'erreur */
+@keyframes shake {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+    40%, 60% { transform: translate3d(4px, 0, 0); }
 }

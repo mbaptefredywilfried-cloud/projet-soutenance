@@ -42,7 +42,7 @@ body {
 aside {
     display: flex;
     flex-direction: column;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    background: none;
     height: 100vh;
     justify-content: space-between;
     font-weight: 600;
@@ -76,7 +76,7 @@ aside {
 }
 
 .img p {
-    font-size: 20px;
+    font-size: 30px;
     font-weight: 700;
     -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.3);
 }
@@ -255,6 +255,8 @@ main > header {
   border: 4px solid #3b82f6; /
 }
 
+
+
 .avatar-upload-btn i { font-size: 18px; }
 
 .avatar-input { display: none; }
@@ -313,18 +315,6 @@ main > header {
     background-color: #1e40af;
 }
 
-
-
-
-
-.info{
-    display: flex;
-    justify-content: space-between;
-    margin: 35px 0px;
-    padding-bottom: 30px;
-    
-}
-
 .stat-budget{
     display: flex;
     justify-content: space-between;
@@ -352,10 +342,45 @@ main > header {
     justify-content: space-between;
 }
 
-.profil-detail-group {
-  display: flex;
-  flex-direction: column;
+
+.info {
+    display: flex;
+    flex-direction: row; /* Aligne tout sur une seule ligne */
+    justify-content: flex-start;
+    gap: 25px; /* Espace entre les blocs */
+    width: 100%;
+    margin: 35px 0;
+    padding-bottom: 30px;
 }
+
+.profil-detail-group {
+    display: flex;
+    flex-direction: column;
+    /* On définit une largeur max pour forcer le masquage si ça dépasse */
+    max-width: 180px; 
+    min-width: 80px;
+}
+
+.profil-detail-group p, 
+.profil-detail-group span {
+    font-size: 16px;
+    color: #1f2937;
+    font-weight: 600;
+
+    /* --- TECHNIQUE DE MASQUAGE --- */
+    white-space: nowrap;      /* Empêche le retour à la ligne */
+    overflow: hidden;         /* Cache ce qui dépasse de la largeur max */
+    text-overflow: ellipsis;  /* Ajoute les "..." automatiquement */
+    display: block;           /* Important pour le fonctionnement du overflow */
+}
+
+/* On peut donner un peu plus de place à l'email qu'au téléphone */
+.profil-detail-group:nth-child(2) {
+    max-width: 180px; 
+}
+
+
+
 .profil-detail-group label {
   font-size: 14px;
   color: #6b7280;
@@ -363,13 +388,6 @@ main > header {
   margin-bottom: 4px;
 }
 
-
-.profil-detail-group p,
-.profil-detail-group span {
-  font-size: 16px;
-  color: #1f2937;
-  font-weight: 600;
-}
 .profil-detail-group .unspecified {
   color: #9ca3af;
   font-weight: 500;

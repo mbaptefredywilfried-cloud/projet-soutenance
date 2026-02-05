@@ -10,7 +10,6 @@ class BudgetManager {
         this.setupEventListeners();
         this.renderBudgets();
         this.updateSummary(); // Calcule tout au démarrage
-        this.setActiveNavLink();
     }
 
     setupEventListeners() {
@@ -29,8 +28,6 @@ class BudgetManager {
         document.getElementById('editModal').addEventListener('click', (e) => {
             if (e.target.id === 'editModal') this.closeModal();
         });
-
-        this.setupNavigation();
 
         document.getElementById('filterBtn').addEventListener('click', () => {
             this.showNotification('Fonction de filtrage à implémenter', 'info');
@@ -64,25 +61,7 @@ class BudgetManager {
         this.closeConfirmModal();
     }
 
-    setupNavigation() {
-        const links = document.querySelectorAll('aside .nav a');
-        links.forEach((link, i) => {
-            if (!link.dataset.id) link.dataset.id = i;
-            link.addEventListener('click', function(e) {
-                links.forEach(l => l.classList.remove('active'));
-                this.classList.add('active');
-                localStorage.setItem('activeSidebarLink', this.dataset.id);
-            });
-        });
-    }
 
-    setActiveNavLink() {
-        const saved = localStorage.getItem('activeSidebarLink');
-        if (saved) {
-            const el = document.querySelector(`aside .nav a[data-id="${saved}"]`);
-            if (el) el.classList.add('active');
-        }
-    }
 
     handleFormSubmit(e) {
         e.preventDefault();

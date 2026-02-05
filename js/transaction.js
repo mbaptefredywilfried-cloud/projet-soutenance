@@ -1,31 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const links = document.querySelectorAll('aside .nav a');
-    if (!links.length) return;
-
     // --- VARIABLES POUR LA SUPPRESSION (AJOUTÉ) ---
     let transactionToDelete = null;
     const deleteModal = document.getElementById('deleteModal');
-
-    // Assign stable data-id if not present
-    links.forEach((link, i) => {
-        if (!link.dataset.id) link.dataset.id = i;
-    });
-
-    // Restore active from localStorage
-    const saved = localStorage.getItem('activeSidebarLink');
-    if (saved) {
-        const el = document.querySelector(`aside .nav a[data-id="${saved}"]`);
-        if (el) el.classList.add('active');
-    }
-
-    // Click handler: set active and store
-    links.forEach(link => {
-        link.addEventListener('click', function (e) {
-            links.forEach(l => l.classList.remove('active'));
-            this.classList.add('active');
-            localStorage.setItem('activeSidebarLink', this.dataset.id);
-        });
-    });
 
     // Transaction functionality
     let transactions = JSON.parse(localStorage.getItem('transactions') || '[]');

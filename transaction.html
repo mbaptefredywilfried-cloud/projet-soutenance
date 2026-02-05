@@ -4,9 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transaction</title>
+    <title>Transaction - Numera</title>
     <link rel="stylesheet" href="./css/transaction.css">
-    <link rel="stylesheet" href="../fontawesome-free-6.7.2-web/fontawesome-free-6.7.2-web/css/all.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/svg+xml" href="./img/icon.svg">
 </head>
 
 <body>
@@ -21,7 +22,7 @@
                         <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2"></path>
                         <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2"></path>
                     </svg>
-                    <p>AppName</p>
+                    <p>Numera</p>
                 </div>
                 <div class="separed"></div>
                 <div class="nav">
@@ -73,7 +74,7 @@
 
                     <!-- montant de la transaction -->
                     <div class="form-group">
-                        <label for="transactionAmount">Montant (€)</label>
+                        <label for="transactionAmount">Montant</label>
                         <input type="number" id="transactionAmount" name="transactionAmount"
                             placeholder="Veuillez inserez un montant... " required>
                     </div>
@@ -100,12 +101,12 @@
 
             <div class="history-controls">
                 <div class="filters">
-                    <button class="filter-btn active" data-filter="all">Tout</button>
+                    <button class="filter-btn active" data-filter="all">Tous</button>
                     <button class="filter-btn" data-filter="income">Revenus</button>
                     <button class="filter-btn" data-filter="expense">Dépenses</button>
                 </div>
                 <button id="deleteAllBtn" class="btn-danger-outline">
-                    <i class="fas fa-trash-can"></i> Tout supprimer
+                    <i class="fas fa-trash-can"></i> Tous supprimer
                 </button>
             </div>
 

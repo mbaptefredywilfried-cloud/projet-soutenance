@@ -13,20 +13,28 @@ document.addEventListener('DOMContentLoaded', function() {
 // --- NOUVEAU : GESTION DYNAMIQUE DU MENU ACTIF ---
 function updateActiveMenu() {
     const links = document.querySelectorAll('aside .nav a');
-    const currentPath = window.location.pathname.split('/').pop(); // Récupère juste "profil.html" ou "budget.html"
+    let currentPath = window.location.pathname.split('/').pop();
+    
+    // Gestion de la page par défaut
+    if (currentPath === '' || currentPath === 'index.html') {
+        currentPath = 'dasboard.html';
+    }
 
     links.forEach(link => {
-        const linkPath = link.getAttribute('href').split('/').pop();
+        const href = link.getAttribute('href');
+        if (!href) return;
+        
+        const linkPath = href.split('/').pop();
         
         // On compare le nom de fichier actuel avec le href du lien
         if (currentPath === linkPath) {
             link.classList.add('active');
         } else {
-            // On retire la classe active si ce n'est pas la bonne page
             link.classList.remove('active');
         }
     });
 }
+
 
 function applyAccentColor(color) {
     const darkerColor = darkenColor(color, 30);
@@ -138,12 +146,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // 3. Rediriger vers la connexion si on confirme
-        confirmLogoutBtn.addEventListener('click', () => {
-            // Optionnel : Nettoyer les données de session ici
-            // localStorage.removeItem('userToken'); 
-            
-            window.location.href = "inscription.html"; // Remplace par ton fichier (ex: login.html)
-        });
+        // Dans common.js
+confirmLogoutBtn.addEventListener('click', () => {
+    localStorage.clear(); // Nettoie ABSOLUMENT TOUT (Budget, Nom, Transactions)
+    window.location.href = "connexion.html"; 
+});
 
         // 4. Fermer si on clique sur l'arrière-plan sombre
         window.addEventListener('click', (e) => {
@@ -153,3 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+
+
