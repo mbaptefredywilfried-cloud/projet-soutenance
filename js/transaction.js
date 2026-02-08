@@ -1,5 +1,75 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // --- VARIABLES POUR LA SUPPRESSION (AJOUTÉ) ---
+    
+    // Debug: Check if budget overrun function exists
+    console.log('checkBudgetOverrun available:', typeof window.checkBudgetOverrun);
+    console.log('budgetOverrunNotification setting:', localStorage.getItem('budgetOverrunNotification'));
+    
+    // --- GESTION DU MENU BURGER RESPONSIVE ---
+    const menuBurger = document.getElementById('menuBurger');
+    const sidebarOverlay = document.querySelector('.sidebar-overlay');
+    const aside = document.querySelector('aside');
+
+    if (menuBurger && sidebarOverlay && aside) {
+        // Fonction pour ouvrir/fermer le menu
+        function toggleSidebar() {
+            const isOpen = aside.classList.contains('active');
+            
+            if (isOpen) {
+                // Fermer le menu
+                aside.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+                menuBurger.classList.remove('active');
+                document.body.style.overflow = 'auto'; // Réactiver le scroll
+            } else {
+                // Ouvrir le menu
+                aside.classList.add('active');
+                sidebarOverlay.classList.add('active');
+                menuBurger.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Empêcher le scroll
+            }
+        }
+
+        // Événement sur le bouton burger
+        menuBurger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleSidebar();
+        });
+
+        // Fermer le menu en cliquant sur l'overlay
+        sidebarOverlay.addEventListener('click', function() {
+            toggleSidebar();
+        });
+
+        // Fermer le menu en cliquant sur un lien dans le sidebar
+        document.querySelectorAll('.side .nav a').forEach(link => {
+            link.addEventListener('click', function() {
+                // Sur mobile seulement
+                if (window.innerWidth <= 767) {
+                    toggleSidebar();
+                }
+            });
+        });
+
+        // Fermer le menu avec la touche Échap
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && aside.classList.contains('active')) {
+                toggleSidebar();
+            }
+        });
+
+        // Gérer le redimensionnement de la fenêtre
+        window.addEventListener('resize', function() {
+            // Si on passe en desktop (> 767px), fermer le menu s'il est ouvert
+            if (window.innerWidth > 767) {
+                aside.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+                menuBurger.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        });
+    }
+
+    // --- VARIABLES POUR LA SUPPRESSION ---
     let transactionToDelete = null;
     const deleteModal = document.getElementById('deleteModal');
 
@@ -18,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
         income: ["Salaire", "Revenus passifs", "Cadeaux", "Vente", "Autre"]
     };
 
-    // --- FONCTION TOAST (AJOUTÉ - BAS DROITE) ---
+    // --- FONCTION TOAST ---
     function showSuccessToast(message) {
         let container = document.getElementById('toast-container');
         if (!container) {
@@ -106,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const index = transactions.findIndex(t => t.id === id);
 
             if (index !== -1) {
-                transactions[index] = {
+                const updatedTransaction = {
                     id: id,
                     type: document.getElementById('editTransactionType').value,
                     category: document.getElementById('editTransactionCategory').value,
@@ -114,8 +184,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     date: document.getElementById('editTransactionDate').value,
                     description: document.getElementById('editTransactionDescription').value
                 };
+                
+                transactions[index] = updatedTransaction;
 
                 localStorage.setItem('transactions', JSON.stringify(transactions));
+                // Check for budget overrun if this is an expense
+                if (updatedTransaction.type === 'expense' && typeof checkBudgetOverrun === 'function') {
+                    checkBudgetOverrun(updatedTransaction.category);
+                }
                 renderTransactions();
                 editModal.style.display = 'none';
                 showSuccessToast("Transaction modifié !");
@@ -123,22 +199,103 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // --- GESTION DU MODAL DE SUPPRESSION (LOGIQUE BOUTONS) ---
+    // --- GESTION DU MODAL DE SUPPRESSION ---
     document.getElementById('cancelDeleteBtn')?.addEventListener('click', () => {
         if(deleteModal) deleteModal.style.display = 'none';
         transactionToDelete = null;
     });
 
-    // Set default date
-    const today = new Date().toISOString().split('T')[0];
-    if(document.getElementById('transactionDate')) document.getElementById('transactionDate').value = today;
+    // --- VALIDATION STRICTE DE LA DATE ---
+    function initializeDateValidation() {
+        const today = new Date();
+        const oneMonthAgo = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+        
+        // Format pour les attributs HTML5
+        const todayStr = today.toISOString().split('T')[0];
+        const minDateStr = oneMonthAgo.toISOString().split('T')[0];
+        
+        const transactionDateInput = document.getElementById('transactionDate');
+        const editTransactionDateInput = document.getElementById('editTransactionDate');
+        
+        // Configuration du champ date principal
+        if (transactionDateInput) {
+            transactionDateInput.value = todayStr;
+            transactionDateInput.max = todayStr; // Interdire les dates futures
+            transactionDateInput.min = minDateStr; // Limiter à 1 mois en arrière
+            
+            // Validation au changement
+            transactionDateInput.addEventListener('change', () => {
+                const selectedDate = new Date(transactionDateInput.value);
+                const selectedDateStr = transactionDateInput.value;
+                
+                if (selectedDateStr > todayStr) {
+                    showErrorToast('Les dates futures sont interdites');
+                    transactionDateInput.value = todayStr;
+                } else if (selectedDateStr < minDateStr) {
+                    showErrorToast('Vous ne pouvez pas sélectionner une date antérieure à 1 mois');
+                    transactionDateInput.value = todayStr;
+                }
+            });
+        }
+        
+        // Configuration du champ date dans le modal de modification
+        if (editTransactionDateInput) {
+            editTransactionDateInput.max = todayStr;
+            editTransactionDateInput.min = minDateStr;
+            
+            editTransactionDateInput.addEventListener('change', () => {
+                const selectedDateStr = editTransactionDateInput.value;
+                
+                if (selectedDateStr > todayStr) {
+                    showErrorToast('Les dates futures sont interdites');
+                    editTransactionDateInput.value = todayStr;
+                } else if (selectedDateStr < minDateStr) {
+                    showErrorToast('Vous ne pouvez pas sélectionner une date antérieure à 1 mois');
+                    editTransactionDateInput.value = todayStr;
+                }
+            });
+        }
+    }
+    
+    function showErrorToast(message) {
+        let container = document.getElementById('toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            document.body.appendChild(container);
+        }
+        const toast = document.createElement('div');
+        toast.className = 'toast-custom';
+        toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #ef4444;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 10000;
+            font-weight: 600;
+            animation: slideInRight 0.3s ease;
+        `;
+        toast.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+        container.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.animation = 'slideOutRight 0.3s ease';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+    
+    initializeDateValidation();
 
     // Apply accent color to sidebar
     const accentColor = localStorage.getItem('accentColor') || '#2563eb';
-    const aside = document.querySelector('aside');
-    if (aside) {
+    const asideElement = document.querySelector('aside');
+    if (asideElement) {
         const darkerColor = darkenColor(accentColor, 30);
-        aside.style.background = `linear-gradient(180deg, ${accentColor} 0%, ${darkerColor} 100%)`;
+        asideElement.style.background = `linear-gradient(180deg, ${accentColor} 0%, ${darkerColor} 100%)`;
     }
 
     // --- Logique des filtres + COULEUR D'ACCENT AU SURVOL ---
@@ -184,7 +341,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     updateFilterStyles(); 
 
-    // --- MODIF : Bouton Tout Supprimer avec Modal ---
+    // --- Bouton Tout Supprimer avec Modal ---
     const deleteAllBtn = document.getElementById('deleteAllBtn');
     if (deleteAllBtn) {
         deleteAllBtn.addEventListener('click', function() {
@@ -217,6 +374,10 @@ document.addEventListener('DOMContentLoaded', function () {
             if (transaction.type && transaction.category && transaction.amount > 0 && transaction.date) {
                 transactions.push(transaction);
                 localStorage.setItem('transactions', JSON.stringify(transactions));
+                // Check for budget overrun if this is an expense
+                if (transaction.type === 'expense' && typeof checkBudgetOverrun === 'function') {
+                    checkBudgetOverrun(transaction.category);
+                }
                 renderTransactions();
                 transactionForm.reset();
                 document.getElementById('transactionDate').value = today;
@@ -314,7 +475,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // --- MODIF : Suppression simple avec Modal ---
+    // --- Suppression simple avec Modal ---
     window.deleteTransaction = function(id) {
         transactionToDelete = id;
         if(deleteModal) deleteModal.style.display = 'flex';

@@ -15,6 +15,14 @@ const translations = {
     phTransactionDescription: "Description de la transaction...",
     phNoteDetail: "Notez un détail...",
 
+    // Navigation ASIDE
+    navDashboard: "Dashboard",
+    navTransaction: "Transaction",
+    navBudget: "Budget",
+    navProfil: "Profil",
+    navParametres: "Parametres",
+    navDeconnexion: "Deconnexion",
+
     // Général
     send: "Envoyer",
     french: "Français",
@@ -30,13 +38,15 @@ const translations = {
     totalBalance: "Solde total",
     monthlyIncome: "Revenu du mois",
     monthlyExpense: "Dépense du mois",
-    financialAnalysis: "Analyse des flux financiers",
+    financialAnalysis: "Analyse des flux",
+    expenseDistribution: "Répartition des dépenses",
+    flowAnalysis: "Analyse des Flux",
     sevenDays: "7J",
     oneMonth: "1M",
     threeMonths: "3M",
     oneYear: "1A",
 
-    budgetByCategory: "Budget par catégorie",
+    allocationofexpenses: "Repartition des Dépense",
     month: "Mois",
     year: "Année",
     recentTransactions: "Transactions récentes",
@@ -61,11 +71,17 @@ const translations = {
 
     // Transactions
     addTransaction: "Ajouter une transaction",
+    addTransactionForm: "Ajouter une transaction",
     select: "Sélectionner",
+    selectOption: "Sélectionner",
     add: "Ajouter",
     optionalDescription: "Description (optionnel)",
+    descriptionOptional: "Description de la transaction...",
     all: "Tous",
     deleteAll: "Tout supprimer",
+    deleteAllBtn: "Tous supprimer",
+    revenues: "Revenus",
+    expenses: "Dépenses",
 
     editTransaction: "Modifier la transaction",
     updateTransactionDetails: "Mettez à jour les détails de votre opération",
@@ -80,16 +96,17 @@ const translations = {
 
     // Budgets
     budgetSummary: "Résumé des budgets",
-    totalBudgeted: "Total budgétisé",
-    totalSpent: "Total dépensé",
+    totalBudgeted: "Total Budgétisé",
+    totalSpent: "Total Dépensé",
     balance: "Équilibre",
-    activeBudgets: "Budgets actifs",
-    exceededBudgets: "Budgets dépassés",
-    totalBudgets: "Total budgets",
+    activeBudgets: "Budgets Actifs",
+    exceededBudgets: "Budgets Dépassés",
+    totalBudgets: "Total Budgets",
 
-    createNewBudget: "Créer un nouveau budget",
-    budgetName: "Nom du budget",
+    createNewBudget: "Créer un Nouveau Budget",
+    budgetName: "Nom du Budget",
     budgetNameHint: "Choisir un nom descriptif pour votre budget",
+    budgetNameHelp: "Choisissez un nom descriptif pour votre budget.",
     maxAmountHint: "Entrer le montant maximum alloué",
     selectCategory: "Sélectionnez une catégorie",
 
@@ -146,25 +163,84 @@ const translations = {
     confirmation: "Confirmation",
     deleteBudgetConfirm: "Êtes-vous sûr de vouloir supprimer ce budget ?",
 
-    // Profil
-    activeAccount: "Compte actif",
+    // Options & Select
+    selectLanguage: "Selectionnez une langue",
+    french: "Français",
+    english: "Anglais",
+    selectBudgetCategory: "Sélectionnez une catégorie",
+    
+    // Toast Messages
+    transactionAdded: "Transaction ajoutée !",
+    transactionEdited: "Transaction modifiée !",
+    transactionDeleted: "Transaction supprimée !",
+    allTransactionsDeleted: "Toutes les transactions supprimées !",
+    historyCleared: "Historique vidé !",
+    transactionModified: "Transaction modifié !",
+    noTransactionsFound: "Aucune transaction trouvée",
+    budgetCreatedSuccess: "Budget créé avec succès!",
+    budgetDeleted: "Budget supprimé",
+    allBudgetsDeleted: "Tous les budgets supprimés!",
+    photoUpdated: "Photo mise à jour !",
+    profileUpdated: "Profil mis à jour !",
+    dataExported: "Données exportées !",
+    languageChanged: "Langue changée avec succès !",
+    
+    // Error Messages
+    futuresDatesNotAllowed: "Les dates futures sont interdites",
+    dateTooOld: "Vous ne pouvez pas sélectionner une date antérieure à 1 mois",
+    budgetExceeded: "Budget dépassé !",
+    budgetExceededAlert: "Alerte : Budget dépassé !",
+    
+    // Placeholders
+    phBudgetName: "Ex: Courses alimentaires",
+    phBudgetAmount: "0.00",
+    phTransactionAmount: "Veuillez inserez un montant...",
+    phFeedback: "Partager vos suggestions...",
+    phSelectLanguage: "Selectionnez une langue",
+    phNotSpecified: "Non spécifié",
+    editTransactionTitle: "Modifier la transaction",
+    updateDetailsMessage: "Mettez à jour les détails de votre opération",
+    confirmDelete: "Supprimer",
+    cancelDelete: "Annuler",
+    irreversibleAction: "Cette action est irréversible.",
+    fillAllFields: "Veuillez remplir tous les champs correctement.",
+    viewMore: "Voir plus",
+    viewLess: "Voir moins",
+    
+    budgetDeleted: "Budget supprimé",
+    deleteAllBudgets: "Supprimer tous les budgets ?",
+    confirmDeleteBudget: "Êtes-vous sûr de vouloir supprimer ce budget ?",
+    editBudget: "Modifier le Budget",
+    editButtonLabel: "Modifier",
+    deleteButtonLabel: "Supprimer",
+    createBudgetBtn: "Créer le Budget",
+    resetBtn: "Réinitialiser",
+    budgetCreated: "Budget créé avec succès!",
+    budgetUpdated: "Budget mis à jour!",
+    
+    yourActiveBudgets: "Vos Budgets Actifs",
+    filterBudgets: "Filtrer",
+    clearAllBudgets: "Tous supprimer",
+    activeAccount: "Compte Actif",
     quickNavigation: "Navigation rapide",
-    accessDashboard: "Accéder au tableau",
+    accessDashboard: "Accéder au Tableau de bord",
     manageBudgets: "Gérer vos budgets",
 
-    personalInfo: "Informations personnelles",
+    personalInfo: "Informations Personnelles",
     fullName: "Nom complet",
     phone: "Téléphone",
     email: "Email",
     editProfile: "Modifier le profil",
+    notSpecified: "Non spécifié",
 
-    budgetOverview: "Aperçu budgétaire",
+    budgetOverview: "Aperçu Budgétaire",
     used: "Utilisé",
     remaining: "Restant",
-    spending: "Dépense",
+    spending: "Dépensé",
+    budgetTip: "Votre budget est sous contrôle.",
 
     accountInfo: "Informations de compte",
-    userId: "Identifiant utilisateur",
+    userId: "Identifiant Utilisateur",
     creationDate: "Date de création",
     lastLogin: "Dernière connexion",
 
@@ -190,7 +266,36 @@ const translations = {
     spanishLang: "Espagnol",
   },
 
+
+
+// --- ANGLAIS ---
+
+
+
   en: {
+    // Placeholders
+    phBudgetExample: "Ex: Grocery shopping",
+    phAmountZero: "0.00",
+    phEmail: "Enter your email address",
+    phPassword: "Password",
+    phUsername: "Username",
+    phEmailLabel: "Email address",
+    phConfirmPassword: "Confirm password",
+    phNewPassword: "New password",
+    phFeedback: "Share your suggestions...",
+    phNotSpecified: "Not specified",
+    phEnterAmount: "Please enter an amount...",
+    phTransactionDescription: "Transaction description...",
+    phNoteDetail: "Note a detail...",
+
+    // Navigation ASIDE
+    navDashboard: "Dashboard",
+    navTransaction: "Transaction",
+    navBudget: "Budget",
+    navProfil: "Profile",
+    navParametres: "Settings",
+    navDeconnexion: "Logout",
+
     // General
     send: "Send",
     french: "French",
@@ -207,6 +312,8 @@ const translations = {
     monthlyIncome: "Monthly income",
     monthlyExpense: "Monthly expense",
     financialAnalysis: "Financial flow analysis",
+    expenseDistribution: "Expense distribution",
+    flowAnalysis: "Flow Analysis",
     sevenDays: "7D",
     oneMonth: "1M",
     threeMonths: "3M",
@@ -236,11 +343,17 @@ const translations = {
 
     // Transactions
     addTransaction: "Add transaction",
+    addTransactionForm: "Add a transaction",
     select: "Select",
+    selectOption: "Select",
     add: "Add",
     optionalDescription: "Description (optional)",
+    descriptionOptional: "Transaction description...",
     all: "All",
     deleteAll: "Delete all",
+    deleteAllBtn: "Delete all",
+    revenues: "Revenues",
+    expenses: "Expenses",
 
     editTransaction: "Edit transaction",
     updateTransactionDetails: "Update the details of your operation",
@@ -254,16 +367,17 @@ const translations = {
 
     // Budgets
     budgetSummary: "Budget summary",
-    totalBudgeted: "Total budgeted",
-    totalSpent: "Total spent",
+    totalBudgeted: "Total Budgeted",
+    totalSpent: "Total Spent",
     balance: "Balance",
-    activeBudgets: "Active budgets",
-    exceededBudgets: "Exceeded budgets",
-    totalBudgets: "Total budgets",
+    activeBudgets: "Active Budgets",
+    exceededBudgets: "Exceeded Budgets",
+    totalBudgets: "Total Budgets",
 
-    createNewBudget: "Create a new budget",
-    budgetName: "Budget name",
+    createNewBudget: "Create a New Budget",
+    budgetName: "Budget Name",
     budgetNameHint: "Choose a descriptive name for your budget",
+    budgetNameHelp: "Choose a descriptive name for your budget.",
     maxAmountHint: "Enter the maximum allocated amount",
     selectCategory: "Select a category",
 
@@ -284,6 +398,10 @@ const translations = {
     renewalFrequency: "Set renewal frequency",
     createBudget: "Create budget",
     reset: "Reset",
+
+    yourActiveBudgets: "Your active budgets",
+    filter: "Filter",
+    noBudgetMessage: "No budget created yet. Start by adding one!",
 
     yourActiveBudgets: "Your active budgets",
     filter: "Filter",
@@ -319,24 +437,52 @@ const translations = {
     confirmation: "Confirmation",
     deleteBudgetConfirm: "Are you sure you want to delete this budget?",
 
-    // Profile
-    activeAccount: "Active account",
+    // Modals & Popups
+    deleteTransactionTitle: "Delete transaction ?",
+    editTransactionTitle: "Edit transaction",
+    updateDetailsMessage: "Update the details of your operation",
+    confirmDelete: "Delete",
+    cancelDelete: "Cancel",
+    irreversibleAction: "This action is irreversible.",
+    fillAllFields: "Please fill all fields correctly.",
+    viewMore: "View more",
+    viewLess: "View less",
+    historyCleared: "History cleared!",
+    transactionModified: "Transaction modified!",
+    noTransactionsFound: "No transactions found",
+    
+    budgetDeleted: "Budget deleted",
+    deleteAllBudgets: "Delete all budgets ?",
+    confirmDeleteBudget: "Are you sure you want to delete this budget ?",
+    editBudget: "Edit Budget",
+    editButtonLabel: "Edit",
+    deleteButtonLabel: "Delete",
+    createBudgetBtn: "Create Budget",
+    resetBtn: "Reset",
+    budgetCreated: "Budget created successfully!",
+    budgetUpdated: "Budget updated!",
+    
+    yourActiveBudgets: "Your Active Budgets",
+    filterBudgets: "Filter",
+    clearAllBudgets: "Delete all",
     quickNavigation: "Quick navigation",
-    accessDashboard: "Access dashboard",
+    accessDashboard: "Access Dashboard",
     manageBudgets: "Manage your budgets",
 
-    personalInfo: "Personal information",
+    personalInfo: "Personal Information",
     fullName: "Full name",
     phone: "Phone",
     email: "Email",
     editProfile: "Edit profile",
+    notSpecified: "Not specified",
 
-    budgetOverview: "Budget overview",
+    budgetOverview: "Budget Overview",
     used: "Used",
     remaining: "Remaining",
     spending: "Spending",
+    budgetTip: "Your budget is under control.",
 
-    accountInfo: "Account information",
+    accountInfo: "Account Information",
     userId: "User ID",
     creationDate: "Creation date",
     lastLogin: "Last login",
@@ -360,6 +506,6 @@ const translations = {
     language: "Language",
     frenchLang: "French",
     englishLang: "English",
-    spanishLang: "Spanish",
+
   },
 };

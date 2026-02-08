@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
@@ -25,25 +25,25 @@
                 </div>
                 <div class="separed"></div>
                 <div class="nav">
-                    <a href="./dasboard.html"><i class="fas fa-home"></i>Dashboard</a>
-                    <a href="./transaction.html"><i class="fas fa-exchange-alt"></i>Transaction</a>
-                    <a href="./budget.html"><i class="fas fa-piggy-bank"></i>Budget</a>
-                    <a href="./profil.html" ><i class="fas fa-user"></i>Profil</a>
+                    <a href="./dasboard.html"><i class="fas fa-home"></i><span data-i18n="navDashboard">Dashboard</span></a>
+                    <a href="./transaction.html"><i class="fas fa-exchange-alt"></i><span data-i18n="navTransaction">Transaction</span></a>
+                    <a href="./budget.html"><i class="fas fa-piggy-bank"></i><span data-i18n="navBudget">Budget</span></a>
+                    <a href="./profil.html" ><i class="fas fa-user"></i><span data-i18n="navProfil">Profil</span></a>
                 </div>
             </div>
 
             <div class="side">
                 <div class="separed"></div>
                 <div class="nav">
-                    <a href="./parametre.html"><i class="fas fa-cog"></i>Parametres</a>
+                    <a href="./parametre.html"><i class="fas fa-cog"></i><span data-i18n="navParametres">Parametres</span></a>
                     <a href="./deconnexion.html" id="logoutLink"><i
-                            class="fas fa-right-from-bracket"></i>Deconnexion</a>
+                            class="fas fa-right-from-bracket"></i><span data-i18n="navDeconnexion">Deconnexion</span></a>
                 </div>
             </div>
         </aside>
 
         <main>
-            <header>Profil</header>
+            <header data-i18n="profile">Profil</header>
 
             <div class="container">
                 <div class="card">
@@ -56,77 +56,77 @@
                             <input id="avatarInput" class="avatar-input" type="file" accept=".png,.jpg,.jpeg">
                         </div>
                         <h3>Fredy 2.0</h3>
-                        <p class="statut-actif">Compte Actif</p>
+                        <p class="statut-actif" data-i18n="activeAccount">Compte Actif</p>
                     </div>
 
                     <nav class="navigation">
-                        <h4>Navigation rapide</h4>
+                        <h4 data-i18n="quickNavigation">Navigation rapide</h4>
                         <ul>
-                            <li><i class="fas fa-home"></i><a href="./dasboard.html">Accéder au Tableau de bord</a></li>
-                            <li><i class="fas fa-piggy-bank"></i><a href="./budget.html">Gérer vos budgets</a></li>
+                            <li><i class="fas fa-home"></i><a href="./dasboard.html" data-i18n="accessDashboard">Accéder au Tableau de bord</a></li>
+                            <li><i class="fas fa-piggy-bank"></i><a href="./budget.html" data-i18n="manageBudgets">Gérer vos budgets</a></li>
                             <li><i class="fas fa-right-from-bracket"></i>
-                                <a href="./deconnexion.html" class="logout-trigger">Déconnexion</a>
+                                <a href="./deconnexion.html" class="logout-trigger" data-i18n="logout">Déconnexion</a>
                             </li>
                         </ul>
                     </nav>
                 </div>
 
                 <div class="card2">
-                    <h2>Informations Personnelles</h2>
+                    <h2 data-i18n="personalInfo">Informations Personnelles</h2>
                     <div class="info">
                         <div class="profil-detail-group">
-                            <label>Nom complet</label>
+                            <label data-i18n="fullName">Nom complet</label>
                             <p id="display-name">Fredy 2.0</p>
                         </div>
                         <div class="profil-detail-group">
-                            <label>Email</label>
-                            <p id="display-email">Fredy2.0@gmail.com</p>
+                            <label data-i18n="email">Email</label>
+                            <p id="display-email"></p>
                         </div>
                         <div class="profil-detail-group">
-                            <label>Téléphone</label>
-                            <p id="display-phone">Non spécifié</p>
+                            <label data-i18n="phone">Téléphone</label>
+                            <p id="display-phone" data-i18n="notSpecified">Non spécifié</p>
                         </div>
                     </div>
-                    <button class="btn-primary" id="openEditModal">
+                    <button class="btn-primary" id="openEditModal" data-i18n="editProfile">
                         <i class="fas fa-edit"></i><span>Modifier le profil</span>
                     </button>
                 </div>
 
                 <div class="card3">
-                    <h2>Aperçu Budgétaire</h2>
+                    <h2 data-i18n="budgetOverview">Aperçu Budgétaire</h2>
                     <div class="stat-budget">
                         <div class="stat-card color-warning">
                             <i class="fas fa-percent"></i>
-                            <span class="stat-label">Utilisé</span>
+                            <span class="stat-label" data-i18n="used">Utilisé</span>
                             <div class="stat-value">--</div>
                         </div>
 
                         <div class="stat-card color-info">
                             <i class="fas fa-hand-holding-usd"></i>
-                            <span class="stat-label">Restant</span>
+                            <span class="stat-label" data-i18n="remaining">Restant</span>
                             <div class="stat-value">--</div>
                         </div>
 
                         <div class="stat-card color-danger">
                             <i class="fas fa-shopping-basket"></i>
-                            <span class="stat-label">Dépensé</span>
+                            <span class="stat-label" data-i18n="spending">Dépensé</span>
                             <div class="stat-value">--</div>
                         </div>
                     </div>
-                    <p class="budget-tip">
+                    <p class="budget-tip" data-i18n="budgetTip">
                         <i class="fas fa-info-circle"></i> Votre budget est sous contrôle.
                     </p>
                 </div>
 
                 <div class="card4">
-                    <h2>Informations de compte</h2>
+                    <h2 data-i18n="accountInfo">Informations de compte</h2>
                     <div class="group">
                         <div class="profil-detail-group">
-                            <label>Identifiant Utilisateur</label>
+                            <label data-i18n="userId">Identifiant Utilisateur</label>
                             <span>AD_565</span>
                         </div>
                         <div class="profil-detail-group">
-                            <label>Date de création</label>
+                            <label data-i18n="creationDate">Date de création</label>
                             <span>2023-01-01</span>
                         </div>
                         <div class="profil-detail-group">
@@ -195,9 +195,11 @@
         </div>
     </div>
 
-    <script src="./js/profil.js"></script>
     <script src="./js/common.js"></script>
-    <script src="./js/notifications.js"></script>
+    <script src="./js/traduction.js"></script>
+    <script src="./js/langue.js"></script>
+    <script src="./js/notification.js"></script>
+    <script src="./js/profil.js"></script>
 </body>
 
 </html>

@@ -483,26 +483,28 @@ main .category .budget-card{
 
 /* Style du bouton principal */
 .btn-view-more {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 10px;
-    background-color: white;
-    color: var(--primary-color);
-    border: 1.5px solid var(--primary-color);
+    background-color: white !important;
+    color: var(--accent-color, var(--primary-color)) !important;
+    border: 1.5px solid var(--accent-color, var(--primary-color)) !important;
     padding: 10px 24px;
-    border-radius: 50px; /* Effet pilule très moderne */
+    border-radius: 50px;
     font-weight: 600;
     font-size: 14px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.18s ease;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    text-decoration: none;
 }
 
-/* Effet au survol (Hover) */
+/* Effet au survol (Hover) : utiliser la couleur d'accent, texte blanc */
 .btn-view-more:hover {
-    background-color: var(--primary-color);
-    color: white;
-    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3); /* Ombre colorée */
+    background-color: var(--accent-color, var(--primary-color)) !important;
+    color: #ffffff !important;
+    border-color: var(--accent-color, var(--primary-color)) !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
     transform: translateY(-2px);
 }
 
@@ -735,4 +737,463 @@ main .category .budget-card{
     background-color: #e2e8f0;
 }
 
+
+
+/* ===========================================
+   RESPONSIVE AVEC TAILLES DE TEXTE RÉDUITES
+   =========================================== */
+
+/* MOBILE : 0px à 767px */
+@media (max-width: 767px) {
+    /* 1. Cache la sidebar par défaut */
+    aside {
+        position: fixed;
+        top: 0;
+        left: -280px;
+        width: 280px;
+        height: 100vh;
+        transition: left 0.3s ease;
+        z-index: 1000;
+    }
+    
+    /* 2. Quand active, sidebar visible */
+    aside.active {
+        left: 0;
+    }
+    
+    /* 3. Overlay pour fermer */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+    
+    .sidebar-overlay.active {
+        display: block;
+    }
+    
+    /* 4. Header mobile fixe */
+    .mobile-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 65px; /* Légèrement réduit */
+        background: white;
+        display: flex;
+        align-items: center;
+        padding: 0 15px; /* Padding réduit */
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        z-index: 998;
+    }
+    
+    /* 5. Menu burger */
+    .menu-burger {
+        width: 28px;
+        height: 18px;
+        background: none;
+        border: none;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        cursor: pointer;
+        padding: 0;
+    }
+    
+    .menu-burger span {
+        display: block;
+        width: 100%;
+        height: 2.5px; /* Légèrement plus fin */
+        background: var(--primary-color);
+        border-radius: 2px;
+        transition: all 0.3s ease;
+    }
+    
+    .menu-burger.active span:nth-child(1) {
+        transform: rotate(45deg) translate(4px, 4px);
+    }
+    
+    .menu-burger.active span:nth-child(2) {
+        opacity: 0;
+    }
+    
+    .menu-burger.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(6px, -5px);
+    }
+    
+    /* 6. Titre centré avec taille réduite */
+    .header-title {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 18px; /* Réduit de 20px à 18px */
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+    }
+    
+    /* 7. Profil à droite */
+    .header-profile {
+        margin-left: auto;
+    }
+    
+    .header-profile .profile-circle {
+        width: 36px; /* Réduit de 40px */
+        height: 36px; /* Réduit de 40px */
+    }
+    
+    /* 8. Ajuste le contenu principal */
+    main {
+        margin-left: 0 !important;
+        margin-top: 65px !important; /* Adapté à la hauteur réduite du header */
+        padding: 15px !important; /* Padding réduit */
+        width: 100% !important;
+    }
+    
+    main .containt {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+    
+    /* 9. Cache l'ancien top bar */
+    .top-bar {
+        display: none !important;
+    }
+    
+    /* 10. Cartes en colonne avec tailles réduites */
+    main .containt .current {
+        flex-direction: column !important;
+        gap: 12px; /* Espacement réduit */
+        padding: 0 !important;
+        margin-bottom: 20px;
+    }
+    
+    main .containt .current .card {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 18px !important; /* Padding réduit */
+        min-height: 90px; /* Hauteur réduite */
+        border-radius: 10px; /* Bordure légèrement réduite */
+    }
+    
+    /* 11. Textes des cartes réduits */
+    main .containt .current .card p {
+        font-size: 13px !important; /* Réduit de 15px */
+        margin: 0;
+        line-height: 1.3;
+    }
+    
+    main .containt .current .card i {
+        font-size: 20px !important; /* Réduit de 25px */
+    }
+    
+    main .containt .current .card .stats-value {
+        font-size: 22px !important; /* Réduit de 25px */
+        font-weight: bold;
+        margin-top: 5px;
+        line-height: 1.2;
+    }
+    
+    /* 12. Graphiques en colonne */
+    main .graphic {
+        flex-direction: column !important;
+        gap: 18px; /* Espacement réduit */
+        padding: 0 !important;
+        margin-bottom: 20px;
+    }
+    
+    main .graphic .graph,
+    main .graphic .category {
+        width: 100% !important;
+        height: 320px; /* Hauteur réduite */
+        border-radius: 10px; /* Bordure réduite */
+    }
+    
+    /* 13. Textes des graphiques réduits */
+    main .graphic .graph .text {
+        padding: 18px !important; /* Padding réduit */
+    }
+    
+    main .graphic .graph .text p {
+        font-size: 16px !important; /* Réduit de 18px */
+        font-weight: 600;
+        margin: 0;
+        line-height: 1.3;
+    }
+    
+    main .graphic .graph .text .button button {
+        width: 38px; /* Réduit de 43px */
+        padding: 4px 0; /* Padding ajusté */
+        font-size: 13px; /* Texte réduit */
+        border-radius: 4px; /* Bordure réduite */
+    }
+    
+    /* 14. Ajustement piechart */
+    main .graphic .graph .dashed {
+        height: 220px !important; /* Réduit de 250px */
+        margin: 0 15px !important;
+        padding: 10px 0 !important;
+    }
+    
+    #piechart {
+        max-height: 200px !important; /* Réduit de 220px */
+    }
+    
+    /* 15. Category section */
+    main .category {
+        padding: 18px !important; /* Padding réduit */
+    }
+    
+    main .category .budget-card {
+        margin-bottom: 15px; /* Espacement réduit */
+    }
+    
+    main .category .budget-card p {
+        font-size: 16px !important; /* Réduit de 18px */
+    }
+    
+    main .category select {
+        padding: 6px 10px; /* Padding réduit */
+        font-size: 14px; /* Texte réduit */
+    }
+    
+    /* 16. Recent transactions */
+    .recent {
+        margin: 0 !important;
+        padding: 18px !important; /* Padding réduit */
+    }
+    
+    .recent-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px; /* Espacement réduit */
+        margin-bottom: 18px;
+    }
+    
+    .recent p {
+        font-size: 16px !important; /* Réduit de 18px */
+        margin: 0;
+    }
+    
+    .filters {
+        width: 100%;
+        flex-direction: column;
+        gap: 8px; /* Espacement réduit */
+    }
+    
+    .filters select {
+        width: 100%;
+        padding: 10px 12px; /* Padding légèrement ajusté */
+        font-size: 14px; /* Texte réduit */
+    }
+    
+    /* 17. Tableau avec scroll */
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .transaction-table {
+        min-width: 600px; /* Légèrement réduit */
+    }
+    
+    /* 18. Textes du tableau réduits */
+    .transaction-table th {
+        padding: 12px 10px !important; /* Padding réduit */
+        font-size: 12px !important; /* Réduit de 14px */
+    }
+    
+    .transaction-table td {
+        padding: 12px 10px !important; /* Padding réduit */
+        font-size: 13px !important; /* Réduit de 14px */
+    }
+    
+    .transaction-table td:last-child {
+        font-size: 16px !important; /* Réduit de 18px */
+        padding-right: 20px !important; /* Padding réduit */
+    }
+    
+    .badge {
+        padding: 4px 8px !important; /* Padding réduit */
+        font-size: 11px !important; /* Réduit de 12px */
+    }
+    
+    /* 19. Bouton Voir plus */
+    .toggle-container {
+        padding: 15px 0 5px 0; /* Padding réduit */
+    }
+    
+    .btn-view-more {
+        width: 100%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 20px; /* Padding réduit */
+        font-size: 13px; /* Texte réduit */
+        color: var(--accent-color, #2563eb);
+        border: 1px solid var(--accent-color, #2563eb);
+        background: transparent;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: background 0.18s ease, color 0.18s ease, transform 0.12s ease;
+    }
+
+    .btn-view-more i, .btn-view-more .btn-text {
+        color: inherit;
+    }
+
+    .btn-view-more:hover {
+        background: var(--accent-color, #2563eb);
+        color: #ffffff;
+        border-color: var(--accent-color, #2563eb);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        transform: translateY(-2px);
+    }
+    
+    /* 20. Cache le h3 original */
+    main .containt h3 {
+        display: none;
+    }
+    
+    /* 21. Cache le nom utilisateur desktop */
+    #userNameDisplay {
+        display: none;
+    }
+    
+    /* 22. Textes généraux réduits */
+    body {
+        font-size: 14px !important; /* Texte global réduit */
+    }
+}
+
+/* TABLETTE : 768px à 1023px - Tailles réduites aussi */
+@media (min-width: 768px) and (max-width: 1023px) {
+    /* Cache header mobile */
+    .mobile-header,
+    .sidebar-overlay {
+        display: none !important;
+    }
+    
+    /* Sidebar réduite */
+    aside {
+        width: 70px; /* Réduit de 80px */
+        transition: width 0.3s ease;
+    }
+    
+    aside:hover {
+        width: 260px; /* Réduit de 280px */
+    }
+    
+    .img p {
+        font-size: 24px !important; /* Réduit */
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    aside:hover .img p {
+        opacity: 1;
+    }
+    
+    .side .nav a {
+        padding: 10px 12px !important; /* Padding réduit */
+        font-size: 14px; /* Texte réduit */
+    }
+    
+    .side .nav a span {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    aside:hover .side .nav a span {
+        opacity: 1;
+    }
+    
+    /* Ajuste main */
+    main {
+        margin-left: 70px !important; /* Adapté à la sidebar réduite */
+        transition: margin-left 0.3s ease;
+        padding: 18px !important; /* Padding réduit */
+    }
+    
+    aside:hover ~ main {
+        margin-left: 260px !important; /* Adapté */
+    }
+    
+    /* Cartes en 2 colonnes avec tailles réduites */
+    main .containt .current {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px; /* Espacement réduit */
+        margin-bottom: 25px;
+    }
+    
+    main .containt .current .card {
+        width: 100% !important;
+        padding: 20px !important; /* Padding réduit */
+        min-height: 110px; /* Hauteur légèrement réduite */
+    }
+    
+    /* Textes des cartes réduits sur tablette */
+    main .containt .current .card p {
+        font-size: 14px !important; /* Réduit */
+    }
+    
+    main .containt .current .card .stats-value {
+        font-size: 24px !important; /* Réduit */
+    }
+    
+    main .containt .current .card:nth-child(3) {
+        grid-column: span 2;
+        width: 50% !important;
+        margin: 0 auto !important;
+    }
+    
+    /* Graphiques en colonne */
+    main .graphic {
+        flex-direction: column;
+        gap: 20px; /* Espacement réduit */
+        margin-bottom: 25px;
+    }
+    
+    main .graphic .graph,
+    main .graphic .category {
+        width: 100% !important;
+        height: 350px; /* Légèrement réduit */
+    }
+    
+    /* Textes graphiques tablette */
+    main .graphic .graph .text p {
+        font-size: 17px !important; /* Légèrement réduit */
+    }
+    
+    /* Tableau tablette */
+    .transaction-table th {
+        padding: 14px 12px !important; /* Padding réduit */
+        font-size: 13px !important; /* Texte réduit */
+    }
+    
+    .transaction-table td {
+        padding: 14px 12px !important;
+        font-size: 14px !important;
+    }
+    
+    .transaction-table td:last-child {
+        font-size: 17px !important; /* Légèrement réduit */
+    }
+}
+
+/* DESKTOP : 1024px et + */
+@media (min-width: 1024px) {
+    .mobile-header,
+    .sidebar-overlay {
+        display: none !important;
+    }
+}
 

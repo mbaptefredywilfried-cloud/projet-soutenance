@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
@@ -11,7 +11,19 @@
 </head>
 
 <body>
+    <!-- Overlay pour fermer la sidebar -->
+<div class="sidebar-overlay"></div>
 
+<!-- Header Mobile SIMPLE (sans profil) -->
+<header class="mobile-header">
+    <button class="menu-burger" id="menuBurger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    
+    <h2 class="header-title">Transactions</h2>
+</header>
     <div class="content">
         <aside>
 
@@ -26,10 +38,10 @@
                 </div>
                 <div class="separed"></div>
                 <div class="nav">
-                    <a href="./dasboard.html"><i class="fas fa-home"></i>Dashboard</a>
-                    <a href="./transaction.html"><i class="fas fa-exchange-alt"></i>Transaction</a>
-                    <a href="./budget.html"><i class="fas fa-piggy-bank"></i>Budget</a>
-                    <a href="./profil.html"><i class="fas fa-user"></i>Profil</a>
+                    <a href="./dasboard.html"><i class="fas fa-home"></i><span data-i18n="navDashboard">Dashboard</span></a>
+                    <a href="./transaction.html"><i class="fas fa-exchange-alt"></i><span data-i18n="navTransaction">Transaction</span></a>
+                    <a href="./budget.html"><i class="fas fa-piggy-bank"></i><span data-i18n="navBudget">Budget</span></a>
+                    <a href="./profil.html"><i class="fas fa-user"></i><span data-i18n="navProfil">Profil</span></a>
                 </div>
             </div>
 
@@ -37,8 +49,8 @@
             <div class="side">
                 <div class="separed"></div>
                 <div class="nav">
-                    <a href="./parametre.html"><i class="fas fa-cog"></i>Parametres</a>
-                    <a href="./deconnexion.html" id="logoutLink"><i class="fas fa-right-from-bracket"></i>Deconnexion</a>
+                    <a href="./parametre.html"><i class="fas fa-cog"></i><span data-i18n="navParametres">Parametres</span></a>
+                    <a href="./deconnexion.html" id="logoutLink"><i class="fas fa-right-from-bracket"></i><span data-i18n="navDeconnexion">Deconnexion</span></a>
                 </div>
             </div>
 
@@ -48,64 +60,64 @@
         <main>
 
             <!-- ajouter une transaction -->
-            <h1>Transactions</h1>
+            <h1 data-i18n="addTransaction">Transactions</h1>
             <div class="card">
-                <h3>Ajouter une transaction</h3>
+                <h3 data-i18n="addTransactionForm">Ajouter une transaction</h3>
                 <form id="transactionForm">
 
                     <!-- type de la transaction -->
                     <div class="form-group">
-                        <label for="transactionType">Type</label>
+                        <label for="transactionType" data-i18n="type">Type</label>
                         <select name="transactionType" id="transactionType" required>
-                            <option value="">Sélectionner</option>
-                            <option value="expense">Dépense</option>
-                            <option value="income">Revenu</option>
+                            <option value="" data-i18n="selectOption">Sélectionner</option>
+                            <option value="expense" data-i18n="expense">Dépense</option>
+                            <option value="income" data-i18n="income">Revenu</option>
                         </select>
                     </div>
 
                     <!-- categorie de la transaction -->
                     <div class="form-group">
-                        <label for="transactionCategory">Catégorie</label>
+                        <label for="transactionCategory" data-i18n="category">Catégorie</label>
                         <select name="transactionCategory" id="transactionCategory" required>
-                            <option value="">Selectionner</option>
+                            <option value="" data-i18n="selectOption">Selectionner</option>
                         </select>
                     </div>
 
 
                     <!-- montant de la transaction -->
                     <div class="form-group">
-                        <label for="transactionAmount">Montant</label>
+                        <label for="transactionAmount" data-i18n="amount">Montant</label>
                         <input type="number" id="transactionAmount" name="transactionAmount"
                             placeholder="Veuillez inserez un montant... " required>
                     </div>
 
                     <!-- Date de la transaction -->
                     <div class="form-group">
-                        <label for="transactionDate">Date</label>
+                        <label for="transactionDate" data-i18n="date">Date</label>
                         <input type="date" id="transactionDate" name="transactionDate" required>
                     </div>
 
                     <!-- bouton ajouter -->
                     <div class="form-group">
-                        <button type="submit" class="btn-primary"><i class="fas fa-plus-circle"></i>Ajouter</button>
+                        <button type="submit" class="btn-primary"><i class="fas fa-plus-circle"></i><span data-i18n="add">Ajouter</span></button>
                     </div>
                 </form>
 
                 <!-- description de la transaction -->
                 <div class="description">
-                    <label for="transactionDescription">Description (optionnel)</label>
+                    <label for="transactionDescription" data-i18n="optionalDescription">Description (optionnel)</label>
                     <input type="text" id="transactionDescription" name="transactionDescription"
-                        placeholder="Description de la transaction...">
+                        placeholder="Description de la transaction..." data-placeholder="descriptionOptional">
                 </div>
             </div>
 
             <div class="history-controls">
                 <div class="filters">
-                    <button class="filter-btn active" data-filter="all">Tous</button>
-                    <button class="filter-btn" data-filter="income">Revenus</button>
-                    <button class="filter-btn" data-filter="expense">Dépenses</button>
+                    <button class="filter-btn active" data-filter="all" data-i18n="all">Tous</button>
+                    <button class="filter-btn" data-filter="income" data-i18n="revenues">Revenus</button>
+                    <button class="filter-btn" data-filter="expense" data-i18n="expenses">Dépenses</button>
                 </div>
-                <button id="deleteAllBtn" class="btn-danger-outline">
+                <button id="deleteAllBtn" class="btn-danger-outline" data-i18n="deleteAllBtn">
                     <i class="fas fa-trash-can"></i> Tous supprimer
                 </button>
             </div>
@@ -124,46 +136,46 @@
     <div id="editModal" class="custom-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Modifier la transaction</h3>
-                <p>Mettez à jour les détails de votre opération</p>
+                <h3 data-i18n="editTransactionTitle">Modifier la transaction</h3>
+                <p data-i18n="updateDetailsMessage">Mettez à jour les détails de votre opération</p>
             </div>
             <form id="editTransactionForm">
                 <input type="hidden" id="editTransactionId">
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="editTransactionType">Type</label>
+                        <label for="editTransactionType" data-i18n="type">Type</label>
                         <select id="editTransactionType" required>
-                            <option value="expense">Dépense</option>
-                            <option value="income">Revenu</option>
+                            <option value="expense" data-i18n="expense">Dépense</option>
+                            <option value="income" data-i18n="income">Revenu</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="editTransactionCategory">Catégorie</label>
+                        <label for="editTransactionCategory" data-i18n="category">Catégorie</label>
                         <select id="editTransactionCategory" required>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="editTransactionAmount">Montant (€)</label>
+                        <label for="editTransactionAmount" data-i18n="amount">Montant (€)</label>
                         <div class="input-group">
                             <input type="number" id="editTransactionAmount" step="0.01" required>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="editTransactionDate">Date</label>
+                        <label for="editTransactionDate" data-i18n="date">Date</label>
                         <input type="date" id="editTransactionDate" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="editTransactionDescription">Description (optionnel)</label>
-                        <input type="text" id="editTransactionDescription" placeholder="Notez un détail...">
+                        <label for="editTransactionDescription" data-i18n="optionalDescription">Description (optionnel)</label>
+                        <input type="text" id="editTransactionDescription" placeholder="Notez un détail..." data-placeholder="phNoteDetail">
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" id="cancelEdit" class="btn-secondary">Annuler</button>
-                    <button type="submit" class="btn-primary">Enregistrer les modifications</button>
+                    <button type="button" id="cancelEdit" class="btn-secondary" data-i18n="cancel">Annuler</button>
+                    <button type="submit" class="btn-primary" data-i18n="saveChanges">Enregistrer les modifications</button>
                 </div>
             </form>
         </div>
@@ -175,33 +187,34 @@
             <div class="modal-icon-warning">
                 <i class="fas fa-exclamation-triangle"></i>
             </div>
-            <h3>Supprimer la transaction ?</h3>
-            <p>Cette action est irréversible.</p>
+            <h3 data-i18n="deleteTransactionTitle">Supprimer la transaction ?</h3>
+            <p data-i18n="irreversibleAction">Cette action est irréversible.</p>
             <div class="modal-buttons">
-                <button id="confirmDeleteBtn" class="btn-confirm">Supprimer</button>
-                <button id="cancelDeleteBtn" class="btn-cancel">Annuler</button>
+                <button id="confirmDeleteBtn" class="btn-confirm" data-i18n="confirmDelete">Supprimer</button>
+                <button id="cancelDeleteBtn" class="btn-cancel" data-i18n="cancel">Annuler</button>
             </div>
         </div>
     </div>
 
-    <div id="toast-container"></div>
+    
     <div id="logoutModal" class="custom-modal2">
     <div class="modal-content2">
         <div class="modal-icon-warning" style="color: var(--primary-color);">
             <i class="fas fa-sign-out-alt"></i>
         </div>
-        <h3>Déconnexion</h3>
-        <p>Êtes-vous sûr de vouloir quitter votre session ?</p>
+        <h3 data-i18n="logout">Déconnexion</h3>
+        <p data-i18n="logoutConfirmationMessage">Êtes-vous sûr de vouloir quitter votre session ?</p>
         <div class="modal-buttons">
-            <button id="confirmLogoutBtn" class="btn-primary" style="background-color: var(--primary-color); border:none; padding: 10px 24px; border-radius: 8px; color: white; cursor: pointer; font-weight: 600;">Oui, me déconnecter</button>
-            <button id="cancelLogoutBtn" class="btn-cancel">Annuler</button>
+            <button id="confirmLogoutBtn" class="btn-primary" style="background-color: var(--primary-color); border:none; padding: 10px 24px; border-radius: 8px; color: white; cursor: pointer; font-weight: 600;" data-i18n="confirmLogout">Oui, me déconnecter</button>
+            <button id="cancelLogoutBtn" class="btn-cancel" data-i18n="cancel">Annuler</button>
         </div>
     </div>
 </div>
     <script src="./js/common.js"></script>
+    <script src="./js/traduction.js"></script>
+    <script src="./js/langue.js"></script>
+    <script src="./js/notification.js"></script>
     <script src="./js/transaction.js"></script>
-    <script src="./js/notifications.js"></script>
-    
 </body>
 
 </html>

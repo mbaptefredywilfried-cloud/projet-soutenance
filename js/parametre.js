@@ -48,6 +48,158 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    // --- 3.b GESTION DE LA DEVISE PRINCIPALE ---
+    const currencySelect = document.getElementById('currencySelect');
+    if (currencySelect) {
+        const savedCurrency = localStorage.getItem('appCurrency') || '€';
+        // Si la valeur sauvegardée n'existe pas dans les options, on laisse la première
+        const hasOption = Array.from(currencySelect.options).some(o => o.value === savedCurrency);
+        if (hasOption) currencySelect.value = savedCurrency;
+
+        currencySelect.addEventListener('change', () => {
+            const selected = currencySelect.value;
+            localStorage.setItem('appCurrency', selected);
+            showToast('Devise principale mise à jour !');
+        });
+    }
+    
+    // --- 3.c GESTION DES RAPPELS DE SAISIE ---
+    const reminderToggle = document.getElementById('reminderToggle');
+    if (reminderToggle) {
+        const savedReminder = localStorage.getItem('notificationsRappel');
+        if (savedReminder === 'true') {
+            reminderToggle.checked = true;
+        }
+        
+        reminderToggle.addEventListener('change', () => {
+            const enabled = reminderToggle.checked;
+            if (typeof setNotificationRappel === 'function') {
+                setNotificationRappel(enabled);
+            }
+            const msg = enabled ? 'Rappels activés !' : 'Rappels désactivés';
+            showToast(msg);
+        });
+    }
+    
+    // --- 3.d GESTION DES NOTIFICATIONS DE DÉPASSEMENT DE BUDGET ---
+    const budgetOverrunToggle = document.getElementById('budgetOverrunToggle');
+    if (budgetOverrunToggle) {
+        const savedOverrun = localStorage.getItem('budgetOverrunNotification');
+        if (savedOverrun === 'true') {
+            budgetOverrunToggle.checked = true;
+        }
+        
+        budgetOverrunToggle.addEventListener('change', () => {
+            const enabled = budgetOverrunToggle.checked;
+            localStorage.setItem('budgetOverrunNotification', enabled ? 'true' : 'false');
+            const msg = enabled ? 'Notifications de dépassement activées !' : 'Notifications de dépassement désactivées';
+            showToast(msg);
+        });
+    }
+
+    // --- 3.e GESTION DU CHANGEMENT DE MOT DE PASSE ---
+    const oldPasswordInput = document.getElementById('oldPassword');
+    const newPasswordInput = document.getElementById('newPassword');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    const savePasswordBtn = document.getElementById('savePasswordBtn');
+    const toggleOld = document.querySelector('.toggle-password-old');
+    const toggleNew = document.querySelector('.toggle-password');
+    const toggleConfirm = document.querySelector('.toggle-password-confirm');
+
+    // Toggle password visibility for all three fields
+    if (toggleOld) {
+        toggleOld.addEventListener('click', (e) => {
+            e.preventDefault();
+            const isPassword = oldPasswordInput.type === 'password';
+            oldPasswordInput.type = isPassword ? 'text' : 'password';
+            toggleOld.innerHTML = isPassword ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+        });
+    }
+
+    if (toggleNew) {
+        toggleNew.addEventListener('click', (e) => {
+            e.preventDefault();
+            const isPassword = newPasswordInput.type === 'password';
+            newPasswordInput.type = isPassword ? 'text' : 'password';
+            toggleNew.innerHTML = isPassword ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+        });
+    }
+
+    if (toggleConfirm) {
+        toggleConfirm.addEventListener('click', (e) => {
+            e.preventDefault();
+            const isPassword = confirmPasswordInput.type === 'password';
+            confirmPasswordInput.type = isPassword ? 'text' : 'password';
+            toggleConfirm.innerHTML = isPassword ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+        });
+    }
+
+    // Save password button
+    if (savePasswordBtn) {
+        savePasswordBtn.addEventListener('click', () => {
+            const oldPass = oldPasswordInput ? oldPasswordInput.value.trim() : '';
+            const newPass = newPasswordInput ? newPasswordInput.value.trim() : '';
+            const confirmPass = confirmPasswordInput ? confirmPasswordInput.value.trim() : '';
+
+            // Validation
+            if (!oldPass || !newPass || !confirmPass) {
+                showModernPopup(
+                    "Erreur",
+                    "Tous les champs de mot de passe sont obligatoires.",
+                    "error"
+                );
+                return;
+            }
+
+            if (newPass.length < 6) {
+                showModernPopup(
+                    "Erreur",
+                    "Le nouveau mot de passe doit contenir au moins 6 caractères.",
+                    "error"
+                );
+                return;
+            }
+
+            if (newPass !== confirmPass) {
+                showModernPopup(
+                    "Erreur",
+                    "Les nouveaux mots de passe ne correspondent pas.",
+                    "error"
+                );
+                return;
+            }
+
+            if (oldPass === newPass) {
+                showModernPopup(
+                    "Erreur",
+                    "Le nouveau mot de passe doit être différent de l'ancien.",
+                    "error"
+                );
+                return;
+            }
+
+            // Check if old password matches stored password
+            const storedPassword = localStorage.getItem('userPassword') || '';
+            if (oldPass !== storedPassword) {
+                showModernPopup(
+                    "Erreur",
+                    "L'ancien mot de passe est incorrect.",
+                    "error"
+                );
+                return;
+            }
+
+            // Update password in localStorage
+            localStorage.setItem('userPassword', newPass);
+
+            // Clear fields
+            oldPasswordInput.value = '';
+            newPasswordInput.value = '';
+            confirmPasswordInput.value = '';
+
+            showToast('Mot de passe mis à jour avec succès !');
+        });
+    }
     // --- 4. EXPORTATION DES DONNÉES (AVEC POPUP ERREUR ET TOAST SUCCÈS) ---
     const exportBtn = document.getElementById('exportCSVBtn');
     if (exportBtn) {

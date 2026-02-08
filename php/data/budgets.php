@@ -1,0 +1,95 @@
+<?php
+/**
+ * Gestion des Budgets
+ * CRUD pour les budgets
+ */
+
+session_start();
+header('Content-Type: application/json; charset=utf-8');
+
+require_once '../config/db_connect.php';
+
+// Vérifier l'authentification
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'message' => 'Non authentifié']);
+    exit();
+}
+
+$user_id = $_SESSION['user_id'];
+$action = $_GET['action'] ?? '';
+
+// Traiter les actions
+if ($action === 'list') {
+    // Lister les budgets
+    $stmt = $conn->prepare("SELECT b.*, c.name as category_name FROM budgets b LEFT JOIN categories c ON b.category_id = c.id WHERE b.user_id = ? ORDER BY b.name");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    $budgets = [];
+    while ($row = $result->fetch_assoc()) {
+        $budgets[] = $row;
+    }
+    
+    $stmt->close();
+    echo json_encode(['success' => true, 'data' => $budgets]);
+    
+} elseif ($action === 'add') {
+    // Ajouter un budget
+    $input = json_decode(file_get_contents('php://input'), true);
+    
+    if (!$input || !isset($input['name']) || !isset($input['limit_amount'])) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Données manquantes']);
+        exit();
+    }
+    
+    $name = $input['name'];
+    $limit_amount = floatval($input['limit_amount']);
+    $category_id = isset($input['category_id']) ? intval($input['category_id']) : null;
+    
+    $stmt = $conn->prepare("INSERT INTO budgets (user_id, name, limit_amount, category_id) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("isdi", $user_id, $name, $limit_amount, $category_id);
+    
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true, 'id' => $stmt->insert_id]);
+    } else {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'message' => 'Erreur lors de l\'ajout']);
+    }
+    
+    $stmt->close();
+    
+} elseif ($action === 'delete') {
+    // Supprimer un budget
+    $input = json_decode(file_get_contents('php://input'), true);
+    
+    if (!$input || !isset($input['id'])) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'ID manquant']);
+        exit();
+    }
+    
+    $id = intval($input['id']);
+    
+    $stmt = $conn->prepare("DELETE FROM budgets WHERE id = ? AND user_id = ?");
+    $stmt->bind_param("ii", $id, $user_id);
+    
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true, 'message' => 'Budget supprimé']);
+    } else {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'message' => 'Erreur lors de la suppression']);
+    }
+    
+    $stmt->close();
+    
+} else {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Action invalide']);
+}
+
+$conn->close();
+
+?>

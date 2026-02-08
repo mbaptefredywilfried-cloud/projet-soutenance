@@ -26,27 +26,27 @@
                 </div>
                 <div class="separed"></div>
                 <div class="nav">
-                    <a href="./dasboard.html"><i class="fas fa-home"></i>Dashboard</a>
-                    <a href="./transaction.html"><i class="fas fa-exchange-alt"></i>Transaction</a>
-                    <a href="./budget.html"><i class="fas fa-piggy-bank"></i>Budget</a>
-                    <a href="./profil.html"><i class="fas fa-user"></i>Profil</a>
+                    <a href="./dasboard.html"><i class="fas fa-home"></i><span data-i18n="navDashboard">Dashboard</span></a>
+                    <a href="./transaction.html"><i class="fas fa-exchange-alt"></i><span data-i18n="navTransaction">Transaction</span></a>
+                    <a href="./budget.html"><i class="fas fa-piggy-bank"></i><span data-i18n="navBudget">Budget</span></a>
+                    <a href="./profil.html"><i class="fas fa-user"></i><span data-i18n="navProfil">Profil</span></a>
                 </div>
             </div>
 
             <div class="side">
                 <div class="separed"></div>
                 <div class="nav">
-                    <a href="./parametre.html"><i class="fas fa-cog"></i>Parametres</a>
+                    <a href="./parametre.html"><i class="fas fa-cog"></i><span data-i18n="navParametres">Parametres</span></a>
                     <a href="./deconnexion.html" id="logoutLink"><i
-                            class="fas fa-right-from-bracket"></i>Deconnexion</a>
+                            class="fas fa-right-from-bracket"></i><span data-i18n="navDeconnexion">Deconnexion</span></a>
                 </div>
             </div>
         </aside>
 
         <main class="main-content" role="main">
             <header class="page-header">
-                <h1>Budgets</h1>
-                <p>Optimisez vos finances avec des outils professionnels de suivi budgétaire.</p>
+                <h1 data-i18n="budget">Budgets</h1>
+                <p data-i18n="marketingText">Optimisez vos finances avec des outils professionnels de suivi budgétaire.</p>
             </header>
 
             <section class="budget-summary" aria-labelledby="summary-heading">
@@ -56,21 +56,21 @@
                     <div class="summary-card">
                         <i class="fas fa-euro-sign"></i>
                         <div>
-                            <h3>Total Budgétisé</h3>
+                            <h3 data-i18n="totalBudgeted">Total Budgétisé</h3>
                             <p id="totalBudgeted">0 €</p>
                         </div>
                     </div>
                     <div class="summary-card">
                         <i class="fas fa-chart-line"></i>
                         <div>
-                            <h3>Total Dépensé</h3>
+                            <h3 data-i18n="totalSpent">Total Dépensé</h3>
                             <p id="totalSpent">0 €</p>
                         </div>
                     </div>
                     <div class="summary-card">
                         <i class="fas fa-balance-scale"></i>
                         <div>
-                            <h3>Équilibre</h3>
+                            <h3 data-i18n="balance">Équilibre</h3>
                             <p id="balance">0 €</p>
                         </div>
                     </div>
@@ -80,7 +80,7 @@
                     <div class="summary-card stat-card">
                         <div class="stat-info"
                             style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
-                            <h3>Budgets Actifs</h3>
+                            <h3 data-i18n="activeBudgets">Budgets Actifs</h3>
                             <span id="activeBudgetsCount"
                                 style="font-size: 1.5rem; font-weight: bold; color: #10b981;">0</span>
                         </div>
@@ -88,7 +88,7 @@
                     <div class="summary-card stat-card">
                         <div class="stat-info"
                             style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
-                            <h3>Budgets Dépassés</h3>
+                            <h3 data-i18n="exceededBudgets">Budgets Dépassés</h3>
                             <span id="overspentBudgetsCount"
                                 style="font-size: 1.5rem; font-weight: bold; color: #ef4444;">0</span>
                         </div>
@@ -96,7 +96,7 @@
                     <div class="summary-card stat-card">
                         <div class="stat-info"
                             style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
-                            <h3>Total Budgets</h3>
+                            <h3 data-i18n="totalBudgets">Total Budgets</h3>
                             <span id="totalBudgetsCount"
                                 style="font-size: 1.5rem; font-weight: bold; color: #1e293b;">0</span>
                         </div>
@@ -106,56 +106,56 @@
 
             <section class="add-budget-section" aria-labelledby="add-budget-heading">
                 <div class="section-header">
-                    <h2 id="add-budget-heading">Créer un Nouveau Budget</h2>
+                    <h2 id="add-budget-heading" data-i18n="createNewBudget">Créer un Nouveau Budget</h2>
                 </div>
                 <form class="budget-form" id="budgetForm" novalidate>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="budgetName">Nom du Budget <span class="required">*</span></label>
+                            <label for="budgetName" data-i18n="budgetName">Nom du Budget <span class="required">*</span></label>
                             <input type="text" id="budgetName" name="budgetName" placeholder="Ex: Courses alimentaires"
                                 required aria-describedby="nameHelp">
-                            <small id="nameHelp" class="form-help">Choisissez un nom descriptif pour votre
+                            <small id="nameHelp" class="form-help" data-i18n="budgetNameHelp">Choisissez un nom descriptif pour votre
                                 budget.</small>
                         </div>
                         <div class="form-group">
-                            <label for="budgetAmount">Montant (€) <span class="required">*</span></label>
+                            <label for="budgetAmount" data-i18n="amount">Montant (€) <span class="required">*</span></label>
                             <input type="number" id="budgetAmount" name="budgetAmount" placeholder="0.00" min="0.01"
                                 step="0.01" required aria-describedby="amountHelp">
-                            <small id="amountHelp" class="form-help">Entrez le montant maximum alloué.</small>
+                            <small id="amountHelp" class="form-help" data-i18n="maxAmountHint">Entrez le montant maximum alloué.</small>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="budgetCategory">Catégorie <span class="required">*</span></label>
+                            <label for="budgetCategory" data-i18n="selectCategory">Catégorie <span class="required">*</span></label>
                             <select id="budgetCategory" name="budgetCategory" required aria-describedby="categoryHelp">
                                 <option value="">Sélectionnez une catégorie</option>
-                                <option value="alimentation" data-icon="fas fa-utensils">Alimentation</option>
-                                <option value="transport" data-icon="fas fa-car">Transport</option>
-                                <option value="loisirs" data-icon="fas fa-gamepad">Loisirs</option>
-                                <option value="sante" data-icon="fas fa-heartbeat">Santé</option>
-                                <option value="logement" data-icon="fas fa-home">Logement</option>
-                                <option value="education" data-icon="fas fa-graduation-cap">Éducation</option>
-                                <option value="autre" data-icon="fas fa-ellipsis-h">Autre</option>
+                                <option value="alimentation" data-icon="fas fa-utensils" data-i18n="food">Alimentation</option>
+                                <option value="transport" data-icon="fas fa-car" data-i18n="transport">Transport</option>
+                                <option value="loisirs" data-icon="fas fa-gamepad" data-i18n="leisure">Loisirs</option>
+                                <option value="sante" data-icon="fas fa-heartbeat" data-i18n="health">Santé</option>
+                                <option value="logement" data-icon="fas fa-home" data-i18n="housing">Logement</option>
+                                <option value="education" data-icon="fas fa-graduation-cap" data-i18n="education">Éducation</option>
+                                <option value="autre" data-icon="fas fa-ellipsis-h" data-i18n="other">Autre</option>
                             </select>
-                            <small id="categoryHelp" class="form-help">Catégorisez votre budget pour un meilleur
+                            <small id="categoryHelp" class="form-help" data-i18n="categorizeBudget">Catégorisez votre budget pour un meilleur
                                 suivi.</small>
                         </div>
                         <div class="form-group">
-                            <label for="budgetPeriod">Période <span class="required">*</span></label>
+                            <label for="budgetPeriod" data-i18n="period">Période <span class="required">*</span></label>
                             <select id="budgetPeriod" name="budgetPeriod" required aria-describedby="periodHelp">
-                                <option value="mensuel">Mensuel</option>
-                                <option value="hebdomadaire">Hebdomadaire</option>
-                                <option value="annuel">Annuel</option>
+                                <option value="mensuel" data-i18n="monthly">Mensuel</option>
+                                <option value="hebdomadaire" data-i18n="weekly">Hebdomadaire</option>
+                                <option value="annuel" data-i18n="yearly">Annuel</option>
                             </select>
-                            <small id="periodHelp" class="form-help">Définissez la fréquence de renouvellement.</small>
+                            <small id="periodHelp" class="form-help" data-i18n="renewalFrequency">Définissez la fréquence de renouvellement.</small>
                         </div>
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn-primary" id="submitBtn">
-                            <i class="fas fa-plus"></i> Créer le Budget
+                            <i class="fas fa-plus"></i> <span data-i18n="createBudgetBtn">Créer le Budget</span>
                         </button>
                         <button type="reset" class="btn-secondary">
-                            <i class="fas fa-undo"></i> Réinitialiser
+                            <i class="fas fa-undo"></i> <span data-i18n="resetBtn">Réinitialiser</span>
                         </button>
                     </div>
                 </form>
@@ -163,13 +163,13 @@
 
             <section class="budgets-list-section" aria-labelledby="budgets-list-heading">
                 <div class="section-header">
-                    <h2 id="budgets-list-heading">Vos Budgets Actifs</h2>
+                    <h2 id="budgets-list-heading" data-i18n="yourActiveBudgets">Vos Budgets Actifs</h2>
                     <div class="header-actions">
                         <button class="btn-filter" id="filterBtn">
-                            <i class="fas fa-filter"></i> Filtrer
+                            <i class="fas fa-filter"></i> <span data-i18n="filterBudgets">Filtrer</span>
                         </button>
                         <button class="btn-clear" id="clearAllBtn">
-                            <i class="fas fa-trash-alt"></i> Tous supprimer
+                            <i class="fas fa-trash-alt"></i> <span data-i18n="clearAllBudgets">Tous supprimer</span>
                         </button>
                     </div>
                 </div>
@@ -177,7 +177,7 @@
                 </div>
                 <div id="noBudgetsMessage" class="no-data">
                     <i class="fas fa-inbox"></i>
-                    <p>Aucun budget créé pour le moment. Commencez par en ajouter un !</p>
+                    <p data-i18n="noBudgetMessage">Aucun budget créé pour le moment. Commencez par en ajouter un !</p>
                 </div>
             </section>
         </main>
@@ -186,22 +186,22 @@
     <div class="modal" id="editModal" role="dialog" aria-labelledby="editModalTitle" aria-hidden="true">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="editModalTitle">Modifier le Budget</h3>
+                <h3 id="editModalTitle" data-i18n="editBudget">Modifier le Budget</h3>
                 <button class="modal-close" id="closeModal">&times;</button>
             </div>
             <form class="modal-form" id="editForm">
                 <input type="hidden" id="editBudgetId">
                 <div class="form-group">
-                    <label for="editBudgetName">Nom du Budget</label>
+                    <label for="editBudgetName" data-i18n="budgetName">Nom du Budget</label>
                     <input type="text" id="editBudgetName" required>
                 </div>
                 <div class="form-group">
-                    <label for="editBudgetAmount">Montant (€)</label>
+                    <label for="editBudgetAmount" data-i18n="amount">Montant (€)</label>
                     <input type="number" id="editBudgetAmount" min="0.01" step="0.01" required>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn-primary">Enregistrer</button>
-                    <button type="button" class="btn-secondary" id="cancelEdit">Annuler</button>
+                    <button type="submit" class="btn-primary" data-i18n="save">Enregistrer</button>
+                    <button type="button" class="btn-secondary" id="cancelEdit" data-i18n="cancel">Annuler</button>
                 </div>
             </form>
         </div>
@@ -210,11 +210,11 @@
     <div id="confirmModal" class="modal">
         <div class="modal-content confirm-box">
             <i class="fas fa-exclamation-triangle warning-icon"></i>
-            <h2>Confirmation</h2>
-            <p>Es-tu sûr de vouloir supprimer ce budget ?</p>
+            <h2 data-i18n="confirmation">Confirmation</h2>
+            <p data-i18n="confirmDeleteBudget">Es-tu sûr de vouloir supprimer ce budget ?</p>
             <div class="confirm-btns">
-                <button id="cancelDelete" class="btn-secondary">Annuler</button>
-                <button id="confirmDelete" class="btn-danger">Supprimer</button>
+                <button id="cancelDelete" class="btn-secondary" data-i18n="cancel">Annuler</button>
+                <button id="confirmDelete" class="btn-danger" data-i18n="confirmDelete">Supprimer</button>
             </div>
         </div>
     </div>
@@ -224,20 +224,22 @@
             <div class="modal-icon-warning" style="color: var(--primary-color);">
                 <i class="fas fa-sign-out-alt"></i>
             </div>
-            <h3>Déconnexion</h3>
-            <p>Êtes-vous sûr de vouloir quitter votre session ?</p>
+            <h3 data-i18n="logout">Déconnexion</h3>
+            <p data-i18n="logoutConfirmationMessage">Êtes-vous sûr de vouloir quitter votre session ?</p>
             <div class="modal-buttons">
                 <button id="confirmLogoutBtn" class="btn-primary"
-                    style="background-color: var(--primary-color); border:none; padding: 10px 24px; border-radius: 8px; color: white; cursor: pointer; font-weight: 600;">Oui,
+                    style="background-color: var(--primary-color); border:none; padding: 10px 24px; border-radius: 8px; color: white; cursor: pointer; font-weight: 600;" data-i18n="confirmLogout">Oui,
                     me déconnecter</button>
-                <button id="cancelLogoutBtn" class="btn-cancel">Annuler</button>
+                <button id="cancelLogoutBtn" class="btn-cancel" data-i18n="cancel">Annuler</button>
             </div>
         </div>
     </div>
 
     <script src="./js/common.js"></script>
+    <script src="./js/traduction.js"></script>
+    <script src="./js/langue.js"></script>
+    <script src="./js/notification.js"></script>
     <script src="./js/budget.js"></script>
-    <script src="./js/notifications.js"></script>
 </body>
 
 </html>

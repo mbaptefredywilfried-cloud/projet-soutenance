@@ -309,11 +309,16 @@ main h1 {
     margin-bottom: 16px;
 }
 
+.card-item .form-group:last-child {
+    margin-bottom: 0;
+}
+
 .card-item .form-group label {
     display: block;
     margin-bottom: 6px;
     font-weight: 500;
     font-size: 14px;
+    color: var(--text-primary);
 }
 
 .card-item .form-group select, input[type="text"], input[type="password"], input[type="file"], textarea {
@@ -327,12 +332,25 @@ main h1 {
     transition: all 0.2s;
 }
 
+.card-item .form-group select:focus, input[type="text"]:focus, input[type="password"]:focus, input[type="file"]:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
 .password-input {
     position: relative;
     margin-top: 8px;
 }
 
-.password-input .toggle-password {
+.password-input input {
+    padding-right: 40px;
+}
+
+.password-input .toggle-password,
+.password-input .toggle-password-old,
+.password-input .toggle-password-confirm {
     position: absolute;
     right: 12px;
     top: 50%;
@@ -341,13 +359,64 @@ main h1 {
     border: none;
     cursor: pointer;
     color: #6c757d;
-    padding: 4px;
+    padding: 4px 8px;
+    transition: color 0.2s;
+}
+
+.password-input .toggle-password:hover,
+.password-input .toggle-password-old:hover,
+.password-input .toggle-password-confirm:hover {
+    color: var(--primary-color);
+}
+
+/* --- SECURITY CARD IMPROVEMENTS --- */
+.card-item:has(> .header .icon-box i.fa-lock) {
+    /* Grouper les champs de mot de passe */
+}
+
+.card-item:has(> .header .icon-box i.fa-lock) .form-group {
+    position: relative;
+    padding-bottom: 8px;
+}
+
+.card-item:has(> .header .icon-box i.fa-lock) .form-group:nth-of-type(3) {
+    /* Ancien mot de passe */
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+}
+
+.card-item:has(> .header .icon-box i.fa-lock) .form-group:nth-of-type(4) {
+    /* Nouveau mot de passe */
+    margin-bottom: 8px;
+}
+
+.card-item:has(> .header .icon-box i.fa-lock) .form-group:nth-of-type(5) {
+    /* Confirmer mot de passe */
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.card-item:has(> .header .icon-box i.fa-lock) #savePasswordBtn {
+    margin-bottom: 12px !important;
+    width: 100%;
+}
+
+.card-item:has(> .header .icon-box i.fa-lock) .setting-item {
+    padding: 12px 0;
+}
+
+.card-item:has(> .header .icon-box i.fa-lock) .setting-item:last-of-type {
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
 }
 
 .card-item .btn-primary {
-    background: #3b82f6;
+    background: linear-gradient(135deg, var(--primary-color), #1d4ed8);
     color: white;
-    padding: 10px 20px;
+    padding: 12px 24px;
     border: none;
     border-radius: 8px;
     font-size: 14px;
@@ -356,13 +425,24 @@ main h1 {
     transition: all 0.2s;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+}
+
+.card-item .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.card-item .btn-primary:active {
+    transform: translateY(0);
 }
 
 .card-item .btn-danger {
-    background: #ef4444;
+    background: linear-gradient(135deg, var(--danger-color), #dc2626);
     color: white;
-    padding: 10px 20px;
+    padding: 12px 24px;
     border: none;
     border-radius: 8px;
     font-size: 14px;
@@ -371,14 +451,20 @@ main h1 {
     transition: all 0.2s;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     margin-top: 15px;
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
 }
 
 .card-item .btn-danger:hover {
-    background: #dc2626;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.card-item .btn-danger:active {
+    transform: translateY(0);
 }
 
 .info {

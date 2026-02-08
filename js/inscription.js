@@ -1,28 +1,43 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const signupForm = document.getElementById("signupForm");
+    const signupForm = document.getElementById("signupForm");
 
-  if (signupForm) {
-    signupForm.addEventListener("submit", (e) => {
-      e.preventDefault();
+    if (signupForm) {
+        signupForm.addEventListener("submit", (e) => {
+            e.preventDefault();
 
-      const name = document.getElementById("nom_input").value.trim();
-      const email = document.getElementById("email_input").value.trim().toLowerCase();
-      const pass = document.getElementById("password_input").value;
-      const confirm = document.getElementById("confirm_password_input").value;
+            const username = document.getElementById("nom_input").value.trim();
+            const email = document.getElementById("email_input").value.trim().toLowerCase();
+            const password = document.getElementById("password_input").value;
+            const confirm_password = document.getElementById("confirm_password_input").value;
 
-      // REMPLACEMENT DE L'ALERTE PAR LE POPUP D'ERREUR
-      if (pass !== confirm) {
-        showErrorModal("Erreur de saisie", "Les mots de passe ne correspondent pas. Veuillez réessayer.");
-        return;
-      }
+            if (password !== confirm_password) {
+                showErrorModal("Erreur de saisie", "Les mots de passe ne correspondent pas. Veuillez réessayer.");
+                return;
+            }
 
-      localStorage.setItem("userName", name);
-      localStorage.setItem("userEmail", email);
-      localStorage.setItem("userPassword", pass);
+            const payload = { username, email, password };
 
-      finaliserEtOuvrirApp();
-    });
-  }
+            fetch('php/auth/register.php', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(resp => resp.json())
+            .then(data => {
+                if (data.success) {
+                    showSuccessModal("Succès!", "Inscription réussie! Redirection vers le dashboard...");
+                    setTimeout(() => { window.location.href = './dasboard.html'; }, 2000);
+                } else {
+                    showErrorModal("Erreur", data.message || "Une erreur est survenue");
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                showErrorModal("Erreur", "Problème de connexion au serveur");
+            });
+        });
+    }
 });
 
 // NOUVELLE FONCTION POUR LE POPUP D'ERREUR
@@ -90,20 +105,60 @@ function showErrorModal(titre, message) {
     });
 }
 
-function finaliserEtOuvrirApp() {
-    // Initialisation propre des données du dashboard
-    localStorage.setItem("userId", "AD_" + Math.floor(100 + Math.random() * 900));
-    localStorage.setItem("userCreationDate", new Date().toLocaleDateString("fr-FR"));
-    localStorage.setItem("userImage", "");
-    localStorage.setItem("transactions", JSON.stringify([]));
-    localStorage.setItem("userBudgetInitial", "0");
-    localStorage.setItem("userTotalSpent", "0");
-    localStorage.setItem("totalBudgets", "0");
-    localStorage.setItem("budgetsActifs", "0");
-    localStorage.setItem("budgetsDepasses", "0");
+function showSuccessModal(titre, message) {
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-success-overlay';
+    
+    overlay.style = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:flex;justify-content:center;align-items:center;z-index:10001;";
 
-    // Affichage de la fenêtre centrale
-    showCentralModal("Succès !", "Votre compte a été créé. Cliquez sur OK pour accéder au tableau de bord.");
+    overlay.innerHTML = `
+        <div style="
+            background: white; padding: 0; border-radius: 16px; 
+            width: 90%; max-width: 400px; overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            display: flex; flex-direction: column;
+            animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        ">
+            <div style="height: 6px; background: linear-gradient(90deg, #10b981, #34d399);"></div>
+            
+            <div style="padding: 30px; text-align: center;">
+                <div style="
+                    width: 70px; height: 70px; background: #d1fae5; 
+                    border-radius: 50%; display: flex; align-items: center; 
+                    justify-content: center; margin: 0 auto 20px;
+                ">
+                    <i class="fas fa-check" style="font-size: 30px; color: #10b981;"></i>
+                </div>
+
+                <h2 style="margin: 0 0 10px; color: #1e293b; font-size: 22px; font-weight: 700;">${titre}</h2>
+                <p style="margin: 0 0 25px; color: #64748b; line-height: 1.6; font-size: 15px;">${message}</p>
+                
+                <button id="btnCloseSuccess" style="
+                    background: #10b981; color: white; border: none; 
+                    padding: 14px 28px; border-radius: 12px; font-weight: 600; 
+                    cursor: pointer; width: 100%; transition: all 0.2s;
+                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                ">
+                    Acceder au Dashboard
+                </button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    document.getElementById('btnCloseSuccess').addEventListener('click', () => {
+        // Utiliser setTimeout pour s'assurer que la redirection se fait
+        setTimeout(() => {
+            window.location.href = './dasboard.html';
+        }, 100);
+    });
+}
+
+function finaliserEtOuvrirApp() {
+    // Ici on s'appuie sur le serveur pour initialiser les données utilisateur.
+    // Affichage de la fenêtre centrale et redirection vers la page de connexion
+    showCentralModal("Succès !", "Votre compte a été créé. Cliquez sur OK pour vous connecter.");
 }
 
 function showCentralModal(titre, message) {
@@ -123,7 +178,7 @@ function showCentralModal(titre, message) {
 
   // Redirection au clic sur OK
   document.getElementById('btnOkConfirm').addEventListener('click', () => {
-    window.location.href = "dasboard.html";
+        window.location.href = "connexion.html";
   });
 }
 

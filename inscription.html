@@ -22,7 +22,7 @@
             <h2>Numera</h2>
         </nav>
     </header>
-    <form id="signupForm">
+    <form id="signupForm" action="php/auth/register.php" method="post" autocomplete="off" onsubmit="return validateForm(event)">
         <div class="text">
             <h3>Bienvenue chez Numera</h3>
             <h6>Créez votre compte pour commencer votre gestion financière.</h6>
@@ -30,19 +30,19 @@
         <div class="input">
             <div class="input-box">
                 <i class="fas fa-user"></i>
-                <input type="text" id="nom_input" placeholder="Nom d'utilisateur" maxlength="20" required>
+                <input type="text" id="nom_input" name="name" placeholder="Nom d'utilisateur" maxlength="60" required>
             </div>
             <div class="input-box">
                 <i class="fas fa-envelope"></i>
-                <input type="email" id="email_input" placeholder="Adresse email" required>
+                <input type="email" id="email_input" name="email" placeholder="Adresse email" required>
             </div>
             <div class="input-box">
                 <i class="fas fa-lock"></i>
-                <input type="password" id="password_input" placeholder="Mot de passe" minlength="8" required>
+                <input type="password" id="password_input" name="password" placeholder="Mot de passe" minlength="8" required>
             </div>
             <div class="input-box">
                 <i class="fas fa-lock"></i>
-                <input type="password" id="confirm_password_input" placeholder="Confirmer mot de passe" minlength="8" required>
+                <input type="password" id="confirm_password_input" name="confirm_password" placeholder="Confirmer mot de passe" minlength="8" required>
             </div>
         </div>
         <div class="submit">
@@ -50,6 +50,7 @@
             <p>Déjà un compte ? <a href="./connexion.html">Se connecter</a></p>
         </div>
     </form>
-    <script src="./js/inscription.js"></script>
+    <script src="./js/inscription_new.js"></script>
+    <script src="./js/success-popup.js"></script>
 </body>
 </html>

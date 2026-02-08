@@ -1,4 +1,33 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // --- 0. INITIALISATION DE L'ACCENT COULEUR ---
+    const savedAccentColor = localStorage.getItem('accentColor') || '#2563eb';
+    
+    // Fonction pour appliquer l'accent au profil
+    function applyProfileAccentColor(color) {
+        // Appliquer la couleur au bouton upload avatar
+        const avatarBtn = document.querySelector('.avatar-upload-btn');
+        if (avatarBtn) {
+            avatarBtn.style.color = color;
+            avatarBtn.style.borderColor = color;
+        }
+        
+        // Appliquer aussi aux autres éléments si la fonction globale existe
+        if (typeof applyAccentColor === 'function') {
+            applyAccentColor(color);
+        }
+    }
+    
+    // Appliquer l'accent initial
+    applyProfileAccentColor(savedAccentColor);
+    
+    // Écouter les changements d'accent (depuis les paramètres)
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'accentColor') {
+            const newColor = e.newValue || '#2563eb';
+            applyProfileAccentColor(newColor);
+        }
+    });
+
     // --- 1. SÉLECTEURS ---
     const avatarInput = document.getElementById('avatarInput');
     const avatarImage = document.querySelector('.avatar-image');
@@ -30,23 +59,40 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- 2. CHARGEMENT INITIAL ---
     function loadUserData() {
-        const savedName = localStorage.getItem('userName') || 'Fredy 2.0';
-        const savedEmail = localStorage.getItem('userEmail') || 'Fredy2.0@gmail.com';
-        const savedPhone = localStorage.getItem('userPhone') || 'Non specifie';
-        const savedPhoto = localStorage.getItem('userImage');
+        fetch('php/data/user_profile.php?action=get', { credentials: 'same-origin' })
+            .then(resp => {
+                if (!resp.ok) throw new Error('Not authenticated');
+                return resp.json();
+            })
+            .then(data => {
+                if (!data.success) throw new Error('No profile');
+                const user = data.user || {};
+                const savedName = user.username || 'Fredy 2.0';
+                const savedEmail = user.email || 'Fredy2.0@gmail.com';
+                const savedPhone = user.phone || 'Non specifie';
+                const savedPhoto = user.image || localStorage.getItem('userImage');
 
-        if (userNameDisplay) userNameDisplay.textContent = savedName;
-        if (fullNameDisplay) fullNameDisplay.textContent = savedName;
-        if (emailDisplay) emailDisplay.textContent = savedEmail;
-        if (phoneDisplay) phoneDisplay.textContent = savedPhone;
-        
-        if (savedPhoto && avatarImage) avatarImage.src = savedPhoto;
+                if (userNameDisplay) userNameDisplay.textContent = savedName;
+                if (fullNameDisplay) fullNameDisplay.textContent = savedName;
+                if (emailDisplay) emailDisplay.textContent = savedEmail;
+                if (phoneDisplay) phoneDisplay.textContent = savedPhone;
+                if (savedPhoto && avatarImage) avatarImage.src = savedPhoto;
 
-        handleAccountStats();
-        updateBudgetOverview(); 
+                // Mettre à jour les éléments de compte
+                const idDisplay = document.querySelector('.card4 .profil-detail-group:nth-child(1) span');
+                const creationDisplay = document.querySelector('.card4 .profil-detail-group:nth-child(2) span');
+                const lastLoginDisplay = document.querySelector('.card4 .profil-detail-group:nth-child(3) span');
+                if (idDisplay) idDisplay.textContent = user.id || 'AD_565';
+                if (creationDisplay) creationDisplay.textContent = user.created_at || '2023-01-01';
+                if (lastLoginDisplay) lastLoginDisplay.textContent = user.last_login || 'Session actuelle';
+
+                updateBudgetOverview();
+            })
+            .catch(err => {
+                console.warn('loadUserData:', err);
+            });
     }
 
-    // --- 3. APERÇU BUDGÉTAIRE DYNAMIQUE ---
     // --- 3. APERÇU BUDGÉTAIRE DYNAMIQUE ---
     function updateBudgetOverview() {
         const totalBudget = parseFloat(localStorage.getItem('userBudgetInitial')) || 0;
@@ -60,15 +106,17 @@ document.addEventListener('DOMContentLoaded', function () {
         const rawPercentage = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
         const displayPercentage = Math.min(100, Math.round(rawPercentage));
 
+        const currencySymbol = localStorage.getItem('appCurrency') || '€';
+
         if (statsValues.length >= 3) {
             // On affiche le pourcentage plafonné à 100%
             statsValues[0].textContent = `${displayPercentage}%`;
             
             // On affiche le montant restant plafonné à 0 €
-            statsValues[1].textContent = `${remaining.toFixed(2)} €`;
+            statsValues[1].textContent = `${remaining.toFixed(2)} ${currencySymbol}`;
             
             // On garde le total dépensé réel (qui peut dépasser le budget)
-            statsValues[2].textContent = `${totalSpent.toFixed(2)} €`;
+            statsValues[2].textContent = `${totalSpent.toFixed(2)} ${currencySymbol}`;
 
             // Optionnel : Changer la couleur du montant restant en rouge s'il est épuisé (dépassé)
             if (rawRemaining < 0) {
@@ -109,6 +157,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const reader = new FileReader();
             reader.onload = (ev) => {
                 avatarImage.src = ev.target.result;
+                // Temporary: store avatar locally until server-side upload is implemented
                 localStorage.setItem('userImage', ev.target.result);
                 showSuccessToast("Photo mise à jour !");
             };
@@ -121,9 +170,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (editBtn && modal) {
         editBtn.addEventListener('click', () => {
-            inputName.value = localStorage.getItem('userName') || userNameDisplay.textContent;
-            inputEmail.value = localStorage.getItem('userEmail') || emailDisplay.textContent;
-            inputPhone.value = localStorage.getItem('userPhone') || (phoneDisplay.textContent === 'Non specifie' ? '' : phoneDisplay.textContent);
+            // Pré-remplir depuis le DOM ou laisser vide
+            inputName.value = userNameDisplay ? userNameDisplay.textContent : '';
+            inputEmail.value = emailDisplay ? emailDisplay.textContent : '';
+            inputPhone.value = phoneDisplay ? (phoneDisplay.textContent === 'Non specifie' ? '' : phoneDisplay.textContent) : '';
             modal.style.display = 'flex';
         });
     }
@@ -135,31 +185,57 @@ document.addEventListener('DOMContentLoaded', function () {
     if (editForm) {
         editForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            localStorage.setItem('userName', inputName.value.trim());
-            localStorage.setItem('userEmail', inputEmail.value.trim());
-            localStorage.setItem('userPhone', inputPhone.value.trim() || 'Non specifie');
-            loadUserData();
-            closeModal();
-            showSuccessToast("Profil mis à jour !");
+            const payload = {
+                username: inputName.value.trim(),
+                email: inputEmail.value.trim(),
+                phone: inputPhone.value.trim() || null
+            };
+            fetch('php/data/user_profile.php?action=update', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(resp => resp.json())
+            .then(result => {
+                if (result.success) {
+                    loadUserData();
+                    closeModal();
+                    showSuccessToast("Profil mis à jour !");
+                } else {
+                    showSuccessToast(result.message || 'Erreur lors de la mise à jour');
+                }
+            })
+            .catch(err => {
+                console.error('Update profile failed', err);
+                showSuccessToast('Erreur réseau');
+            });
         });
     }
 
     // --- 7. SÉCURITÉ ET DONNÉES (Boutons Card 5) ---
     if (exportBtn) {
         exportBtn.addEventListener('click', () => {
-            const data = {
-                nom: localStorage.getItem('userName'),
-                email: localStorage.getItem('userEmail'),
-                budget: localStorage.getItem('userBudgetInitial'),
-                depenses: localStorage.getItem('userTotalSpent')
-            };
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'mon_profil_data.json';
-            a.click();
-            showSuccessToast("Données exportées !");
+            fetch('php/data/user_profile.php?action=get', { credentials: 'same-origin' })
+                .then(resp => resp.json())
+                .then(result => {
+                    if (!result.success) throw new Error('No profile');
+                    const user = result.user || {};
+                    const data = {
+                        nom: user.username,
+                        email: user.email,
+                        budget: localStorage.getItem('userBudgetInitial') || null,
+                        depenses: localStorage.getItem('userTotalSpent') || null
+                    };
+                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'mon_profil_data.json';
+                    a.click();
+                    showSuccessToast("Données exportées !");
+                })
+                .catch(() => showSuccessToast('Impossible d\'exporter : utilisateur non authentifié'));
         });
     }
 
@@ -169,6 +245,41 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log("Bouton suppression en attente...");
         });
     }
+
+    // --- 8.b GESTION DE LA DÉCONNEXION (Modal) ---
+    const logoutModal = document.getElementById('logoutModal');
+    const confirmLogoutBtn = document.getElementById('confirmLogoutBtn');
+    const cancelLogoutBtn = document.getElementById('cancelLogoutBtn');
+    const logoutTrigger = document.querySelector('.logout-trigger');
+    const logoutLink = document.getElementById('logoutLink');
+
+    const openLogoutModal = (e) => {
+        if (e) e.preventDefault();
+        if (logoutModal) logoutModal.style.display = 'flex';
+    };
+
+    const closeLogoutModal = (e) => {
+        if (e) e.preventDefault();
+        if (logoutModal) logoutModal.style.display = 'none';
+    };
+
+    if (logoutTrigger) logoutTrigger.addEventListener('click', openLogoutModal);
+    if (logoutLink) logoutLink.addEventListener('click', openLogoutModal);
+    if (cancelLogoutBtn) cancelLogoutBtn.addEventListener('click', closeLogoutModal);
+    if (confirmLogoutBtn) {
+        confirmLogoutBtn.addEventListener('click', () => {
+            fetch('php/auth/logout.php', { credentials: 'same-origin' })
+                .then(() => {
+                    // Clear any leftover client-only data (avatar)
+                    localStorage.removeItem('userImage');
+                    window.location.href = './connexion.html';
+                })
+                .catch(() => { window.location.href = './connexion.html'; });
+        });
+    }
+    window.addEventListener('click', (e) => {
+        if (e.target === logoutModal) closeLogoutModal();
+    });
 
     // --- 8. TOAST ET NAVIGATION ---
     function showSuccessToast(message) {

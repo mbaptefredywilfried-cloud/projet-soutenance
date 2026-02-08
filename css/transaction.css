@@ -290,10 +290,6 @@ main .card .description label {
   color: white;
 }
 
-
-
-
-
 .history-controls {
     display: flex;
     justify-content: space-between;
@@ -315,7 +311,6 @@ main .card .description label {
     transition: 0.3s;
 }
 .filter-btn:hover {
-    /* background-color: #2563eb !important; Un léger voile gris au survol */
     color: inherit !important;
     transition: all 0.2s ease;
     color: white !important;
@@ -337,8 +332,6 @@ main .card .description label {
     transition: 0.3s;
     font-weight: 600;
 }
-
-
 
 .btn-danger-outline:hover {
     background: #ef4444;
@@ -367,7 +360,7 @@ main .card .description label {
     padding: 15px;
     background-color: #fff;
     border-radius: 12px;
-    margin-bottom: 10px; /* <--- Augmente cette valeur pour plus d'espace */
+    margin-bottom: 10px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     transition: transform 0.2s ease;
 }
@@ -377,12 +370,6 @@ main .card .description label {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
-
-
-
-
-
-
 
 .btn-view-more-history {
     display: block;
@@ -400,7 +387,6 @@ main .card .description label {
 .btn-view-more-history:hover {
     background-color: rgba(0, 0, 0, 0.05);
 }
-
 
 /* --- Style du Modal (Arrière-plan) --- */
 .custom-modal {
@@ -615,10 +601,6 @@ main .card .description label {
     to { transform: translateY(0); opacity: 1; }
 }
 
-
-
-
-
 #toast-container {
     position: fixed;
     bottom: 30px;
@@ -700,7 +682,9 @@ main .card .description label {
 .empty-state p {
     font-size: 16px;
     font-weight: 500;
-}.custom-modal2 {
+}
+
+.custom-modal2 {
     display: none; 
     position: fixed;
     inset: 0;
@@ -719,4 +703,417 @@ main .card .description label {
     padding: 30px;
     text-align: center;
     box-shadow: var(--shadow);
+}
+
+/* ===========================================
+   RESPONSIVE TRANSACTION
+   =========================================== */
+
+/* MOBILE : 0px à 767px */
+@media (max-width: 767px) {
+    /* 1. Cache la sidebar par défaut */
+    aside {
+        position: fixed;
+        top: 0;
+        left: -280px;
+        width: 280px;
+        height: 100vh;
+        transition: left 0.3s ease;
+        z-index: 1000;
+        padding: 24px 20px;
+        box-shadow: var(--shadow);
+    }
+    
+    /* 2. Quand active, sidebar visible */
+    aside.active {
+        left: 0;
+    }
+    
+    /* 3. Overlay pour fermer */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(3px);
+        z-index: 999;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .sidebar-overlay.active {
+        display: block;
+        opacity: 1;
+    }
+    
+    /* 4. Header mobile fixe SIMPLE (sans profil) */
+    .mobile-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        background: white;
+        display: flex;
+        align-items: center;
+        padding: 0 15px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        z-index: 998;
+    }
+    
+    /* 5. Menu burger */
+    .menu-burger {
+        width: 28px;
+        height: 18px;
+        background: none;
+        border: none;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        cursor: pointer;
+        padding: 0;
+        z-index: 1001;
+    }
+    
+    .menu-burger span {
+        display: block;
+        width: 100%;
+        height: 2.5px;
+        background: var(--primary-color);
+        border-radius: 2px;
+        transition: all 0.3s ease;
+    }
+    
+    .menu-burger.active span:nth-child(1) {
+        transform: rotate(45deg) translate(4px, 4px);
+    }
+    
+    .menu-burger.active span:nth-child(2) {
+        opacity: 0;
+    }
+    
+    .menu-burger.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(6px, -5px);
+    }
+    
+    /* 6. Titre centré */
+    .header-title {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+        width: 100%;
+        text-align: center;
+    }
+    
+    /* 7. Ajuste le contenu principal */
+    main {
+        margin-left: 0 !important;
+        margin-top: 60px !important;
+        padding: 15px !important;
+        width: 100% !important;
+    }
+    
+    /* 8. Cache le h1 original */
+    main h1 {
+        display: none;
+    }
+    
+    /* 9. Carte d'ajout de transaction */
+    main .card {
+        padding: 18px !important;
+        margin-bottom: 20px;
+        border-radius: 12px;
+    }
+    
+    main .card h3 {
+        font-size: 18px !important;
+        margin-bottom: 18px;
+    }
+    
+    /* 10. Formulaire en colonne */
+    main .card form {
+        display: flex !important;
+        flex-direction: column;
+        gap: 12px !important;
+    }
+    
+    main .card form .form-group {
+        width: 100%;
+    }
+    
+    /* 11. Labels et inputs réduits */
+    main .card form .form-group label,
+    main .card .description label {
+        font-size: 13px !important;
+        margin-bottom: 6px;
+    }
+    
+    main .card form .form-group select,
+    main .card form .form-group input[type="number"],
+    main .card form .form-group input[type="date"],
+    main .card .description input {
+        padding: 10px !important;
+        font-size: 14px !important;
+        border-radius: 6px;
+    }
+    
+    /* 12. Bouton d'ajout */
+    main .card form .form-group button {
+        padding: 12px !important;
+        font-size: 14px !important;
+        margin-top: 10px;
+        border-radius: 6px;
+    }
+    
+    /* 13. Contrôles d'historique */
+    .history-controls {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+        margin: 20px 0;
+    }
+    
+    .filters {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .filter-btn {
+        flex: 1;
+        padding: 8px 12px;
+        font-size: 13px;
+        text-align: center;
+    }
+    
+    #deleteAllBtn {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+    }
+    
+    /* 14. Items de transaction - ALIGNEMENT COMME SUR LA PHOTO */
+    .transaction-item {
+        flex-direction: row !important;
+        align-items: center !important;
+        padding: 12px 15px !important;
+        margin-bottom: 8px;
+        border-radius: 10px;
+        gap: 0;
+    }
+    
+    .transaction-info {
+        flex: 0 0 auto;
+        width: auto !important;
+        justify-content: flex-start !important;
+        gap: 12px;
+    }
+    
+    .transaction-icon {
+        width: 35px !important;
+        height: 35px !important;
+        font-size: 14px !important;
+        flex-shrink: 0;
+    }
+    
+    .transaction-details h4 {
+        font-size: 13px !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100px;
+        margin-bottom: 2px;
+    }
+    
+    .transaction-details p {
+        font-size: 11px !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100px;
+    }
+    
+    .transaction-amount {
+        flex: 0 0 auto;
+        font-size: 15px !important;
+        font-weight: 700 !important;
+        text-align: center;
+        min-width: 70px;
+    }
+    
+    .transaction-item > div:last-child {
+        display: flex !important;
+        align-items: center !important;
+        gap: 15px !important;
+        flex: 0 0 auto;
+    }
+    
+    .transaction-item button {
+        padding: 6px 8px !important;
+        min-width: auto !important;
+        font-size: 11px !important;
+        border-radius: 4px !important;
+    }
+    
+    .transaction-item button i {
+        font-size: 14px !important;
+    }
+    
+    /* 15. États vides */
+    .empty-state {
+        padding: 30px 15px;
+    }
+    
+    .empty-state i {
+        font-size: 40px;
+    }
+    
+    .empty-state p {
+        font-size: 14px;
+    }
+    
+    /* 16. Modals responsives */
+    .modal-content,
+    .modal-content2 {
+        width: 95% !important;
+        max-width: 350px !important;
+        padding: 20px !important;
+    }
+    
+    .modal-body {
+        padding: 15px !important;
+    }
+    
+    .modal-footer {
+        padding: 15px !important;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .modal-footer button {
+        width: 100%;
+    }
+    
+    /* 17. Toast mobile */
+    #toast-container {
+        bottom: 20px;
+        right: 20px;
+        left: 20px;
+    }
+    
+    .toast-custom {
+        min-width: auto;
+        width: 100%;
+    }
+}
+
+/* TABLETTE : 768px à 1023px */
+@media (min-width: 768px) and (max-width: 1023px) {
+    /* Cache header mobile */
+    .mobile-header,
+    .sidebar-overlay {
+        display: none !important;
+    }
+    
+    /* Sidebar réduite */
+    aside {
+        width: 70px;
+        transition: width 0.3s ease;
+    }
+    
+    aside:hover {
+        width: 260px;
+    }
+    
+    .img p {
+        font-size: 24px !important;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    aside:hover .img p {
+        opacity: 1;
+    }
+    
+    .side .nav a {
+        padding: 10px 12px !important;
+        font-size: 14px;
+    }
+    
+    .side .nav a span {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    aside:hover .side .nav a span {
+        opacity: 1;
+    }
+    
+    /* Ajuste main */
+    main {
+        margin-left: 70px !important;
+        transition: margin-left 0.3s ease;
+        padding: 20px !important;
+    }
+    
+    aside:hover ~ main {
+        margin-left: 260px !important;
+    }
+    
+    /* Formulaire en 2 colonnes */
+    main .card form {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 15px !important;
+    }
+    
+    /* Titre réduit */
+    main h1 {
+        font-size: 26px !important;
+    }
+    
+    main .card h3 {
+        font-size: 18px !important;
+    }
+    
+    /* Items de transaction */
+    .transaction-item {
+        padding: 15px !important;
+    }
+    
+    .transaction-details h4 {
+        font-size: 14px !important;
+    }
+    
+    .transaction-details p {
+        font-size: 13px !important;
+    }
+    
+    /* Boutons filtres */
+    .filter-btn {
+        padding: 8px 14px;
+        font-size: 14px;
+    }
+}
+
+/* DESKTOP : 1024px et + */
+@media (min-width: 1024px) {
+    .mobile-header,
+    .sidebar-overlay {
+        display: none !important;
+    }
+}
+
+/* Style pour les montants */
+.transaction-amount.income {
+    color: #10b981;
+}
+
+.transaction-amount.expense {
+    color: #ef4444;
 }

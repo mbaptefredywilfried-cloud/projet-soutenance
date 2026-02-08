@@ -3,27 +3,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
-            // 1. BLOQUE le rafraîchissement de la page
             e.preventDefault();
 
-            // 2. RÉCUPÈRE les infos saisies
-            const emailSaisi = document.getElementById('loginEmail').value;
-            const passSaisi = document.getElementById('loginPass').value;
+            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const password = document.getElementById('loginPass').value;
 
-            // 3. RÉCUPÈRE les infos stockées lors de l'inscription
-            const storedEmail = localStorage.getItem('userEmail');
-            const storedPass = localStorage.getItem('userPassword');
+            // Envoyer les données au serveur
+            const formData = {
+                email: email,
+                password: password
+            };
 
-            // 4. VÉRIFIE les identifiants
-            if (emailSaisi === storedEmail && passSaisi === storedPass) {
-                gererConnexion();
-            } else {
-                // Remplacement de l'alert par le nouveau popup d'erreur
-                showErrorPopup(
-                    "Accès refusé", 
-                    "L'email ou le mot de passe est incorrect. Veuillez vérifier vos identifiants."
-                );
-            }
+            fetch('php/auth/login.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Le serveur a créé la session ; redirection vers le dashboard.
+                    showToast("Connexion réussie !");
+                    setTimeout(() => {
+                        window.location.href = 'dasboard.html';
+                    }, 1500);
+                } else {
+                    showErrorPopup("Accès refusé", data.message || "Email ou mot de passe incorrect");
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                showErrorPopup("Erreur", "Problème de connexion au serveur");
+            });
         });
     }
 });
@@ -31,21 +44,14 @@ document.addEventListener('DOMContentLoaded', () => {
 /**
  * Gère la réussite de la connexion
  */
-function gererConnexion() {
+function gererConnexion(email) {
     const now = new Date();
     const lastLogin = now.toLocaleDateString('fr-FR') + ' ' + 
                       now.getHours().toString().padStart(2, '0') + ':' + 
                       now.getMinutes().toString().padStart(2, '0');
-
-    localStorage.setItem('lastLoginTime', lastLogin);
-
-    // Affichage de la notification de succès
+    // Ne plus utiliser localStorage pour l'authentification client ; la session est gérée côté serveur.
     showToast("Connexion réussie !");
-
-    // Redirection après 1.5 seconde vers le tableau de bord
-    setTimeout(() => {
-        window.location.href = 'dasboard.html';
-    }, 1500);
+    setTimeout(() => { window.location.href = 'dasboard.html'; }, 1500);
 }
 
 /**
@@ -91,5 +97,14 @@ function showErrorPopup(titre, message) {
         overlay.style.opacity = '0';
         overlay.style.transition = '0.3s';
         setTimeout(() => overlay.remove(), 300);
+    });
+    
+    // Fermer popup au clic sur overlay
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            overlay.style.opacity = '0';
+            overlay.style.transition = '0.3s';
+            setTimeout(() => overlay.remove(), 300);
+        }
     });
 }

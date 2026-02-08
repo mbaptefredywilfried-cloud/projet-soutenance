@@ -177,6 +177,7 @@ class BudgetManager {
     }
 
     createBudgetCard(budget) {
+        const currencySymbol = localStorage.getItem('appCurrency') || '€';
         const spent = this.calculateSpent(budget);
         const rawRemaining = budget.amount - spent;
         const remaining = Math.max(0, rawRemaining); 
@@ -199,16 +200,16 @@ class BudgetManager {
                     <div class="stats-row">
                         <div class="stat-unit">
                             <span class="stat-label">Budgétisé</span>
-                            <span class="stat-val">${budget.amount.toLocaleString()} €</span>
+                            <span class="stat-val">${budget.amount.toLocaleString()} ${currencySymbol}</span>
                         </div>
                         <div class="stat-unit">
                             <span class="stat-label">Dépensé</span>
-                            <span class="stat-val">${spent.toLocaleString()} €</span>
+                            <span class="stat-val">${spent.toLocaleString()} ${currencySymbol}</span>
                         </div>
                         <div class="stat-unit">
                             <span class="stat-label">Restant</span>
                             <span class="stat-val highlight" style="color: ${rawRemaining < 0 ? '#ef4444' : '#2563eb'}">
-                                ${remaining.toLocaleString()} €
+                                ${remaining.toLocaleString()} ${currencySymbol}
                             </span>
                         </div>
                     </div>
@@ -269,9 +270,10 @@ class BudgetManager {
         const elTotalSpent = document.getElementById('totalSpent');
         const elBalance = document.getElementById('balance');
 
-        if (elTotalBudgeted) elTotalBudgeted.textContent = `${totalBudgeted.toLocaleString()} €`;
-        if (elTotalSpent) elTotalSpent.textContent = `${totalSpent.toLocaleString()} €`;
-        if (elBalance) elBalance.textContent = `${balance.toLocaleString()} €`;
+        const currencySymbol = localStorage.getItem('appCurrency') || '€';
+        if (elTotalBudgeted) elTotalBudgeted.textContent = `${totalBudgeted.toLocaleString()} ${currencySymbol}`;
+        if (elTotalSpent) elTotalSpent.textContent = `${totalSpent.toLocaleString()} ${currencySymbol}`;
+        if (elBalance) elBalance.textContent = `${balance.toLocaleString()} ${currencySymbol}`;
 
         // Mise à jour de l'affichage HTML - Rangée 2 (Compteurs)
         const elActiveCount = document.getElementById('activeBudgetsCount');

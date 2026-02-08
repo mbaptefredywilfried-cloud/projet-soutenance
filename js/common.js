@@ -8,7 +8,33 @@ document.addEventListener('DOMContentLoaded', function() {
     
     applyAccentColor(accentColor);
     updateActiveMenu(); // Ajout de la vérification du menu actif
+    enforceAuth();
 });
+
+// Vérifie si l'utilisateur est authentifié pour accéder aux pages protégées
+function enforceAuth() {
+    const publicPages = ['connexion.html', 'inscription.html', 'index.html', 'Bienvenue.html', 'deconnexion.html'];
+    let current = window.location.pathname.split('/').pop();
+    if (!current) current = 'dasboard.html';
+
+    if (publicPages.includes(current)) return; // pages publiques
+    // Vérifier la session côté serveur
+    fetch('php/auth/check_session.php', { credentials: 'same-origin' })
+        .then(response => {
+            if (!response.ok) throw new Error('No session');
+            return response.json();
+        })
+        .then(data => {
+            if (!data.success) {
+                window.location.href = 'connexion.html';
+            }
+            // Optionnel: stocker temporairement le nom utilisateur dans window
+            if (data.username) window._currentUsername = data.username;
+        })
+        .catch(() => {
+            window.location.href = 'connexion.html';
+        });
+}
 
 // --- NOUVEAU : GESTION DYNAMIQUE DU MENU ACTIF ---
 function updateActiveMenu() {
@@ -40,6 +66,13 @@ function applyAccentColor(color) {
     const darkerColor = darkenColor(color, 30);
     const gradient = `linear-gradient(180deg, ${color} 0%, ${darkerColor} 100%)`;
 
+    // Exposer des variables CSS globales pour que le CSS puisse les utiliser
+    try {
+        document.documentElement.style.setProperty('--accent-color', color);
+        document.documentElement.style.setProperty('--accent-gradient', gradient);
+    } catch (e) {
+        // silent fallback pour navigateurs non supportés (très rares)
+    }
     // Aside
     const aside = document.querySelector('aside');
     if (aside) {
@@ -148,8 +181,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // 3. Rediriger vers la connexion si on confirme
         // Dans common.js
 confirmLogoutBtn.addEventListener('click', () => {
-    localStorage.clear(); // Nettoie ABSOLUMENT TOUT (Budget, Nom, Transactions)
-    window.location.href = "connexion.html"; 
+    // Déconnexion non destructive : on marque l'utilisateur comme déconnecté
+    localStorage.setItem('isAuthenticated', 'false');
+    localStorage.removeItem('lastLoginTime');
+    // Optionnel : on peut garder les données utilisateur pour une reconnexion
+    window.location.href = "connexion.html";
 });
 
         // 4. Fermer si on clique sur l'arrière-plan sombre
@@ -160,6 +196,8 @@ confirmLogoutBtn.addEventListener('click', () => {
         });
     }
 });
+
+
 
 
 
