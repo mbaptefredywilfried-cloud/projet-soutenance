@@ -1,15 +1,43 @@
 class BudgetManager {
     constructor() {
-        this.budgets = JSON.parse(localStorage.getItem('budgets') || '[]');
-        this.transactions = JSON.parse(localStorage.getItem('transactions') || '[]'); 
+        this.budgets = [];
+        this.categories = [];
+        // Les transactions doivent être récupérées depuis le backend si besoin
+        this.transactions = [];
         this.budgetIdToDelete = null; 
         this.init();
     }
 
-    init() {
+    async init() {
+        await this.fetchCategories();
         this.setupEventListeners();
-        this.renderBudgets();
-        this.updateSummary(); // Calcule tout au démarrage
+        this.populateCategorySelect();
+        this.fetchAndRenderBudgets();
+    }
+    async fetchCategories() {
+        try {
+            const response = await fetch('php/categories/get_categories.php', { credentials: 'same-origin' });
+            const data = await response.json();
+            if (data.status === 'success' && Array.isArray(data.categories)) {
+                this.categories = data.categories.filter(c => c.type === 'expense');
+            } else {
+                this.categories = [];
+            }
+        } catch (e) {
+            this.categories = [];
+        }
+    }
+
+    populateCategorySelect() {
+        const select = document.getElementById('budgetCategory');
+        if (!select) return;
+        select.innerHTML = '<option value="">Sélectionnez une catégorie</option>';
+        this.categories.forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat.name;
+            option.textContent = cat.name;
+            select.appendChild(option);
+        });
     }
 
     setupEventListeners() {
@@ -63,28 +91,78 @@ class BudgetManager {
 
 
 
-    handleFormSubmit(e) {
+    async handleFormSubmit(e) {
         e.preventDefault();
         const form = e.target;
         if (!this.validateForm(form)) return;
 
         const formData = new FormData(form);
-        const budget = {
-            id: Date.now(),
-            name: formData.get('budgetName').trim(),
-            amount: parseFloat(formData.get('budgetAmount')),
-            category: formData.get('budgetCategory'),
-            period: formData.get('budgetPeriod'),
-            spent: 0,
-            createdAt: new Date().toISOString()
-        };
+        const name = formData.get('budgetName').trim();
+        const amount = parseFloat(formData.get('budgetAmount'));
+        const categoryName = formData.get('budgetCategory');
+        const period = formData.get('budgetPeriod');
+        const month = this.getCurrentMonth();
+        // Récupérer l'ID de la catégorie côté serveur
+        const categoryId = await this.getCategoryIdByName(categoryName, 'expense');
+        if (!categoryId) {
+            this.showNotification('Catégorie invalide.', 'error');
+            return;
+        }
+        try {
+            const response = await fetch('php/budgets/set_budget.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify({ category_id: categoryId, amount, month })
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                this.showNotification('Budget créé avec succès !', 'success');
+                form.reset();
+                await this.fetchAndRenderBudgets();
+            } else {
+                this.showNotification(data.message || 'Erreur lors de la création.', 'error');
+            }
+        } catch (err) {
+            this.showNotification('Erreur réseau ou serveur.', 'error');
+        }
+    }
 
-        this.budgets.push(budget);
-        this.saveBudgets();
-        this.renderBudgets();
-        this.updateSummary(); // Met à jour les compteurs après ajout
-        form.reset();
-        this.showNotification('Budget créé avec succès !', 'success');
+    async fetchAndRenderBudgets() {
+        try {
+            const response = await fetch('php/budgets/get_budgets.php', { credentials: 'same-origin' });
+            const data = await response.json();
+            if (data.status === 'success') {
+                this.budgets = data.budgets;
+                this.renderBudgets();
+                this.updateSummary();
+            } else {
+                this.budgets = [];
+                this.renderBudgets();
+                this.updateSummary();
+            }
+        } catch (e) {
+            this.budgets = [];
+            this.renderBudgets();
+            this.updateSummary();
+        }
+    }
+
+    async getCategoryIdByName(name, type) {
+        try {
+            const response = await fetch('php/categories/get_categories.php', { credentials: 'same-origin' });
+            const data = await response.json();
+            if (data.status === 'success' && Array.isArray(data.categories)) {
+                const found = data.categories.find(cat => cat.name === name && cat.type === type);
+                return found ? found.id : null;
+            }
+        } catch (e) {}
+        return null;
+    }
+
+    getCurrentMonth() {
+        const now = new Date();
+        return now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
     }
 
     validateForm(form) {
@@ -177,7 +255,8 @@ class BudgetManager {
     }
 
     createBudgetCard(budget) {
-        const currencySymbol = localStorage.getItem('appCurrency') || '€';
+        // Récupérer la devise depuis le backend ou une variable globale
+        const currencySymbol = window.appCurrency || '€';
         const spent = this.calculateSpent(budget);
         const rawRemaining = budget.amount - spent;
         const remaining = Math.max(0, rawRemaining); 
@@ -270,7 +349,7 @@ class BudgetManager {
         const elTotalSpent = document.getElementById('totalSpent');
         const elBalance = document.getElementById('balance');
 
-        const currencySymbol = localStorage.getItem('appCurrency') || '€';
+        const currencySymbol = window.appCurrency || '€';
         if (elTotalBudgeted) elTotalBudgeted.textContent = `${totalBudgeted.toLocaleString()} ${currencySymbol}`;
         if (elTotalSpent) elTotalSpent.textContent = `${totalSpent.toLocaleString()} ${currencySymbol}`;
         if (elBalance) elBalance.textContent = `${balance.toLocaleString()} ${currencySymbol}`;
@@ -285,11 +364,27 @@ class BudgetManager {
         if (elTotalCount) elTotalCount.textContent = totalBudgetsCount;
 
         // Synchro avec LocalStorage
-        localStorage.setItem('userBudgetInitial', totalBudgeted.toFixed(2));
-        localStorage.setItem('userTotalSpent', totalSpent.toFixed(2));
+        // Synchronisation côté backend si besoin
+        fetch('php/budget/set_budget.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify({
+                totalBudgeted: totalBudgeted,
+                totalSpent: totalSpent
+            })
+        });
     }
 
-    saveBudgets() { localStorage.setItem('budgets', JSON.stringify(this.budgets)); }
+    saveBudgets() {
+        // Synchronisation côté backend
+        fetch('php/budget/set_budget.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify({ budgets: this.budgets })
+        });
+    }
 
     escapeHtml(text) {
         const div = document.createElement('div');

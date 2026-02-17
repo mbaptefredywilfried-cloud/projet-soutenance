@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
     
     // Debug: Check if budget overrun function exists
     console.log('checkBudgetOverrun available:', typeof window.checkBudgetOverrun);
-    console.log('budgetOverrunNotification setting:', localStorage.getItem('budgetOverrunNotification'));
+    // ...existing code...
     
     // --- GESTION DU MENU BURGER RESPONSIVE ---
     const menuBurger = document.getElementById('menuBurger');
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const deleteModal = document.getElementById('deleteModal');
 
     // Transaction functionality
-    let transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+    let transactions = [];
     const transactionForm = document.getElementById('transactionForm');
     const transactionsContainer = document.getElementById('transactionsContainer');
     
@@ -82,11 +82,30 @@ document.addEventListener('DOMContentLoaded', function () {
     let currentFilter = 'all';
     let showAll = false; 
 
-    // Définir les catégories par type
-    const categories = {
-        expense: ["Alimentation", "Transport", "Loisirs", "Logement", "Sante", "Education", "Autre"],
-        income: ["Salaire", "Revenus passifs", "Cadeaux", "Vente", "Autre"]
-    };
+    // Catégories dynamiques synchronisées depuis le backend
+    let categories = { expense: [], income: [] };
+    async function fetchCategories() {
+        try {
+            const response = await fetch('php/categories/get_categories.php', { credentials: 'same-origin' });
+            const data = await response.json();
+            if (data.status === 'success' && Array.isArray(data.categories)) {
+                categories.expense = data.categories.filter(c => c.type === 'expense').map(c => c.name);
+                categories.income = data.categories.filter(c => c.type === 'income').map(c => c.name);
+            }
+        } catch (e) {
+            categories = { expense: [], income: [] };
+        }
+    }
+    // Charger les catégories au démarrage
+    fetchCategories().then(() => {
+        // Mettre à jour les listes déroulantes si besoin
+        const typeSelect = document.getElementById('transactionType');
+        const categorySelect = document.getElementById('transactionCategory');
+        if (typeSelect && categorySelect) {
+            typeSelect.addEventListener('change', () => updateCategoryOptions(typeSelect, categorySelect));
+            updateCategoryOptions(typeSelect, categorySelect);
+        }
+    });
 
     // --- FONCTION TOAST ---
     function showSuccessToast(message) {
@@ -187,7 +206,26 @@ document.addEventListener('DOMContentLoaded', function () {
                 
                 transactions[index] = updatedTransaction;
 
-                localStorage.setItem('transactions', JSON.stringify(transactions));
+                // Synchronisation avec le backend
+                fetch('php/transactions/add_transaction.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({
+                        transaction: updatedTransaction,
+                        category_id: updatedTransaction.category_id // Assurez-vous que category_id est bien numérique
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        renderTransactions();
+                        editModal.style.display = 'none';
+                        showNotification('Transaction modifiée !', 'success');
+                    } else {
+                        showNotification('Erreur lors de la modification.', 'error');
+                    }
+                });
                 // Check for budget overrun if this is an expense
                 if (updatedTransaction.type === 'expense' && typeof checkBudgetOverrun === 'function') {
                     checkBudgetOverrun(updatedTransaction.category);
@@ -349,7 +387,21 @@ document.addEventListener('DOMContentLoaded', function () {
             
             document.getElementById('confirmDeleteBtn').onclick = function() {
                 transactions = [];
-                localStorage.setItem('transactions', JSON.stringify([]));
+                // Suppression côté backend
+                fetch('php/transactions/delete_all_transactions.php', {
+                    method: 'POST',
+                    credentials: 'same-origin'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        renderTransactions();
+                        if (deleteModal) deleteModal.style.display = 'none';
+                        showNotification('Historique vidé !', 'success');
+                    } else {
+                        showNotification('Erreur lors du vidage.', 'error');
+                    }
+                });
                 renderTransactions();
                 if (deleteModal) deleteModal.style.display = 'none';
                 showSuccessToast("Historique vidé !");
@@ -359,34 +411,83 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Form submission principal
     if (transactionForm) {
-        transactionForm.addEventListener('submit', function(e) {
+        transactionForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             const formData = new FormData(transactionForm);
             const transaction = {
-                id: Date.now(),
                 type: formData.get('transactionType'),
                 category: formData.get('transactionCategory'),
                 amount: parseFloat(formData.get('transactionAmount')),
-                date: formData.get('transactionDate'),
+                transaction_date: formData.get('transactionDate'),
                 description: document.getElementById('transactionDescription').value || ''
             };
 
-            if (transaction.type && transaction.category && transaction.amount > 0 && transaction.date) {
-                transactions.push(transaction);
-                localStorage.setItem('transactions', JSON.stringify(transactions));
-                // Check for budget overrun if this is an expense
-                if (transaction.type === 'expense' && typeof checkBudgetOverrun === 'function') {
-                    checkBudgetOverrun(transaction.category);
+            if (transaction.type && transaction.category && transaction.amount > 0 && transaction.transaction_date) {
+                // Récupérer l'ID de la catégorie côté serveur (à adapter si besoin)
+                const categoryId = await getCategoryIdByName(transaction.category, transaction.type);
+                if (!categoryId) {
+                    alert('Catégorie invalide.');
+                    return;
                 }
-                renderTransactions();
-                transactionForm.reset();
-                document.getElementById('transactionDate').value = today;
-                showSuccessToast("Transaction ajoutée !");
+                transaction.category_id = categoryId;
+                try {
+                    const response = await fetch('php/transactions/add_transaction.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'same-origin',
+                        body: JSON.stringify(transaction)
+                    });
+                    const data = await response.json();
+                    if (data.status === 'success') {
+                        showSuccessToast('Transaction ajoutée !');
+                        transactionForm.reset();
+                        document.getElementById('transactionDate').value = today;
+                        await fetchAndRenderTransactions();
+                    } else {
+                        alert(data.message || 'Erreur lors de l\'ajout.');
+                    }
+                } catch (err) {
+                    alert('Erreur réseau ou serveur.');
+                }
             } else {
                 alert('Veuillez remplir tous les champs correctement.');
             }
         });
     }
+
+    // Fonction utilitaire pour obtenir l'ID de la catégorie par son nom et type
+    async function getCategoryIdByName(name, type) {
+        try {
+            const response = await fetch('php/categories/get_categories.php', { credentials: 'same-origin' });
+            const data = await response.json();
+            if (data.status === 'success' && Array.isArray(data.categories)) {
+                const found = data.categories.find(cat => cat.name === name && cat.type === type);
+                return found ? found.id : null;
+            }
+        } catch (e) {}
+        return null;
+    }
+
+    // Récupérer et afficher les transactions depuis le backend
+    async function fetchAndRenderTransactions() {
+        try {
+            const response = await fetch('php/transactions/get_transactions.php', { credentials: 'same-origin' });
+            const data = await response.json();
+            if (data.status === 'success') {
+                transactions = data.transactions;
+                renderTransactions();
+            } else {
+                transactions = [];
+                renderTransactions();
+            }
+        } catch (e) {
+            transactions = [];
+            renderTransactions();
+        }
+    }
+
+    // Initialisation : charger les transactions au chargement de la page
+    fetchAndRenderTransactions();
 
     // --- Fonction de formatage des montants ---
     function formatAmount(amount) {
@@ -417,7 +518,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const limit = 3;
         const toDisplay = showAll ? filteredTransactions : filteredTransactions.slice(0, limit);
-        const currencySymbol = localStorage.getItem('appCurrency') || '€';
+        // Récupérer la devise depuis le backend ou une variable globale
+        const currencySymbol = window.appCurrency || '€';
 
         toDisplay.forEach(transaction => {
             const transactionItem = document.createElement('div');
@@ -482,12 +584,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
         document.getElementById('confirmDeleteBtn').onclick = function() {
             if (transactionToDelete !== null) {
-                transactions = transactions.filter(t => t.id !== transactionToDelete);
-                localStorage.setItem('transactions', JSON.stringify(transactions));
-                renderTransactions();
-                if (deleteModal) deleteModal.style.display = 'none';
-                showSuccessToast("Transaction supprimée !");
-                transactionToDelete = null;
+                // Suppression côté backend
+                fetch('php/transactions/delete_transaction.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ transaction_id: transactionToDelete })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        renderTransactions();
+                        if (deleteModal) deleteModal.style.display = 'none';
+                        showNotification('Transaction supprimée !', 'success');
+                        transactionToDelete = null;
+                    } else {
+                        showNotification('Erreur lors de la suppression.', 'error');
+                    }
+                });
             }
         };
     }

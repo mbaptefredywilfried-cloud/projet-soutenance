@@ -312,6 +312,13 @@ function handleAccountStats() {
         pieChart.update();
     }
 
+    function formatAmountForChart(amount) {
+        if (amount >= 1000) {
+            return (amount / 1000).toFixed(0) + 'k';
+        }
+        return amount.toString();
+    }
+
     function updateBarChart(scope) {
         if (!barChart) return;
         const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
@@ -346,8 +353,8 @@ function handleAccountStats() {
                 .reduce((sum, t) => sum + t.amount, 0);
         });
         
-        // Créer les labels des mois
-        const labels = months.map(m => monthNames[m.month]);
+        // Créer les labels des mois avec l'année
+        const labels = months.map(m => `${monthNames[m.month]} ${m.year}`);
         
         barChart.data = {
             labels: labels,
@@ -364,6 +371,14 @@ function handleAccountStats() {
                 }
             ]
         };
+
+        // Appliquer le formatage des montants sur l'axe Y
+        if (barChart.options && barChart.options.scales && barChart.options.scales.y) {
+            barChart.options.scales.y.ticks.callback = function(value) {
+                return formatAmountForChart(value);
+            };
+        }
+
         barChart.update();
     }
 

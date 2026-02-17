@@ -1,116 +1,42 @@
 <?php
-/**
- * Inscription - Crée un nouvel utilisateur
- */
+// php/auth/register.php
+header('Content-Type: application/json');
+require_once __DIR__ . '/../config/database.php';
 
+$data = json_decode(file_get_contents('php://input'), true);
+$username = $data['username'] ?? '';
+$email = $data['email'] ?? '';
+$password = $data['password'] ?? '';
+
+if (!$username || !$email || !$password) {
+    echo json_encode(['success' => false, 'error' => 'Champs manquants']);
+    exit;
+}
+
+// Vérifier si l'utilisateur existe déjà
+$stmt = $pdo->prepare('SELECT id FROM users WHERE username = :username OR email = :email');
+$stmt->execute(['username' => $username, 'email' => $email]);
+if ($stmt->fetch()) {
+    echo json_encode(['success' => false, 'error' => 'Utilisateur ou email déjà existant']);
+    exit;
+}
+
+$hash = password_hash($password, PASSWORD_DEFAULT);
+$stmt = $pdo->prepare('INSERT INTO users (username, email, password_hash, created_at) VALUES (:username, :email, :password_hash, NOW())');
+$stmt->execute([
+    'username' => $username,
+    'email' => $email,
+    'password_hash' => $hash
+]);
+
+// Récupérer l'id généré par le trigger
+$stmt = $pdo->prepare('SELECT id FROM users WHERE email = :email');
+$stmt->execute(['email' => $email]);
+$user = $stmt->fetch();
 session_start();
-header('Content-Type: application/json; charset=utf-8');
-
-require_once '../config/db_connect.php';
-
-// Récupérer les données POST
-$username = isset($_POST['name']) ? trim($_POST['name']) : '';
-$email = isset($_POST['email']) ? trim($_POST['email']) : '';
-$password = isset($_POST['password']) ? $_POST['password'] : '';
-$confirm_password = isset($_POST['confirm_password']) ? $_POST['confirm_password'] : '';
-
-// Vérifier les données
-if (empty($username) || empty($email) || empty($password)) {
-    http_response_code(400);
-    header('Location: ../../inscription.html?error=missing');
-    exit();
-}
-
-// Validation
-if (strlen($username) < 3) {
-    http_response_code(400);
-    header('Location: ../../inscription.html?error=username_short');
-    exit();
-}
-
-if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    http_response_code(400);
-    header('Location: ../../inscription.html?error=invalid_email');
-    exit();
-}
-
-if (strlen($password) < 8) {
-    http_response_code(400);
-    header('Location: ../../inscription.html?error=password_short');
-    exit();
-}
-
-// Vérification de confirmation côté serveur (double vérification)
-if ($password !== $confirm_password) {
-    http_response_code(400);
-    header('Location: ../../inscription.html?error=password_mismatch');
-    exit();
-}
-
-// Vérifier si l'utilisateur existe
-$check = $conn->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
-if (!$check) {
-    http_response_code(500);
-    header('Location: ../../inscription.html?error=db_error');
-    exit();
-}
-
-$check->bind_param("ss", $username, $email);
-$check->execute();
-$result = $check->get_result();
-
-if ($result->num_rows > 0) {
-    http_response_code(409);
-    header('Location: ../../inscription.html?error=user_exists');
-    $check->close();
-    exit();
-}
-$check->close();
-
-// Générer l'ID au format AD_XXX
-$lastUserQuery = $conn->query("SELECT id FROM users ORDER BY id DESC LIMIT 1");
-$lastUser = $lastUserQuery->fetch_assoc();
-$lastUserId = $lastUser ? $lastUser['id'] : 'AD_000';
-
-// Extraire le numéro de l'ID
-$lastNumber = (int)substr($lastUserId, 3);
-$newNumber = $lastNumber + 1;
-$newUserId = 'AD_' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
-
-// Hasher le mot de passe
-$hashed = password_hash($password, PASSWORD_DEFAULT);
-
-// Insérer l'utilisateur avec l'ID généré
-$insert = $conn->prepare("INSERT INTO users (id, username, email, password) VALUES (?, ?, ?, ?)");
-if (!$insert) {
-    http_response_code(500);
-    header('Location: ../../inscription.html?error=db_error');
-    exit();
-}
-
-$insert->bind_param("ssss", $newUserId, $username, $email, $hashed);
-
-if ($insert->execute()) {
-    $user_id = $newUserId;
-    
-    // Créer la session
-    $_SESSION['user_id'] = $user_id;
-    $_SESSION['username'] = $username;
-    $_SESSION['email'] = $email;
-    
-    $insert->close();
-    $conn->close();
-    
-    // Redirection vers inscription avec paramètre de succès
-    header('Location: ../../inscription.html?success=1');
-    exit();
+if ($user && isset($user['id'])) {
+    $_SESSION['user_id'] = $user['id'];
+    echo json_encode(['success' => true]);
 } else {
-    http_response_code(500);
-    header('Location: ../../inscription.html?error=registration_failed');
-    exit();
+    echo json_encode(['success' => false, 'error' => "Erreur lors de la récupération de l'identifiant utilisateur"]);
 }
-
-$insert->close();
-$conn->close();
-
-?>

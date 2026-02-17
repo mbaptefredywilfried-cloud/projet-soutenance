@@ -1,13 +1,7 @@
 <?php
-/**
- * Déconnexion - Détruit la session et redirige
- */
-
+// php/auth/logout.php
+header('Content-Type: application/json');
 session_start();
+session_unset();
 session_destroy();
-
-// Rediriger vers la page d'accueil
-header('Location: ../../index.html');
-exit();
-
-?>
+echo json_encode(['success' => true]);

@@ -20,16 +20,11 @@ function enforceAuth() {
     if (publicPages.includes(current)) return; // pages publiques
     // Vérifier la session côté serveur
     fetch('php/auth/check_session.php', { credentials: 'same-origin' })
-        .then(response => {
-            if (!response.ok) throw new Error('No session');
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
             if (!data.success) {
                 window.location.href = 'connexion.html';
             }
-            // Optionnel: stocker temporairement le nom utilisateur dans window
-            if (data.username) window._currentUsername = data.username;
         })
         .catch(() => {
             window.location.href = 'connexion.html';
@@ -181,11 +176,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // 3. Rediriger vers la connexion si on confirme
         // Dans common.js
 confirmLogoutBtn.addEventListener('click', () => {
-    // Déconnexion non destructive : on marque l'utilisateur comme déconnecté
-    localStorage.setItem('isAuthenticated', 'false');
-    localStorage.removeItem('lastLoginTime');
-    // Optionnel : on peut garder les données utilisateur pour une reconnexion
-    window.location.href = "connexion.html";
+    // Appel au backend pour déconnexion sécurisée
+    fetch('php/auth/logout.php', { method: 'POST', credentials: 'same-origin' })
+        .then(() => {
+            window.location.href = "connexion.html";
+        });
 });
 
         // 4. Fermer si on clique sur l'arrière-plan sombre

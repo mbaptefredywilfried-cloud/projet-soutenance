@@ -32,9 +32,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const avatarInput = document.getElementById('avatarInput');
     const avatarImage = document.querySelector('.avatar-image');
     const userNameDisplay = document.querySelector('.side-header h3');
-    const fullNameDisplay = document.querySelector('.card2 .info .profil-detail-group:nth-child(1) p');
-    const emailDisplay = document.querySelector('.card2 .info .profil-detail-group:nth-child(2) p');
-    const phoneDisplay = document.querySelector('.card2 .info .profil-detail-group:nth-child(3) p');
+    const fullNameDisplay = document.getElementById('display-name');
+    const emailDisplay = document.getElementById('display-email');
+    const phoneDisplay = document.getElementById('display-phone');
     
     // Sélecteurs Aperçu Budgétaire (Card 3)
     const statsValues = document.querySelectorAll('.card3 .stat-value');

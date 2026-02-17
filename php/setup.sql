@@ -1,87 +1,100 @@
--- ========================================
--- SCRIPT DE CRÉATION DE LA BASE NUMERA
--- ========================================
+-- Création de la base de données
+CREATE DATABASE IF NOT EXISTS numera
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
 
--- Créer la base de données si elle n'existe pas
-CREATE DATABASE IF NOT EXISTS `numera` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `numera`;
+USE numera;
 
--- ========================================
--- TABLE USERS
--- ========================================
-CREATE TABLE IF NOT EXISTS `users` (
-  `id` VARCHAR(10) NOT NULL PRIMARY KEY,
-  `username` VARCHAR(100) NOT NULL UNIQUE KEY,
-  `email` VARCHAR(255) NOT NULL UNIQUE KEY,
-  `password` VARCHAR(255) NOT NULL,
-  `balance` DECIMAL(12, 2) NOT NULL DEFAULT 0.00,
-  `total_income` DECIMAL(12, 2) NOT NULL DEFAULT 0.00,
-  `total_expense` DECIMAL(12, 2) NOT NULL DEFAULT 0.00,
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `last_login` TIMESTAMP NULL DEFAULT NULL,
-  INDEX idx_email (`email`),
-  INDEX idx_username (`username`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Table des utilisateurs
+CREATE TABLE users (
+    id VARCHAR(8) NOT NULL PRIMARY KEY, -- Format AD_XXXXX
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    -- L'identifiant est généré automatiquement via un trigger
+    CONSTRAINT chk_id_format CHECK (id REGEXP '^AD_[0-9]{5}$')
+) ENGINE=InnoDB COMMENT='Utilisateurs de l’application';
 
--- ========================================
--- TABLE CATEGORIES
--- ========================================
-CREATE TABLE IF NOT EXISTS `categories` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `name` VARCHAR(100) NOT NULL UNIQUE KEY,
-  `description` TEXT,
-  `icon` VARCHAR(50),
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Table des catégories (revenus/dépenses)
+CREATE TABLE categories (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id VARCHAR(8) NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    type ENUM('income', 'expense') NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_categories_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT uc_user_category UNIQUE (user_id, name, type)
+) ENGINE=InnoDB COMMENT='Catégories personnalisées par utilisateur';
 
--- ========================================
--- TABLE TRANSACTIONS
--- ========================================
-CREATE TABLE IF NOT EXISTS `transactions` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `user_id` VARCHAR(10) NOT NULL,
-  `description` VARCHAR(255) NOT NULL,
-  `amount` DECIMAL(12, 2) NOT NULL,
-  `category_id` INT UNSIGNED,
-  `type` ENUM('income', 'expense') NOT NULL,
-  `date` DATETIME NOT NULL,
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  INDEX idx_user_id (`user_id`),
-  INDEX idx_category_id (`category_id`),
-  INDEX idx_date (`date`),
-  CONSTRAINT fk_transactions_user FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  CONSTRAINT fk_transactions_category FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Table des transactions
+CREATE TABLE transactions (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id VARCHAR(8) NOT NULL,
+    category_id INT UNSIGNED NOT NULL,
+    type ENUM('income', 'expense') NOT NULL,
+    amount DECIMAL(12,2) NOT NULL,
+    description VARCHAR(255),
+    transaction_date DATE NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_transactions_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_transactions_category FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE,
+    INDEX idx_user_date (user_id, transaction_date)
+) ENGINE=InnoDB COMMENT='Transactions financières des utilisateurs';
 
--- ========================================
--- TABLE BUDGETS
--- ========================================
-CREATE TABLE IF NOT EXISTS `budgets` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `user_id` VARCHAR(10) NOT NULL,
-  `name` VARCHAR(255) NOT NULL,
-  `limit_amount` DECIMAL(12, 2) NOT NULL,
-  `category_id` INT UNSIGNED,
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  INDEX idx_user_id (`user_id`),
-  INDEX idx_category_id (`category_id`),
-  CONSTRAINT fk_budgets_user FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  CONSTRAINT fk_budgets_category FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Table des budgets mensuels
+CREATE TABLE budgets (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id VARCHAR(8) NOT NULL,
+    category_id INT UNSIGNED NOT NULL,
+    amount DECIMAL(12,2) NOT NULL,
+    month CHAR(7) NOT NULL, -- Format YYYY-MM
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_budgets_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_budgets_category FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE,
+    CONSTRAINT uc_budget UNIQUE (user_id, category_id, month)
+) ENGINE=InnoDB COMMENT='Budgets mensuels par catégorie et utilisateur';
 
--- ========================================
--- INSERTION DES CATÉGORIES PAR DÉFAUT
--- ========================================
-INSERT IGNORE INTO `categories` (`name`, `description`, `icon`) VALUES
-('Alimentation', 'Courses et restaurants', 'fa-utensils'),
-('Transport', 'Essence, transport, parking', 'fa-car'),
-('Loisirs', 'Divertissements et loisirs', 'fa-gamepad'),
-('Santé', 'Médicaments et soins médicaux', 'fa-heartbeat'),
-('Logement', 'Loyer, électricité, internet', 'fa-home'),
-('Vêtements', 'Vêtements et accessoires', 'fa-shirt'),
-('Éducation', 'Formation et études', 'fa-book'),
-('Autres', 'Autres dépenses', 'fa-ellipsis-h'),
-('Salaire', 'Revenu principal', 'fa-briefcase'),
-('Bonus', 'Primes et bonus', 'fa-gift');
+-- Trigger pour générer automatiquement l’ID utilisateur au format AD_XXXXX
+DELIMITER $$
+CREATE TRIGGER before_insert_users
+BEFORE INSERT ON users
+FOR EACH ROW
+BEGIN
+    DECLARE new_id VARCHAR(8);
+    DECLARE try_count INT DEFAULT 0;
+    REPEAT
+        SET new_id = CONCAT('AD_', LPAD(FLOOR(RAND() * 100000), 5, '0'));
+        SET try_count = try_count + 1;
+    UNTIL (SELECT COUNT(*) FROM users WHERE id = new_id) = 0 OR try_count > 10
+    END REPEAT;
+    SET NEW.id = new_id;
+END$$
+DELIMITER ;
+
+-- Exemple d’insertion d’un utilisateur
+INSERT INTO users (username, email, password_hash)
+VALUES ('alice', 'alice@email.com', 'hash_de_mot_de_passe');
+
+-- Exemple de requête pour vérifier un dépassement de budget
+-- (Liste les budgets dépassés pour un utilisateur donné et un mois donné)
+SELECT
+    b.user_id,
+    b.category_id,
+    c.name AS category_name,
+    b.month,
+    b.amount AS budget_amount,
+    IFNULL(SUM(t.amount), 0) AS total_spent
+FROM budgets b
+LEFT JOIN transactions t
+    ON b.user_id = t.user_id
+    AND b.category_id = t.category_id
+    AND t.type = 'expense'
+    AND DATE_FORMAT(t.transaction_date, '%Y-%m') = b.month
+JOIN categories c ON b.category_id = c.id
+WHERE b.user_id = 'AD_XXXXX' -- Remplacer par l’ID réel de l’utilisateur
+  AND b.month = '2026-02'
+GROUP BY b.id
+HAVING total_spent > b.amount;
+
+-- Fin du script
