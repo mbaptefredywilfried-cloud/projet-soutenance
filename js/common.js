@@ -19,10 +19,10 @@ function enforceAuth() {
 
     if (publicPages.includes(current)) return; // pages publiques
     // Vérifier la session côté serveur
-    fetch('php/auth/check_session.php', { credentials: 'same-origin' })
+    fetch('php/auth/check_auth.php', { credentials: 'same-origin' })
         .then(response => response.json())
         .then(data => {
-            if (!data.success) {
+            if (data.status !== 'success') {
                 window.location.href = 'connexion.html';
             }
         })

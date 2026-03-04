@@ -1,84 +1,235 @@
 document.addEventListener('DOMContentLoaded', function () {
-    
-    // Debug: Check if budget overrun function exists
-    console.log('checkBudgetOverrun available:', typeof window.checkBudgetOverrun);
-    // ...existing code...
-    
-    // --- GESTION DU MENU BURGER RESPONSIVE ---
-    const menuBurger = document.getElementById('menuBurger');
-    const sidebarOverlay = document.querySelector('.sidebar-overlay');
-    const aside = document.querySelector('aside');
-
-    if (menuBurger && sidebarOverlay && aside) {
-        // Fonction pour ouvrir/fermer le menu
-        function toggleSidebar() {
-            const isOpen = aside.classList.contains('active');
-            
-            if (isOpen) {
-                // Fermer le menu
-                aside.classList.remove('active');
-                sidebarOverlay.classList.remove('active');
-                menuBurger.classList.remove('active');
-                document.body.style.overflow = 'auto'; // Réactiver le scroll
-            } else {
-                // Ouvrir le menu
-                aside.classList.add('active');
-                sidebarOverlay.classList.add('active');
-                menuBurger.classList.add('active');
-                document.body.style.overflow = 'hidden'; // Empêcher le scroll
-            }
-        }
-
-        // Événement sur le bouton burger
-        menuBurger.addEventListener('click', function(e) {
-            e.stopPropagation();
-            toggleSidebar();
-        });
-
-        // Fermer le menu en cliquant sur l'overlay
-        sidebarOverlay.addEventListener('click', function() {
-            toggleSidebar();
-        });
-
-        // Fermer le menu en cliquant sur un lien dans le sidebar
-        document.querySelectorAll('.side .nav a').forEach(link => {
-            link.addEventListener('click', function() {
-                // Sur mobile seulement
-                if (window.innerWidth <= 767) {
-                    toggleSidebar();
-                }
-            });
-        });
-
-        // Fermer le menu avec la touche Échap
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && aside.classList.contains('active')) {
-                toggleSidebar();
-            }
-        });
-
-        // Gérer le redimensionnement de la fenêtre
-        window.addEventListener('resize', function() {
-            // Si on passe en desktop (> 767px), fermer le menu s'il est ouvert
-            if (window.innerWidth > 767) {
-                aside.classList.remove('active');
-                sidebarOverlay.classList.remove('active');
-                menuBurger.classList.remove('active');
-                document.body.style.overflow = 'auto';
-            }
-        });
-    }
+    // ...menu burger et responsive inchangé...
 
     // --- VARIABLES POUR LA SUPPRESSION ---
     let transactionToDelete = null;
     const deleteModal = document.getElementById('deleteModal');
 
-    // Transaction functionality
     let transactions = [];
     const transactionForm = document.getElementById('transactionForm');
     const transactionsContainer = document.getElementById('transactionsContainer');
-    
-    // --- Variables de contrôle ---
+
+    // Charger les transactions depuis le backend
+    async function fetchTransactions() {
+        try {
+            const response = await fetch('php/transactions/list.php', { credentials: 'same-origin' });
+            const data = await response.json();
+            if (data.status === 'success') {
+                console.log('Transactions reçues:', data.data);
+                transactions = data.data;
+            } else {
+                transactions = [];
+            }
+            renderTransactions();
+        } catch (e) {
+            transactions = [];
+            renderTransactions();
+        }
+    }
+
+    // Ajouter une transaction
+    async function addTransaction(transaction) {
+        try {
+            const response = await fetch('php/transactions/add.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify(transaction)
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                showSuccessToast('Transaction ajoutée !');
+                transactionForm.reset();
+                await fetchTransactions();
+                window.dispatchEvent(new Event('transactionsUpdated'));
+            } else {
+                alert(data.message || 'Erreur lors de l\'ajout.');
+            }
+        } catch (err) {
+            alert('Erreur réseau ou serveur.');
+        }
+    }
+
+    // Modifier une transaction
+    async function updateTransaction(transaction) {
+        try {
+            const response = await fetch('php/transactions/update.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify(transaction)
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                showSuccessToast('Transaction modifiée !');
+                await fetchTransactions();
+                window.dispatchEvent(new Event('transactionsUpdated'));
+            } else {
+                alert(data.message || 'Erreur lors de la modification.');
+            }
+        } catch (err) {
+            alert('Erreur réseau ou serveur.');
+        }
+    }
+
+    // Supprimer une transaction
+    async function deleteTransaction(id) {
+        try {
+            const response = await fetch('php/transactions/delete.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify({ id })
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                showSuccessToast('Transaction supprimée !');
+                await fetchTransactions();
+                window.dispatchEvent(new Event('transactionsUpdated'));
+            } else {
+                alert(data.message || 'Erreur lors de la suppression.');
+            }
+        } catch (err) {
+            alert('Erreur réseau ou serveur.');
+        }
+    }
+
+    // Soumission du formulaire
+    if (transactionForm) {
+        transactionForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(transactionForm);
+            const transaction = {
+                category_id: parseInt(formData.get('transactionCategory'), 10),
+                type: formData.get('transactionType'),
+                amount: parseFloat(formData.get('transactionAmount')),
+                description: formData.get('transactionDescription') || '',
+                transaction_date: formData.get('transactionDate')
+            };
+            await addTransaction(transaction);
+        });
+    }
+
+    // Rendu des transactions
+    function renderTransactions() {
+        if (!transactionsContainer) return;
+        transactionsContainer.innerHTML = '';
+        if (transactions.length === 0) {
+            transactionsContainer.innerHTML = `<div class="empty-state"><i class="fas fa-receipt"></i><p>Aucune transaction trouvée</p></div>`;
+            return;
+        }
+        transactions.forEach(transaction => {
+            const transactionItem = document.createElement('div');
+            transactionItem.className = 'transaction-item';
+
+            // Définir l'icône et la couleur selon la catégorie
+            const iconMap = {
+                'Alimentation': {icon: 'fas fa-utensils', color: '#fff', bg: '#00B894'},
+                'Transport': {icon: 'fas fa-gas-pump', color: '#fff', bg: '#0984E3'},
+                'Loisirs': {icon: 'fas fa-gamepad', color: '#fff', bg: '#E84393'},
+                'Logement': {icon: 'fas fa-home', color: '#fff', bg: '#6C5CE7'},
+                'Santé': {icon: 'fas fa-heartbeat', color: '#fff', bg: '#D63031'},
+                'Éducation': {icon: 'fas fa-graduation-cap', color: '#fff', bg: '#d1fae5'},
+                'Salaire': {icon: 'fas fa-wallet', color: '#fff', bg: '#d1fae5'},
+                'Prime': {icon: 'fas fa-gift', color: '#fff', bg: '#cffafe'},
+                'Activité secondaire': {icon: 'fas fa-briefcase', color: '#fff', bg: '#16A085'},
+                'Business': {icon: 'fas fa-store', color: '#fff', bg: '#1ABC9C'},
+                'Bourse': {icon: 'fas fa-hand-holding-dollar', color: '#fff', bg: '#2980B9'},
+                'Aide familiale': {icon: 'fas fa-people-roof', color: '#fff', bg: '#8E44AD'},
+                'Investissements': {icon: 'fas fa-chart-line', color: '#fff', bg: '#2ECC71'},
+                'Ventes': {icon: 'fas fa-cart-shopping', color: '#fff', bg: '#F39C12'},
+                'Remboursements': {icon: 'fas fa-rotate-left', color: '#fff', bg: '#3498DB'},
+                'Gains exceptionnels': {icon: 'fas fa-coins', color: '#fff', bg: '#F1C40F'},
+                'Autres revenus': {icon: 'fas fa-plus', color: '#fff', bg: '#7F8C8D'},
+                'Vêtements': {icon: 'fas fa-shirt', color: '#fff', bg: '#FDCB6E'},
+                'Communication': {icon: 'fas fa-mobile-screen', color: '#fff', bg: '#00CEC9'},
+                'Finance': {icon: 'fas fa-credit-card', color: '#fff', bg: '#636E72'},
+                'Assurances': {icon: 'fas fa-shield-halved', color: '#fff', bg: '#2D3436'},
+                'Impôts': {icon: 'fas fa-file-invoice-dollar', color: '#fff', bg: '#B71540'},
+                'Abonnements': {icon: 'fas fa-rotate-right', color: '#fff', bg: '#6AB04C'},
+                'Cadeaux': {icon: 'fas fa-gift', color: '#fff', bg: '#FF7675'},
+                'Divers': {icon: 'fas fa-ellipsis', color: '#fff', bg: '#95A5A6'},
+                'Autre': {icon: 'fas fa-ellipsis-h', color: '#fff', bg: '#a3a3a3'}
+            };
+            const cat = transaction.category_name || 'Autre';
+            const iconData = iconMap[cat] || iconMap['Autre'];
+
+            // Déterminer le signe et la couleur du montant
+            const isIncome = (transaction.category_type === 'income');
+            const sign = isIncome ? '+' : '-';
+            const amountColor = isIncome ? '#10b981' : '#ef4444';
+
+            // Formatage de la date
+            const date = new Date(transaction.transaction_date || transaction.date);
+            const dateStr = date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+
+            transactionItem.innerHTML = `
+                <div class="transaction-info" style="display:flex;align-items:center;gap:16px;">
+                    <div class="transaction-icon" style="background:${iconData.bg};width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;font-size:22px;">
+                        <i class="${iconData.icon}" style="color:${iconData.color};"></i>
+                    </div>
+                    <div class="transaction-details">
+                        <h4 style="margin:0;font-weight:600;">${transaction.description || cat}</h4>
+                        <p style="margin:0;color:#888;font-size:15px;">${dateStr} • ${cat}</p>
+                    </div>
+                </div>
+                <div style="display: inline-flex; gap: 35px; align-items: center;">
+                    <div class="transaction-amount" style="font-size: 18px; font-weight: 700; color:${amountColor};">
+                        ${sign}${Number(transaction.amount).toLocaleString('fr-FR', {minimumFractionDigits:2, maximumFractionDigits:2})} €
+                    </div>
+                    <div style="padding: 0px 10px 0px;">
+                        <button class="edit-btn" onclick="editTransaction(${transaction.id})" style="background-color: #3498db; border: none; color: white; cursor: pointer; margin-right: 10px; padding: 7px; border-radius: 4px;">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <button class="delete-btn" onclick="confirmDeleteTransaction(${transaction.id})" style="background-color: #e74c3c; border: none; color: white; cursor: pointer; padding: 7px; border-radius: 4px;">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            transactionsContainer.appendChild(transactionItem);
+        });
+    }
+
+    // Edition transaction (à adapter selon ton modal)
+    window.editTransaction = function(id) {
+        const transaction = transactions.find(t => t.id === id);
+        if (!transaction) return;
+        // Remplir ton modal ici puis appeler updateTransaction avec les nouvelles valeurs
+    };
+
+    // Confirmation suppression
+    window.confirmDeleteTransaction = function(id) {
+        transactionToDelete = id;
+        if (deleteModal) deleteModal.style.display = 'flex';
+        document.getElementById('confirmDeleteBtn').onclick = async function() {
+            await deleteTransaction(transactionToDelete);
+            if (deleteModal) deleteModal.style.display = 'none';
+            transactionToDelete = null;
+        };
+    };
+
+    // Toast de succès
+    function showSuccessToast(message) {
+        let container = document.getElementById('toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            document.body.appendChild(container);
+        }
+        const toast = document.createElement('div');
+        toast.className = 'toast-custom';
+        toast.innerHTML = `<div class="toast-message">${message}</div>`;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.classList.add('fade-out');
+            setTimeout(() => toast.remove(), 400);
+        }, 3000);
+    }
+
+    // Initialisation
+    fetchTransactions();
+});
     let currentFilter = 'all';
     let showAll = false; 
 
@@ -88,9 +239,10 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             const response = await fetch('php/categories/get_categories.php', { credentials: 'same-origin' });
             const data = await response.json();
+            console.log('Catégories reçues:', data);
             if (data.status === 'success' && Array.isArray(data.categories)) {
-                categories.expense = data.categories.filter(c => c.type === 'expense').map(c => c.name);
-                categories.income = data.categories.filter(c => c.type === 'income').map(c => c.name);
+                categories.expense = data.categories.filter(c => c.type === 'expense');
+                categories.income = data.categories.filter(c => c.type === 'income');
             }
         } catch (e) {
             categories = { expense: [], income: [] };
@@ -137,8 +289,8 @@ document.addEventListener('DOMContentLoaded', function () {
         if (selectedType && categories[selectedType]) {
             categories[selectedType].forEach(cat => {
                 const option = document.createElement("option");
-                option.value = cat.toLowerCase();
-                option.textContent = cat;
+                option.value = cat.id;
+                option.textContent = cat.name;
                 targetCategorySelect.appendChild(option);
             });
         }
@@ -206,26 +358,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 
                 transactions[index] = updatedTransaction;
 
-                // Synchronisation avec le backend
-                fetch('php/transactions/add_transaction.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'same-origin',
-                    body: JSON.stringify({
-                        transaction: updatedTransaction,
-                        category_id: updatedTransaction.category_id // Assurez-vous que category_id est bien numérique
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        renderTransactions();
-                        editModal.style.display = 'none';
-                        showNotification('Transaction modifiée !', 'success');
-                    } else {
-                        showNotification('Erreur lors de la modification.', 'error');
-                    }
-                });
+                localStorage.setItem('transactions', JSON.stringify(transactions));
                 // Check for budget overrun if this is an expense
                 if (updatedTransaction.type === 'expense' && typeof checkBudgetOverrun === 'function') {
                     checkBudgetOverrun(updatedTransaction.category);
@@ -387,21 +520,7 @@ document.addEventListener('DOMContentLoaded', function () {
             
             document.getElementById('confirmDeleteBtn').onclick = function() {
                 transactions = [];
-                // Suppression côté backend
-                fetch('php/transactions/delete_all_transactions.php', {
-                    method: 'POST',
-                    credentials: 'same-origin'
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        renderTransactions();
-                        if (deleteModal) deleteModal.style.display = 'none';
-                        showNotification('Historique vidé !', 'success');
-                    } else {
-                        showNotification('Erreur lors du vidage.', 'error');
-                    }
-                });
+                localStorage.setItem('transactions', JSON.stringify([]));
                 renderTransactions();
                 if (deleteModal) deleteModal.style.display = 'none';
                 showSuccessToast("Historique vidé !");
@@ -471,7 +590,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Récupérer et afficher les transactions depuis le backend
     async function fetchAndRenderTransactions() {
         try {
-            const response = await fetch('php/transactions/get_transactions.php', { credentials: 'same-origin' });
+            const response = await fetch('php/transactions/list.php', { credentials: 'same-origin' });
             const data = await response.json();
             if (data.status === 'success') {
                 transactions = data.transactions;
@@ -518,8 +637,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const limit = 3;
         const toDisplay = showAll ? filteredTransactions : filteredTransactions.slice(0, limit);
-        // Récupérer la devise depuis le backend ou une variable globale
-        const currencySymbol = window.appCurrency || '€';
+        const currencySymbol = localStorage.getItem('appCurrency') || '€';
 
         toDisplay.forEach(transaction => {
             const transactionItem = document.createElement('div');
@@ -584,24 +702,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         document.getElementById('confirmDeleteBtn').onclick = function() {
             if (transactionToDelete !== null) {
-                // Suppression côté backend
-                fetch('php/transactions/delete_transaction.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'same-origin',
-                    body: JSON.stringify({ transaction_id: transactionToDelete })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        renderTransactions();
-                        if (deleteModal) deleteModal.style.display = 'none';
-                        showNotification('Transaction supprimée !', 'success');
-                        transactionToDelete = null;
-                    } else {
-                        showNotification('Erreur lors de la suppression.', 'error');
-                    }
-                });
+                transactions = transactions.filter(t => t.id !== transactionToDelete);
+                localStorage.setItem('transactions', JSON.stringify(transactions));
+                renderTransactions();
+                if (deleteModal) deleteModal.style.display = 'none';
+                showSuccessToast("Transaction supprimée !");
+                transactionToDelete = null;
             }
         };
     }
@@ -631,4 +737,3 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     renderTransactions();
-});

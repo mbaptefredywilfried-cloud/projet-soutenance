@@ -1,7 +1,7 @@
 <?php
-// php/auth/logout.php
 header('Content-Type: application/json');
-session_start();
-session_unset();
+require_once '../config/database.php';
+
 session_destroy();
-echo json_encode(['success' => true]);
+echo json_encode(["status" => "success", "message" => "Déconnexion réussie"]);
+?>

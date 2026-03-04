@@ -9,13 +9,15 @@ document.addEventListener('DOMContentLoaded', function () {
 				const res = await fetch('./php/auth/login.php', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
+					credentials: 'same-origin',
 					body: JSON.stringify({ email, password })
 				});
 				const data = await res.json();
-				if (data.success) {
+				console.log('Réponse serveur login:', data);
+				if (data.status === "success") {
 					window.location.href = 'dasboard.html';
 				} else {
-					alert(data.error || "Échec de la connexion.");
+					alert(data.message || "Échec de la connexion.");
 				}
 			} catch (err) {
 				alert("Erreur lors de la connexion.");

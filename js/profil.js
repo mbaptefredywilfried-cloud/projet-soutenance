@@ -59,32 +59,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- 2. CHARGEMENT INITIAL ---
     function loadUserData() {
-        fetch('php/data/user_profile.php?action=get', { credentials: 'same-origin' })
-            .then(resp => {
-                if (!resp.ok) throw new Error('Not authenticated');
-                return resp.json();
-            })
+        fetch('php/users/profile.php', { credentials: 'same-origin' })
+            .then(resp => resp.json())
             .then(data => {
-                if (!data.success) throw new Error('No profile');
-                const user = data.user || {};
-                const savedName = user.username || 'Fredy 2.0';
-                const savedEmail = user.email || 'Fredy2.0@gmail.com';
-                const savedPhone = user.phone || 'Non specifie';
-                const savedPhoto = user.image || localStorage.getItem('userImage');
-
-                if (userNameDisplay) userNameDisplay.textContent = savedName;
-                if (fullNameDisplay) fullNameDisplay.textContent = savedName;
-                if (emailDisplay) emailDisplay.textContent = savedEmail;
-                if (phoneDisplay) phoneDisplay.textContent = savedPhone;
-                if (savedPhoto && avatarImage) avatarImage.src = savedPhoto;
+                if (data.status !== 'success') throw new Error('No profile');
+                const user = data.data || {};
+                if (userNameDisplay) userNameDisplay.textContent = user.name || '';
+                if (fullNameDisplay) fullNameDisplay.textContent = user.name || '';
+                if (emailDisplay) emailDisplay.textContent = user.email || '';
+                if (phoneDisplay) phoneDisplay.textContent = user.phone || '';
+                if (user.image && avatarImage) avatarImage.src = user.image;
 
                 // Mettre à jour les éléments de compte
                 const idDisplay = document.querySelector('.card4 .profil-detail-group:nth-child(1) span');
                 const creationDisplay = document.querySelector('.card4 .profil-detail-group:nth-child(2) span');
                 const lastLoginDisplay = document.querySelector('.card4 .profil-detail-group:nth-child(3) span');
-                if (idDisplay) idDisplay.textContent = user.id || 'AD_565';
-                if (creationDisplay) creationDisplay.textContent = user.created_at || '2023-01-01';
-                if (lastLoginDisplay) lastLoginDisplay.textContent = user.last_login || 'Session actuelle';
+                if (idDisplay) idDisplay.textContent = user.id || '';
+                if (creationDisplay) creationDisplay.textContent = user.created_at || '';
+                if (lastLoginDisplay) lastLoginDisplay.textContent = user.last_login || '';
 
                 updateBudgetOverview();
             })
@@ -186,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function () {
         editForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const payload = {
-                username: inputName.value.trim(),
+                name: inputName.value.trim(),
                 email: inputEmail.value.trim(),
                 phone: inputPhone.value.trim() || null
             };

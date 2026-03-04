@@ -105,19 +105,15 @@
     }
 
     // Return most recent transaction date (ISO yyyy-mm-dd) or null
-    function getMostRecentTransactionDate() {
+    async function getMostRecentTransactionDate() {
         try {
-            const raw = localStorage.getItem('transactions');
-            if (!raw) return null;
-            const arr = JSON.parse(raw);
-            if (!Array.isArray(arr) || arr.length === 0) return null;
-
-            // We expect transaction.date to be a string like 'YYYY-MM-DD' or similar.
-            // Convert to Date and pick the most recent by comparing time.
+            const response = await fetch('php/transactions/list.php', { credentials: 'same-origin' });
+            const data = await response.json();
+            if (data.status !== 'success' || !Array.isArray(data.data) || data.data.length === 0) return null;
             let latest = null;
-            for (const t of arr) {
-                if (!t || !t.date) continue;
-                const d = new Date(t.date + 'T00:00:00');
+            for (const t of data.data) {
+                if (!t || !t.transaction_date) continue;
+                const d = new Date(t.transaction_date + 'T00:00:00');
                 if (isNaN(d)) continue;
                 if (!latest || d.getTime() > latest.getTime()) latest = d;
             }
@@ -129,21 +125,16 @@
     }
 
     // Main exported function
-    function checkTransactionReminder() {
+    async function checkTransactionReminder() {
         try {
-            // Respect user's choice: default = false (do not notify)
             const enabled = localStorage.getItem('notificationsRappel');
-            if (enabled !== 'true') return; // explicit opt-in required
-
-            // Enforce one reminder per day
+            if (enabled !== 'true') return;
             const today = toISODate(new Date());
             const lastShown = localStorage.getItem('lastReminderDate');
             if (lastShown === today) return;
-
-            const latestISO = getMostRecentTransactionDate();
+            const latestISO = await getMostRecentTransactionDate();
             const now = new Date();
             const todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
             let daysSince = Infinity;
             if (latestISO) {
                 const parts = latestISO.split('-');
@@ -151,31 +142,18 @@
                 const diffMs = todayDate.getTime() - d.getTime();
                 daysSince = Math.floor(diffMs / (24 * 60 * 60 * 1000));
             }
-
-            // Conditions:
-            // - if no transaction today -> notify (daysSince >= 0 and not 0)
-            // - if no transaction in last 7 days -> notify (daysSince >= 7) or no transactions at all
-            // Prefer to show the "today" reminder if daysSince >=1 and <7, otherwise weekly message.
-
-            if (latestISO === today) {
-                // transaction today exists -> nothing to do
-                return;
-            }
-
+            if (latestISO === today) return;
             let message = null;
             if (latestISO === null || daysSince >= 7) {
                 message = "Aucune transaction enregistrée depuis plus de 7 jours. Pensez à suivre vos dépenses.";
             } else if (daysSince >= 1) {
                 message = "Aucune transaction enregistrée aujourd'hui. N'oubliez pas d'ajouter vos dépenses.";
             }
-
             if (message) {
-                // Show non-blocking toast; action goes to transaction page
                 createToast(message, 'Saisir', 'transaction.html');
                 localStorage.setItem('lastReminderDate', today);
             }
         } catch (e) {
-            // fail silently
             console.error('Reminder check failed', e);
         }
     }

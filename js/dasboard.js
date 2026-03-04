@@ -163,73 +163,105 @@ function handleAccountStats() {
         parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
         return parts.join('.');
     }
-    function renderDashboardTransactions() {
-        const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
-        const currencySymbol = localStorage.getItem('appCurrency') || '€';
-        
-        const typeVal = filterType ? filterType.value : 'all';
-        const catVal = filterCategory ? filterCategory.value : 'all';
-        
-        let filtered = transactions.filter(t => {
-            const matchesType = (typeVal === 'all' || t.type === typeVal);
-            const matchesCat = (catVal === 'all' || t.category === catVal);
-            return matchesType && matchesCat;
-        });
-
-        filtered.sort((a, b) => b.id - a.id);
-
-        if (toggleBtn) {
-            toggleBtn.parentElement.style.display = filtered.length > 3 ? 'flex' : 'none';
-        }
-
-        const displayList = filtered.slice(0, 3);
-        if (tableBody) {
-            tableBody.innerHTML = ''; 
-
-            if (filtered.length === 0) {
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="5" style="text-align: center; padding: 60px 0;">
-                            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; color: #718096;">
-                                <i class="fas fa-folder-open" style="font-size: 32px; margin-bottom: 10px; opacity: 0.5;"></i>
-                                <p style="margin: 0; font-size: 15px;">Aucune transaction récente effectuée</p>
-                            </div>
-                        </td>
-                    </tr>`;
-                return;
+    async function renderDashboardTransactions() {
+        try {
+            const response = await fetch('php/transactions/list.php', { credentials: 'same-origin' });
+            const data = await response.json();
+            let transactions = [];
+            if (data.status === 'success') {
+                transactions = data.data;
             }
-
-            displayList.forEach(t => {
-                const row = document.createElement('tr');
-                const isInc = t.type === 'income';
-                row.innerHTML = `
-                    <td>${new Date(t.date).toLocaleDateString('fr-FR')}</td>
-                    <td>${t.description || '-'}</td>
-                    <td>${t.category}</td>
-                    <td><span class="badge ${isInc ? 'badge-income' : 'badge-expense'}">${isInc ? 'Revenu' : 'Dépense'}</span></td>
-                    <td class="${isInc ? 'amount-income' : 'amount-expense'}">${isInc ? '+' : '-'}${t.amount.toLocaleString()} ${currencySymbol}</td>
-                `;
-                tableBody.appendChild(row);
+            const currencySymbol = localStorage.getItem('appCurrency') || '€';
+            const typeVal = filterType ? filterType.value : 'all';
+            const catVal = filterCategory ? filterCategory.value : 'all';
+            let filtered = transactions.filter(t => {
+                const matchesType = (typeVal === 'all' || t.category_type === typeVal);
+                const matchesCat = (catVal === 'all' || t.category_name === catVal);
+                return matchesType && matchesCat;
             });
+            filtered.sort((a, b) => b.id - a.id);
+            if (toggleBtn) {
+                toggleBtn.parentElement.style.display = filtered.length > 3 ? 'flex' : 'none';
+            }
+            const displayList = filtered.slice(0, 3);
+            if (tableBody) {
+                tableBody.innerHTML = '';
+                if (filtered.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 60px 0;"><div style="display: flex; flex-direction: column; align-items: center; justify-content: center; color: #718096;"><i class="fas fa-folder-open" style="font-size: 32px; margin-bottom: 10px; opacity: 0.5;"></i><p style="margin: 0; font-size: 15px;">Aucune transaction récente effectuée</p></div></td></tr>`;
+                    return;
+                }
+                displayList.forEach(t => {
+                    const row = document.createElement('tr');
+                    const isInc = t.category_type === 'income';
+                    // Correction affichage date : utiliser t.date (toujours présent)
+                    let dateAffiche = '-';
+                    if (t.date) {
+                        const d = new Date(t.date);
+                        if (!isNaN(d.getTime())) {
+                            dateAffiche = d.toLocaleDateString('fr-FR');
+                        } else {
+                            // Si format non ISO, afficher brut
+                            dateAffiche = t.date;
+                        }
+                    }
+                    row.innerHTML = `<td>${dateAffiche}</td><td>${t.description || '-'} </td><td>${t.category_name}</td><td><span class="badge ${isInc ? 'badge-income' : 'badge-expense'}">${isInc ? 'Revenu' : 'Dépense'}</span></td><td class="${isInc ? 'amount-income' : 'amount-expense'}">${isInc ? '+' : '-'}${parseFloat(t.amount).toLocaleString()} ${currencySymbol}</td>`;
+                    tableBody.appendChild(row);
+                });
+            }
+        } catch (e) {
+            if (tableBody) tableBody.innerHTML = '<tr><td colspan="5">Erreur de chargement</td></tr>';
         }
     }
 
-    function updateSummaryCards() {
-        const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
-        let inc = 0, exp = 0;
-        
-        transactions.forEach(t => { 
-            if(t.type === 'income') inc += t.amount; else exp += t.amount; 
-        });
-
-        const cards = document.querySelectorAll('.stats-value');
-        const currencySymbol = localStorage.getItem('appCurrency') || '€';
-        if (cards.length >= 3) {
-            const soldeAffiche = Math.max(0, inc - exp);
-            cards[0].textContent = `${formatAmountDash(soldeAffiche)} ${currencySymbol}`;
-            cards[1].textContent = `${formatAmountDash(inc)} ${currencySymbol}`;
-            cards[2].textContent = `${formatAmountDash(exp)} ${currencySymbol}`;
-        }
+    async function updateSummaryCards() {
+        try {
+            const response = await fetch('php/transactions/list.php', { credentials: 'same-origin' });
+            const data = await response.json();
+            let transactions = [];
+            if (data.status === 'success') {
+                transactions = data.data;
+            }
+            let incMois = 0;
+            let expTotal = 0;
+            const now = new Date();
+            transactions.forEach(t => {
+                // Somme de tous les revenus du mois
+                let d;
+                if (t.date) {
+                    d = new Date(t.date);
+                    if (isNaN(d.getTime())) {
+                        const parts = t.date.split(' ');
+                        if (parts.length === 3) {
+                            const mois = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+                            const moisIndex = mois.findIndex(m => m === parts[1].toLowerCase());
+                            if (moisIndex !== -1) {
+                                d = new Date(parseInt(parts[2]), moisIndex, parseInt(parts[0]));
+                            }
+                        }
+                    }
+                } else if (t.transaction_date) {
+                    d = new Date(t.transaction_date);
+                } else {
+                    d = new Date();
+                }
+                if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) {
+                    if(t.category_type === 'income') incMois += parseFloat(t.amount);
+                }
+                // Somme de toutes les dépenses (toutes périodes)
+                if(t.category_type === 'expense') expTotal += parseFloat(t.amount);
+            });
+            const cards = document.querySelectorAll('.stats-value');
+            const currencySymbol = localStorage.getItem('appCurrency') || '€';
+            if (cards.length >= 3) {
+                const soldeAffiche = Math.max(0, incMois - expTotal);
+                // Debug temporaire
+                // console.log('Solde:', soldeAffiche, 'Revenus:', incMois, 'Dépenses:', expTotal);
+                cards[0].textContent = `${formatAmountDash(soldeAffiche)} ${currencySymbol}`;
+                cards[1].textContent = `${formatAmountDash(incMois)} ${currencySymbol}`;
+                // Affichage strict du montant (pas de Math.max)
+                cards[2].textContent = `${formatAmountDash(Number(expTotal))} ${currencySymbol}`;
+            }
+        } catch (e) {}
     }
 
     // 4. LOGIQUE DES GRAPHIQUES
@@ -265,51 +297,58 @@ function handleAccountStats() {
 
    function updatePieChart(period) {
         if (!pieChart) return;
-        const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
-        const now = new Date();
-        
-        // 1. Filtrage par période
-        const periodFiltered = transactions.filter(t => {
-            const d = new Date(t.date);
-            if (period === '7J') return (now - d) / (1000*60*60*24) <= 7;
-            if (period === '1M') return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-            if (period === '1A') return d.getFullYear() === now.getFullYear();
-            return true;
-        });
-
-        // 2. Filtrage strict : UNIQUEMENT les dépenses
-        const expenseDataOnly = periodFiltered.filter(t => t.type === 'expense');
-
-        // 3. CONDITION CRUCIALE : Si aucune dépense, on force l'état "Aucune donnée"
-        if (expenseDataOnly.length === 0) {
-            // On détruit le chart et on appelle l'affichage vide
-            if (pieChart) {
-                pieChart.destroy();
-                pieChart = null; 
-            }
-            showEmptyPieState(); 
-            return;
-        }
-
-        // 4. Si on a des dépenses, on s'assure que le canvas existe
-        ensurePieCanvasExists();
-
-        const dataMap = {};
-        expenseDataOnly.forEach(t => {
-            const cat = t.category.charAt(0).toUpperCase() + t.category.slice(1);
-            dataMap[cat] = (dataMap[cat] || 0) + t.amount;
-        });
-
-        const labels = Object.keys(dataMap);
-        const values = Object.values(dataMap);
-        const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'];
-
-        pieChart.data = {
-            labels: labels,
-            datasets: [{ data: values, backgroundColor: colors.slice(0, labels.length) }]
-        };
-
-        pieChart.update();
+        fetch('php/transactions/list.php', { credentials: 'same-origin' })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Réponse backend pour piechart:', data);
+                if (Array.isArray(data.data)) {
+                    data.data.forEach((t, i) => {
+                        console.log(`Transaction[${i}]`, t);
+                    });
+                }
+                let transactions = [];
+                if (data.status === 'success') {
+                    transactions = data.data;
+                }
+                const now = new Date();
+                // 1. Filtrage par période
+                const periodFiltered = transactions.filter(t => {
+                    const d = new Date(t.date);
+                    if (period === '7J') return (now - d) / (1000*60*60*24) <= 7;
+                    if (period === '1M') return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+                    if (period === '1A') return d.getFullYear() === now.getFullYear();
+                    return true;
+                });
+                // 2. Filtrage strict : UNIQUEMENT les dépenses
+                const expenseDataOnly = periodFiltered.filter(t => t.category_type === 'expense');
+                // 3. CONDITION CRUCIALE : Si aucune dépense, on force l'état "Aucune donnée"
+                if (expenseDataOnly.length === 0) {
+                    if (pieChart) {
+                        pieChart.destroy();
+                        pieChart = null;
+                    }
+                    showEmptyPieState();
+                    return;
+                }
+                // 4. Si on a des dépenses, on s'assure que le canvas existe
+                ensurePieCanvasExists();
+                const dataMap = {};
+                expenseDataOnly.forEach(t => {
+                    const cat = t.category_name ? (t.category_name.charAt(0).toUpperCase() + t.category_name.slice(1)) : 'Autre';
+                    dataMap[cat] = (dataMap[cat] || 0) + parseFloat(t.amount);
+                });
+                const labels = Object.keys(dataMap);
+                const values = Object.values(dataMap);
+                const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'];
+                pieChart.data = {
+                    labels: labels,
+                    datasets: [{ data: values, backgroundColor: colors.slice(0, labels.length) }]
+                };
+                pieChart.update();
+            })
+            .catch(() => {
+                showEmptyPieState();
+            });
     }
 
     function formatAmountForChart(amount) {
@@ -321,65 +360,67 @@ function handleAccountStats() {
 
     function updateBarChart(scope) {
         if (!barChart) return;
-        const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
-        const now = new Date();
-        
-        // Noms des mois
-        const monthNames = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
-        
-        // Afficher les 3 derniers mois (glissants)
-        let months = [];
-        for (let i = 2; i >= 0; i--) {
-            const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-            months.push({ month: d.getMonth(), year: d.getFullYear() });
-        }
-        
-        // Calculer revenus et dépenses par mois
-        const revenueByMonth = months.map(m => {
-            return transactions
-                .filter(t => {
-                    const d = new Date(t.date);
-                    return d.getMonth() === m.month && d.getFullYear() === m.year && t.type === 'income';
-                })
-                .reduce((sum, t) => sum + t.amount, 0);
-        });
-        
-        const expenseByMonth = months.map(m => {
-            return transactions
-                .filter(t => {
-                    const d = new Date(t.date);
-                    return d.getMonth() === m.month && d.getFullYear() === m.year && t.type === 'expense';
-                })
-                .reduce((sum, t) => sum + t.amount, 0);
-        });
-        
-        // Créer les labels des mois avec l'année
-        const labels = months.map(m => `${monthNames[m.month]} ${m.year}`);
-        
-        barChart.data = {
-            labels: labels,
-            datasets: [
-                { 
-                    label: 'Revenu', 
-                    data: revenueByMonth,
-                    backgroundColor: '#36A2EB' 
-                },
-                { 
-                    label: 'Dépense', 
-                    data: expenseByMonth,
-                    backgroundColor: '#FF6384' 
+        fetch('php/transactions/list.php', { credentials: 'same-origin' })
+            .then(response => response.json())
+            .then(data => {
+                let transactions = [];
+                if (data.status === 'success') {
+                    transactions = data.data;
                 }
-            ]
-        };
-
-        // Appliquer le formatage des montants sur l'axe Y
-        if (barChart.options && barChart.options.scales && barChart.options.scales.y) {
-            barChart.options.scales.y.ticks.callback = function(value) {
-                return formatAmountForChart(value);
-            };
-        }
-
-        barChart.update();
+                const now = new Date();
+                // Noms des mois
+                const monthNames = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
+                // Afficher les 3 derniers mois (glissants)
+                let months = [];
+                for (let i = 2; i >= 0; i--) {
+                    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                    months.push({ month: d.getMonth(), year: d.getFullYear() });
+                }
+                // Calculer revenus et dépenses par mois
+                const revenueByMonth = months.map(m => {
+                    return transactions
+                        .filter(t => {
+                            const d = new Date(t.date);
+                            return d.getMonth() === m.month && d.getFullYear() === m.year && t.category_type === 'income';
+                        })
+                        .reduce((sum, t) => sum + parseFloat(t.amount), 0);
+                });
+                const expenseByMonth = months.map(m => {
+                    return transactions
+                        .filter(t => {
+                            const d = new Date(t.date);
+                            return d.getMonth() === m.month && d.getFullYear() === m.year && t.category_type === 'expense';
+                        })
+                        .reduce((sum, t) => sum + parseFloat(t.amount), 0);
+                });
+                // Créer les labels des mois avec l'année
+                const labels = months.map(m => `${monthNames[m.month]} ${m.year}`);
+                barChart.data = {
+                    labels: labels,
+                    datasets: [
+                        { 
+                            label: 'Revenu', 
+                            data: revenueByMonth,
+                            backgroundColor: '#36A2EB' 
+                        },
+                        { 
+                            label: 'Dépense', 
+                            data: expenseByMonth,
+                            backgroundColor: '#FF6384' 
+                        }
+                    ]
+                };
+                // Appliquer le formatage des montants sur l'axe Y
+                if (barChart.options && barChart.options.scales && barChart.options.scales.y) {
+                    barChart.options.scales.y.ticks.callback = function(value) {
+                        return formatAmountForChart(value);
+                    };
+                }
+                barChart.update();
+            })
+            .catch(() => {
+                // Optionnel : afficher un état vide ou une erreur
+            });
     }
 
     function updateCategoryFilter() {
@@ -421,6 +462,15 @@ function handleAccountStats() {
     updateSummaryCards();
     renderDashboardTransactions();
     initCharts();
+
+    // Rafraîchir le dashboard après une transaction
+    window.addEventListener('transactionsUpdated', function() {
+        updateSummaryCards();
+        renderDashboardTransactions();
+        updateCategoryFilter();
+        if (typeof updatePieChart === 'function') updatePieChart('7J');
+        if (typeof updateBarChart === 'function') updateBarChart('Mois');
+    });
 });
 
 // GESTION DE L'ÉTAT VIDE DES GRAPHIQUES
