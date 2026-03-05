@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 require_once '../config/database.php';
-// session_start();
+session_start();
 
 $action = isset($_GET['action']) ? $_GET['action'] : null;
 

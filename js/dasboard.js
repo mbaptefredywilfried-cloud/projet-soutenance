@@ -65,7 +65,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     }
-    // ============ FIN AJOUT ============
 
     // 1. GESTION DU PROFIL (MISE À JOUR AVEC ICÔNE PAR DÉFAUT)
     // Charger le profil utilisateur depuis le serveur (session)
@@ -217,9 +216,13 @@ function handleAccountStats() {
         try {
             const response = await fetch('php/transactions/list.php', { credentials: 'same-origin' });
             const data = await response.json();
+            console.log('[DEBUG] Transactions récupérées pour dashboard:', data);
             let transactions = [];
             if (data.status === 'success') {
                 transactions = data.data;
+            }
+            if (!Array.isArray(transactions) || transactions.length === 0) {
+                console.warn('[DEBUG] Aucune transaction trouvée pour cet utilisateur.');
             }
             let incMois = 0;
             let expTotal = 0;
@@ -253,7 +256,8 @@ function handleAccountStats() {
             const cards = document.querySelectorAll('.stats-value');
             const currencySymbol = localStorage.getItem('appCurrency') || '€';
             if (cards.length >= 3) {
-                const soldeAffiche = Math.max(0, incMois - expTotal);
+                let soldeAffiche = incMois - expTotal;
+                if (soldeAffiche < 0) soldeAffiche = 0;
                 // Debug temporaire
                 // console.log('Solde:', soldeAffiche, 'Revenus:', incMois, 'Dépenses:', expTotal);
                 cards[0].textContent = `${formatAmountDash(soldeAffiche)} ${currencySymbol}`;
@@ -261,7 +265,9 @@ function handleAccountStats() {
                 // Affichage strict du montant (pas de Math.max)
                 cards[2].textContent = `${formatAmountDash(Number(expTotal))} ${currencySymbol}`;
             }
-        } catch (e) {}
+        } catch (e) {
+            console.error('[DEBUG] Erreur lors de la mise à jour des cartes dashboard:', e);
+        }
     }
 
     // 4. LOGIQUE DES GRAPHIQUES
@@ -426,15 +432,13 @@ function handleAccountStats() {
     function updateCategoryFilter() {
         const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
         if (!filterCategory) return;
-        const uniqueCategories = [...new Set(transactions.map(t => t.category.trim()))];
+        const uniqueCategories = [...new Set(transactions.map(t => (t.category ? t.category.trim() : '')))].filter(cat => cat);
         filterCategory.innerHTML = '<option value="all">Toutes les catégories</option>';
         uniqueCategories.forEach(cat => {
-            if (cat) {
-                const option = document.createElement('option');
-                option.value = cat;
-                option.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
-                filterCategory.appendChild(option);
-            }
+            const option = document.createElement('option');
+            option.value = cat;
+            option.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+            filterCategory.appendChild(option);
         });
     }
 

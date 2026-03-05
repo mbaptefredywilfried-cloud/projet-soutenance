@@ -42,7 +42,8 @@ foreach ($fields as $field) {
             $params[] = $val;
         } elseif ($field === 'category_id') {
             $catId = (int)$data[$field];
-            $typeVal = isset($data['type']) ? trim($data['type']) : $transaction['type'];
+            // On vérifie la présence de type dans $data, sinon on prend la valeur existante en base
+            $typeVal = array_key_exists('type', $data) ? trim($data['type']) : $transaction['type'];
             $catStmt = $pdo->prepare("SELECT id FROM categories WHERE id = ? AND type = ?");
             $catStmt->execute([$catId, $typeVal]);
             if (!$catStmt->fetch()) {

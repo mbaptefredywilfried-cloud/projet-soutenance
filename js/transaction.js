@@ -1,4 +1,17 @@
 document.addEventListener('DOMContentLoaded', function () {
+        // Gestion du filtre
+        let currentFilter = 'all';
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        if (filterButtons.length) {
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.dataset.filter;
+                    renderTransactions();
+                });
+            });
+        }
     // ...menu burger et responsive inchangé...
 
     // --- VARIABLES POUR LA SUPPRESSION ---
@@ -114,15 +127,21 @@ document.addEventListener('DOMContentLoaded', function () {
     function renderTransactions() {
         if (!transactionsContainer) return;
         transactionsContainer.innerHTML = '';
-        if (transactions.length === 0) {
+        // Filtrage selon le bouton actif
+        let filtered = transactions;
+        if (currentFilter === 'income') {
+            filtered = transactions.filter(t => t.category_type === 'income');
+        } else if (currentFilter === 'expense') {
+            filtered = transactions.filter(t => t.category_type === 'expense');
+        }
+        if (filtered.length === 0) {
             transactionsContainer.innerHTML = `<div class="empty-state"><i class="fas fa-receipt"></i><p>Aucune transaction trouvée</p></div>`;
             return;
         }
-        transactions.forEach(transaction => {
+        filtered.forEach(transaction => {
             const transactionItem = document.createElement('div');
             transactionItem.className = 'transaction-item';
-
-            // Définir l'icône et la couleur selon la catégorie
+            // ...existing code...
             const iconMap = {
                 'Alimentation': {icon: 'fas fa-utensils', color: '#fff', bg: '#00B894'},
                 'Transport': {icon: 'fas fa-gas-pump', color: '#fff', bg: '#0984E3'},
@@ -153,16 +172,13 @@ document.addEventListener('DOMContentLoaded', function () {
             };
             const cat = transaction.category_name || 'Autre';
             const iconData = iconMap[cat] || iconMap['Autre'];
-
-            // Déterminer le signe et la couleur du montant
+            // ...existing code...
             const isIncome = (transaction.category_type === 'income');
             const sign = isIncome ? '+' : '-';
             const amountColor = isIncome ? '#10b981' : '#ef4444';
-
-            // Formatage de la date
+            // ...existing code...
             const date = new Date(transaction.transaction_date || transaction.date);
             const dateStr = date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
-
             transactionItem.innerHTML = `
                 <div class="transaction-info" style="display:flex;align-items:center;gap:16px;">
                     <div class="transaction-icon" style="background:${iconData.bg};width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;font-size:22px;">
@@ -175,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
                 <div style="display: inline-flex; gap: 35px; align-items: center;">
                     <div class="transaction-amount" style="font-size: 18px; font-weight: 700; color:${amountColor};">
-                        ${sign}${Number(transaction.amount).toLocaleString('fr-FR', {minimumFractionDigits:2, maximumFractionDigits:2})} €
+                        ${sign}${Number(transaction.amount).toLocaleString('fr-FR', {minimumFractionDigits:2, maximumFractionDigits:2})} ${localStorage.getItem('appCurrency') || '€'}
                     </div>
                     <div style="padding: 0px 10px 0px;">
                         <button class="edit-btn" onclick="editTransaction(${transaction.id})" style="background-color: #3498db; border: none; color: white; cursor: pointer; margin-right: 10px; padding: 7px; border-radius: 4px;">
@@ -195,7 +211,34 @@ document.addEventListener('DOMContentLoaded', function () {
     window.editTransaction = function(id) {
         const transaction = transactions.find(t => t.id === id);
         if (!transaction) return;
-        // Remplir ton modal ici puis appeler updateTransaction avec les nouvelles valeurs
+        // Ouvre le modal d'édition
+        document.getElementById('editModal').style.display = 'flex';
+        // Pré-remplit le formulaire
+        document.getElementById('editTransactionId').value = transaction.id;
+        document.getElementById('editTransactionType').value = transaction.category_type;
+        // Met à jour les catégories selon le type
+        if (typeof updateCategoryOptions === 'function') {
+            updateCategoryOptions(document.getElementById('editTransactionType'), document.getElementById('editTransactionCategory'));
+        }
+        document.getElementById('editTransactionCategory').value = transaction.category_id;
+        document.getElementById('editTransactionAmount').value = transaction.amount;
+        document.getElementById('editTransactionDate').value = transaction.transaction_date || transaction.date;
+        document.getElementById('editTransactionDescription').value = transaction.description || '';
+    };
+
+    // Soumission du formulaire de modification
+    document.getElementById('editTransactionForm').onsubmit = async function(e) {
+        e.preventDefault();
+        const id = document.getElementById('editTransactionId').value;
+        const type = document.getElementById('editTransactionType').value;
+        const category_id = parseInt(document.getElementById('editTransactionCategory').value, 10);
+        const amount = parseFloat(document.getElementById('editTransactionAmount').value);
+        const date = document.getElementById('editTransactionDate').value;
+        const description = document.getElementById('editTransactionDescription').value;
+        await updateTransaction({ id, type, category_id, amount, date, description });
+        document.getElementById('editModal').style.display = 'none';
+        // Rafraîchir la liste après modif
+        window.dispatchEvent(new Event('transactionsUpdated'));
     };
 
     // Confirmation suppression
@@ -517,13 +560,25 @@ document.addEventListener('DOMContentLoaded', function () {
     if (deleteAllBtn) {
         deleteAllBtn.addEventListener('click', function() {
             if (deleteModal) deleteModal.style.display = 'flex';
-            
-            document.getElementById('confirmDeleteBtn').onclick = function() {
-                transactions = [];
-                localStorage.setItem('transactions', JSON.stringify([]));
-                renderTransactions();
+            document.getElementById('confirmDeleteBtn').onclick = async function() {
+                try {
+                    const response = await fetch('php/transactions/delete_all.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    const data = await response.json();
+                    if (data.status === 'success') {
+                        transactions = [];
+                        localStorage.setItem('transactions', JSON.stringify([]));
+                        renderTransactions();
+                        showSuccessToast("Historique vidé !");
+                    } else {
+                        showErrorToast("Erreur lors de la suppression");
+                    }
+                } catch (e) {
+                    showErrorToast("Erreur lors de la suppression");
+                }
                 if (deleteModal) deleteModal.style.display = 'none';
-                showSuccessToast("Historique vidé !");
             };
         });
     }
@@ -545,7 +600,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Récupérer l'ID de la catégorie côté serveur (à adapter si besoin)
                 const categoryId = await getCategoryIdByName(transaction.category, transaction.type);
                 if (!categoryId) {
-                    alert('Catégorie invalide.');
                     return;
                 }
                 transaction.category_id = categoryId;

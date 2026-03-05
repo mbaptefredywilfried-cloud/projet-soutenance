@@ -8,7 +8,7 @@ $stmt = $pdo->prepare("SELECT t.*, c.name AS category_name, c.type AS category_t
     FROM transactions t
     JOIN categories c ON t.category_id = c.id
     WHERE t.user_id = ?
-    ORDER BY t.date DESC");
+    ORDER BY t.date DESC, t.id DESC"); // Tri secondaire par id
 $stmt->execute([$user_id]);
 $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
