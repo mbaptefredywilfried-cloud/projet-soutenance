@@ -1,4 +1,6 @@
 <?php
+error_reporting(0); // Masquer les notices/warnings pour garantir un JSON propre
+ini_set('display_errors', 0);
 header('Content-Type: application/json');
 require_once '../config/database.php';
 session_start();
@@ -13,7 +15,7 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 
 if ($action === 'get') {
-    $stmt = $pdo->prepare("SELECT id, name as username, email, phone, created_at FROM users WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT id, name as username, email, phone, created_at, image FROM users WHERE id = ?");
     $stmt->execute([$user_id]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
     if ($user) {

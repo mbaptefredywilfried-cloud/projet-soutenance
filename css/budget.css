@@ -1,3 +1,48 @@
+/* Style période sur carte budget */
+.budget-period {
+    display: inline-block;
+    font-size: 0.85rem;
+    color: #fff;
+    background: #97a3b4b6;
+    padding: 3px 18px;
+    border-radius: 50px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    box-shadow: 0 1px 4px rgba(36,41,46,0.08);
+    border: 1px solid rgba(255, 255, 255, 0.508);
+    margin-left: 8px;
+    margin-top: 2px;
+    transition: background 0.2s, color 0.2s;
+}
+/* Filtres budgets (période, catégorie, statut) */
+.budget-filters {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-right: 0;
+}
+.budget-filters .filter-select {
+    padding: 8px 8px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border-color);
+    background: #fff;
+    font-size: 1rem;
+    color: var(--text-primary);
+    font-family: 'Inter', Arial, sans-serif;
+    box-shadow: 0 2px 8px rgba(36, 41, 46, 0.04);
+    transition: border 0.2s, box-shadow 0.2s;
+    outline: none;
+    height: 40px;
+}
+.budget-filters .filter-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px #dbeafe;
+}
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
 /* Centrage du modal d'édition */
 #editModal {
     display: none;
@@ -522,6 +567,25 @@ aside {
 }
 
 .budget-card {
+        opacity: 0;
+        transform: translateY(16px);
+        animation: budgetCardFadeIn 0.45s cubic-bezier(.4,0,.2,1) forwards;
+    }
+
+    @keyframes budgetCardFadeIn {
+        0% {
+            opacity: 0;
+            transform: translateY(16px);
+        }
+        80% {
+            opacity: 1;
+            transform: translateY(-2px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
     background: var(--card-background);
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
@@ -538,7 +602,7 @@ aside {
 
 .budget-header {
     padding: 20px;
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    background: linear-gradient(135deg, var(--accent-color, var(--primary-color)), var(--accent-color-dark, var(--primary-dark)));
     color: white;
     display: flex;
     align-items: center;
@@ -625,8 +689,8 @@ aside {
 }
 
 .btn-edit {
-    background: var(--success-color);
-    color: white;
+    background: var(--accent-color, var(--success-color));
+    color: #fff;
 }
 
 .btn-edit:hover {

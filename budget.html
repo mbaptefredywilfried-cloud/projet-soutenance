@@ -159,7 +159,23 @@
                 <div class="section-header">
                     <h2 id="budgets-list-heading" data-i18n="yourActiveBudgets">Vos Budgets Actifs</h2>
                     <div class="header-actions">
-                       
+                        <div class="budget-filters" style="display:flex;gap:12px;align-items:center;margin-right:16px">
+                            <select id="filterPeriod" class="filter-select" aria-label="Filtrer par période">
+                                <option value="">Période</option>
+                                <option value="mensuel">Mensuel</option>
+                                <option value="hebdomadaire">Hebdomadaire</option>
+                                <option value="annuel">Annuel</option>
+                            </select>
+                            <select id="filterCategory" class="filter-select" aria-label="Filtrer par catégorie">
+                                <option value="">Catégorie</option>
+                                <!-- Catégories dynamiques JS -->
+                            </select>
+                            <select id="filterStatus" class="filter-select" aria-label="Filtrer par statut">
+                                <option value="">Statut</option>
+                                <option value="actif">Actif</option>
+                                <option value="dépassé">Dépassé</option>
+                            </select>
+                        </div>
                         <button class="btn-clear" id="clearAllBtn">
                             <i class="fas fa-trash"></i> <span data-i18n="clearAllBudgets">Tous supprimer</span>
                         </button>

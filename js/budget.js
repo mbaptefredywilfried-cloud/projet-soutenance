@@ -133,6 +133,11 @@ class BudgetManager {
         this.budgets = [];
         this.categories = [];
         this.budgetIdToDelete = null;
+        this.activeFilters = {
+            period: '',
+            category: '',
+            status: ''
+        };
         this.init();
     }
 
@@ -140,6 +145,8 @@ class BudgetManager {
         await this.fetchCategories();
         this.setupEventListeners();
         this.populateCategorySelect();
+        this.populateFilterCategory();
+        this.setupFilterListeners();
         await this.fetchAndRenderBudgets();
     }
 
@@ -167,6 +174,42 @@ class BudgetManager {
             option.textContent = cat.name;
             select.appendChild(option);
         });
+    }
+
+    populateFilterCategory() {
+        const filterSelect = document.getElementById('filterCategory');
+        if (!filterSelect) return;
+        filterSelect.innerHTML = '<option value="">Catégorie</option>';
+        this.categories.forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat.id;
+            option.textContent = cat.name;
+            filterSelect.appendChild(option);
+        });
+    }
+
+    setupFilterListeners() {
+        const periodSelect = document.getElementById('filterPeriod');
+        const categorySelect = document.getElementById('filterCategory');
+        const statusSelect = document.getElementById('filterStatus');
+        if (periodSelect) {
+            periodSelect.addEventListener('change', () => {
+                this.activeFilters.period = periodSelect.value;
+                this.renderBudgets();
+            });
+        }
+        if (categorySelect) {
+            categorySelect.addEventListener('change', () => {
+                this.activeFilters.category = categorySelect.value;
+                this.renderBudgets();
+            });
+        }
+        if (statusSelect) {
+            statusSelect.addEventListener('change', () => {
+                this.activeFilters.status = statusSelect.value;
+                this.renderBudgets();
+            });
+        }
     }
 
     setupEventListeners() {
@@ -295,6 +338,7 @@ class BudgetManager {
         try {
             const response = await fetch('php/budgets/list.php', { credentials: 'same-origin' });
             const data = await response.json();
+            console.log('Réponse budgets/list.php:', data); // LOG DEBUG
             if (data.status === 'success') {
                 this.budgets = data.data;
             } else {
@@ -329,8 +373,55 @@ class BudgetManager {
         const currency = localStorage.getItem('appCurrency') || '€';
         if (!container) return;
         container.innerHTML = '';
-        if (!this.budgets || this.budgets.length === 0) {
+
+        // Filtrage dynamique : si aucun filtre sélectionné, afficher tous les budgets
+        let filteredBudgets = this.budgets;
+        const { period, category, status } = this.activeFilters;
+        const hasFilter = period || category || status;
+        if (hasFilter) {
+            if (period) {
+                console.log('Filtre période:', period);
+                console.log('Valeurs des budgets:', this.budgets.map(b => b.month));
+                const filterPeriod = String(period).trim().toLowerCase();
+                filteredBudgets = filteredBudgets.filter(b => {
+                    const budgetPeriod = String(b.month).trim().toLowerCase();
+                    if (filterPeriod === 'hebdomadaire') {
+                        // Accepte toutes variantes commençant par 'hebdo' (hebdo, hebdomadaire, hebdoma, hebdo­ma, etc.)
+                        return budgetPeriod.startsWith('hebdo');
+                    }
+                    const periodMap = {
+                        'mensuel': ['mensuel', 'mois'],
+                        'annuel': ['annuel', 'an']
+                    };
+                    if (periodMap[filterPeriod]) {
+                        return periodMap[filterPeriod].includes(budgetPeriod);
+                    }
+                    return budgetPeriod === filterPeriod;
+                });
+            }
+            if (category) {
+                filteredBudgets = filteredBudgets.filter(b => String(b.category_id) === String(category));
+            }
+            if (status) {
+                // Calcul du statut
+                filteredBudgets = filteredBudgets.filter(b => {
+                    // Calcul du montant dépensé
+                    const spent = this.transactions
+                        .filter(t => t.category_id == b.category_id && t.category_type === 'expense' && (t.month === b.month || !t.month))
+                        .reduce((sum, t) => sum + Number(t.amount), 0);
+                    if (status === 'actif') {
+                        return spent < Number(b.amount);
+                    } else if (status === 'dépassé') {
+                        return spent >= Number(b.amount);
+                    }
+                    return true;
+                });
+            }
+        }
+
+        if (!filteredBudgets || filteredBudgets.length === 0) {
             document.getElementById('noBudgetsMessage').style.display = 'block';
+            document.getElementById('noBudgetsMessage').innerHTML = '<i class="fas fa-inbox"></i><p>Aucun budget trouvé pour ces filtres.</p>';
             return;
         } else {
             document.getElementById('noBudgetsMessage').style.display = 'none';
@@ -376,7 +467,7 @@ class BudgetManager {
             'Autre': {icon: 'fas fa-ellipsis-h', color: '#fff', bg: '#a3a3a3'}
         };
 
-        this.budgets.forEach(budget => {
+        filteredBudgets.forEach(budget => {
             // Calcul du montant dépensé pour ce budget (transactions de même catégorie et même période)
             const spent = transactions
                 .filter(t => t.category_id == budget.category_id && t.category_type === 'expense' && (t.month === budget.month || !t.month))
@@ -394,6 +485,14 @@ class BudgetManager {
                 barColor = '#f59e0b'; // orange
             }
 
+            // Affichage du reste ou du dépassement
+            let bottomLabel = '';
+            if (spent > budget.amount) {
+                bottomLabel = '<span style="color:#ef4444;font-weight:600">Dépassé</span>';
+            } else {
+                bottomLabel = `<span>${Number(budget.amount - spent).toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ${currency} restants</span>`;
+            }
+
             const budgetDiv = document.createElement('div');
             budgetDiv.className = 'budget-card';
             budgetDiv.innerHTML = `
@@ -405,12 +504,12 @@ class BudgetManager {
                         <h3 style="margin:0;font-size:1.1rem;">${budgetName}</h3>
                         <div style="font-size:0.95em;color:#a3bffa;">${cat}</div>
                     </div>
-                    <span class="budget-period" style="font-size:1rem;color:#fff;background:#64748b;padding:4px 12px;border-radius:6px;">${budget.month || ''}</span>
+                    <span class="budget-period">${budget.month || ''}</span>
                 </div>
                 <div class="budget-content">
                     <div class="budget-details">
                         <div class="detail-item">
-                            <div class="label">Montant</div>
+                            <div class="label">Montant budgétisé</div>
                             <div class="value">${Number(budget.amount).toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ${currency}</div>
                         </div>
                         <div class="detail-item">
@@ -421,7 +520,7 @@ class BudgetManager {
                     <div class="progress-container">
                         <div class="progress-label">
                             <span>${percent.toFixed(0)}% utilisé</span>
-                            <span>${Number(budget.amount - spent).toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ${currency} restants</span>
+                            ${bottomLabel}
                         </div>
                         <div class="progress-bar">
                             <div class="progress-fill" style="width:${percent}%;background:${barColor};"></div>

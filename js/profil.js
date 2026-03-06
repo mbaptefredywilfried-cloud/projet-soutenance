@@ -59,16 +59,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- 2. CHARGEMENT INITIAL ---
     function loadUserData() {
-        fetch('php/users/profile.php', { credentials: 'same-origin' })
+        fetch('php/data/user_profile.php?action=get', { credentials: 'same-origin' })
             .then(resp => resp.json())
             .then(data => {
-                if (data.status !== 'success') throw new Error('No profile');
-                const user = data.data || {};
-                if (userNameDisplay) userNameDisplay.textContent = user.name || '';
-                if (fullNameDisplay) fullNameDisplay.textContent = user.name || '';
+                const user = data.user || data.data || {};
+                console.log('[DEBUG] user.image =', user.image);
+                if (userNameDisplay) userNameDisplay.textContent = user.username || user.name || '';
+                if (fullNameDisplay) fullNameDisplay.textContent = user.username || user.name || '';
                 if (emailDisplay) emailDisplay.textContent = user.email || '';
                 if (phoneDisplay) phoneDisplay.textContent = user.phone || '';
-                if (user.image && avatarImage) avatarImage.src = user.image;
+                if (user.image && avatarImage) {
+                    avatarImage.src = user.image;
+                } else if (avatarImage) {
+                    avatarImage.src = './assets/default-avatar.png';
+                }
 
                 // Mettre à jour les éléments de compte
                 const idDisplay = document.querySelector('.card4 .profil-detail-group:nth-child(1) span');
@@ -146,14 +150,25 @@ document.addEventListener('DOMContentLoaded', function () {
         avatarInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                avatarImage.src = ev.target.result;
-                // Temporary: store avatar locally until server-side upload is implemented
-                localStorage.setItem('userImage', ev.target.result);
-                showSuccessToast("Photo mise à jour !");
-            };
-            reader.readAsDataURL(file);
+            const formData = new FormData();
+            formData.append('avatar', file);
+            fetch('php/data/upload_avatar.php', {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.image) {
+                    avatarImage.src = data.image;
+                    showSuccessToast("Photo mise à jour !");
+                } else {
+                    showErrorToast(data.error || "Erreur lors de l'upload de la photo.");
+                }
+            })
+            .catch(() => {
+                showErrorToast("Erreur réseau lors de l'upload de la photo.");
+            });
         });
     }
 
@@ -287,47 +302,3 @@ document.addEventListener('DOMContentLoaded', function () {
 
     loadUserData();
 });
-
-// --- LOGIQUE DU POP-UP DE RAPPEL ---
-function checkExpenseReminder() {
-    const lastEntry = localStorage.getItem('lastExpenseDate');
-    const now = new Date().getTime();
-    const oneDay = 24 * 60 * 60 * 1000; 
-
-    // Si aucune dépense n'a jamais été saisie ou si ça fait plus de 24h
-    if (!lastEntry || (now - lastEntry) > oneDay) {
-        createReminderPopup();
-    }
-}
-
-function createReminderPopup() {
-    // Création de la structure du pop-up
-    const popup = document.createElement('div');
-    popup.className = 'reminder-popup';
-    
-    popup.innerHTML = `
-        <div class="popup-content">
-            <div class="popup-header">
-                <i class="fas fa-bell"></i>
-                <span>Rappel de saisie</span>
-                <button class="close-popup-btn">&times;</button>
-            </div>
-            <div class="popup-body">
-                <p>Vous n'avez pas encore saisi vos dépenses aujourd'hui !</p>
-                <button class="action-btn" onclick="window.location.href='transaction.html'">Saisir maintenant</button>
-            </div>
-        </div>
-    `;
-
-    document.body.appendChild(popup);
-
-    // Gestion de la fermeture manuelle
-    const closeBtn = popup.querySelector('.close-popup-btn');
-    closeBtn.addEventListener('click', () => {
-        popup.classList.add('fade-out');
-        setTimeout(() => popup.remove(), 500);
-    });
-}
-
-// Lancer la vérification
-checkExpenseReminder();
