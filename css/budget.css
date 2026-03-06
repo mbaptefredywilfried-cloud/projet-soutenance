@@ -1,3 +1,134 @@
+/* Centrage du modal d'édition */
+#editModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.18);
+    z-index: 99999;
+    justify-content: center;
+    align-items: center;
+    display: none;
+}
+
+#editModal.show {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+}
+
+
+#editModal .modal-content {
+    max-width: 420px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    padding: 24px 20px 18px 20px;
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+#editModal .modal-form {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+#editModal .form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+#editModal .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+/* Boutons d'action sur les cartes budget */
+.budget-actions {
+    display: inline-flex;
+    gap: 12px;
+    align-items: center;
+    margin-top: 12px;
+}
+.budget-actions .btn-edit, .budget-actions .btn-delete {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    border-radius: 7px;
+    font-size: 0.98em;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.budget-actions .btn-edit {
+    background: var(--success-color);
+    color: #fff;
+}
+.budget-actions .btn-edit:hover {
+    background: #059669;
+}
+.budget-actions .btn-delete {
+    background: var(--danger-color);
+    color: #fff;
+}
+.budget-actions .btn-delete:hover {
+    background: #b91c1c;
+}
+body, .budget-form, .budget-card, #budgetsContainer {
+    font-family: 'Inter', Arial, sans-serif !important;
+}
+.budget-form input.input-error,
+.budget-form select.input-error,
+.form-group input.input-error,
+.form-group select.input-error,
+input.input-error[name],
+select.input-error[name] {
+    border: 2px solid #ef4444 !important;
+    outline: none !important;
+    background: #fff0f0 !important;
+    box-shadow: 0 0 0 2px #ffe4e6 !important;
+    transition: border 0.2s, box-shadow 0.2s;
+}
+.budget-form input.input-error,
+.budget-form select.input-error,
+.budget-form .input-error,
+.budget-form select:has(.input-error),
+.budget-form select.input-error:focus,
+.budget-form input.input-error:focus {
+    border: 2px solid #ef4444 !important;
+    outline: none !important;
+    background: #fff0f0 !important;
+    box-shadow: 0 0 0 2px #ffe4e6 !important;
+    transition: border 0.2s, box-shadow 0.2s;
+}
+/* Champs invalides et messages d'erreur pour le formulaire budget */
+.budget-form .input-error,
+.budget-form input.input-error,
+.budget-form select.input-error {
+    border: 2px solid #ef4444 !important;
+    outline: none !important;
+    background: #fff0f0 !important;
+    box-shadow: 0 0 0 2px #ffe4e6;
+    transition: border 0.2s, box-shadow 0.2s;
+}
+.error-message {
+    color: #ef4444;
+    font-size: 0.85em;
+    margin-top: 4px;
+    font-weight: 500;
+}
 
 :root {
     --primary-color: #2563eb;
@@ -237,22 +368,26 @@ aside {
     gap: 16px;
 }
 
-.header-actions {
+.budget-actions {
     display: flex;
     gap: 12px;
+    align-items: center;
+    margin-top: 12px;
+    width: 100%;
 }
-
-.section-header h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--text-primary);
-}
-
-.btn-filter {
-    background: var(--secondary-color);
-    color: white;
+.budget-actions .btn-edit, .budget-actions .btn-delete {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    border-radius: 7px;
+    font-size: 0.98em;
+    font-weight: 500;
     border: none;
-    padding: 8px 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+    flex: 1 1 0;
+    justify-content: center;
     border-radius: var(--border-radius);
     cursor: pointer;
     transition: var(--transition);
@@ -576,6 +711,12 @@ aside {
 
 .form-actions{
     margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    gap: 14px;
+
+    flex: 1 1 0;
+    width: 100%;
 }
 
 

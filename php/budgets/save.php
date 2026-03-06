@@ -4,18 +4,22 @@ require_once '../config/database.php';
 require_once '../auth/require_auth.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
-$required = ['category_id', 'month', 'amount'];
+
+
+$required = ['category_id', 'month', 'amount', 'name'];
 foreach ($required as $field) {
-    if (!isset($data[$field])) {
+    if (!isset($data[$field]) || ($field === 'name' && trim($data[$field]) === '')) {
         echo json_encode(["status" => "error", "message" => "Champs manquants", "data" => null]);
         exit;
     }
 }
 
+// Récupérer les données
 $user_id = $_SESSION['user_id'];
 $category_id = (int)$data['category_id'];
 $month = $data['month'];
 $amount = floatval($data['amount']);
+$name = trim($data['name']);
 if ($amount <= 0) {
     echo json_encode(["status" => "error", "message" => "Le montant doit être supérieur à 0", "data" => null]);
     exit;
@@ -27,11 +31,20 @@ if (!$stmt->fetch()) {
     echo json_encode(["status" => "error", "message" => "Catégorie invalide", "data" => null]);
     exit;
 }
+
 try {
-    $stmt = $pdo->prepare("INSERT INTO budgets (user_id, category_id, month, amount) VALUES (?, ?, ?, ?)
-        ON DUPLICATE KEY UPDATE amount = VALUES(amount)");
-    $stmt->execute([$user_id, $category_id, $month, $amount]);
-    echo json_encode(["status" => "success", "message" => "Budget enregistré", "data" => null]);
+    if (isset($data['id']) && $data['id']) {
+        // Modification
+        $budget_id = intval($data['id']);
+        $stmt = $pdo->prepare("UPDATE budgets SET category_id = ?, month = ?, amount = ?, name = ? WHERE id = ? AND user_id = ?");
+        $stmt->execute([$category_id, $month, $amount, $name, $budget_id, $user_id]);
+        echo json_encode(["status" => "success", "message" => "Budget modifié", "data" => null]);
+    } else {
+        // Création
+        $stmt = $pdo->prepare("INSERT INTO budgets (user_id, category_id, month, amount, name) VALUES (?, ?, ?, ?, ?)");
+        $stmt->execute([$user_id, $category_id, $month, $amount, $name]);
+        echo json_encode(["status" => "success", "message" => "Budget enregistré", "data" => null]);
+    }
 } catch (PDOException $e) {
     echo json_encode(["status" => "error", "message" => "Erreur serveur", "data" => null]);
 }

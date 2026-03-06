@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -129,13 +130,6 @@
                             <label for="budgetCategory" data-i18n="selectCategory">Catégorie <span class="required">*</span></label>
                             <select id="budgetCategory" name="budgetCategory" required aria-describedby="categoryHelp">
                                 <option value="">Sélectionnez une catégorie</option>
-                                <option value="alimentation" data-icon="fas fa-utensils" data-i18n="food">Alimentation</option>
-                                <option value="transport" data-icon="fas fa-car" data-i18n="transport">Transport</option>
-                                <option value="loisirs" data-icon="fas fa-gamepad" data-i18n="leisure">Loisirs</option>
-                                <option value="sante" data-icon="fas fa-heartbeat" data-i18n="health">Santé</option>
-                                <option value="logement" data-icon="fas fa-home" data-i18n="housing">Logement</option>
-                                <option value="education" data-icon="fas fa-graduation-cap" data-i18n="education">Éducation</option>
-                                <option value="autre" data-icon="fas fa-ellipsis-h" data-i18n="other">Autre</option>
                             </select>
                             <small id="categoryHelp" class="form-help" data-i18n="categorizeBudget">Catégorisez votre budget pour un meilleur
                                 suivi.</small>
@@ -165,11 +159,9 @@
                 <div class="section-header">
                     <h2 id="budgets-list-heading" data-i18n="yourActiveBudgets">Vos Budgets Actifs</h2>
                     <div class="header-actions">
-                        <button class="btn-filter" id="filterBtn">
-                            <i class="fas fa-filter"></i> <span data-i18n="filterBudgets">Filtrer</span>
-                        </button>
+                       
                         <button class="btn-clear" id="clearAllBtn">
-                            <i class="fas fa-trash-alt"></i> <span data-i18n="clearAllBudgets">Tous supprimer</span>
+                            <i class="fas fa-trash"></i> <span data-i18n="clearAllBudgets">Tous supprimer</span>
                         </button>
                     </div>
                 </div>
@@ -191,13 +183,31 @@
             </div>
             <form class="modal-form" id="editForm">
                 <input type="hidden" id="editBudgetId">
-                <div class="form-group">
-                    <label for="editBudgetName" data-i18n="budgetName">Nom du Budget</label>
-                    <input type="text" id="editBudgetName" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editBudgetName" data-i18n="budgetName">Nom du Budget <span class="required">*</span></label>
+                        <input type="text" id="editBudgetName" name="editBudgetName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editBudgetAmount" data-i18n="amount">Montant (€) <span class="required">*</span></label>
+                        <input type="number" id="editBudgetAmount" name="editBudgetAmount" min="0.01" step="0.01" required>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="editBudgetAmount" data-i18n="amount">Montant (€)</label>
-                    <input type="number" id="editBudgetAmount" min="0.01" step="0.01" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editBudgetCategory" data-i18n="selectCategory">Catégorie <span class="required">*</span></label>
+                        <select id="editBudgetCategory" name="editBudgetCategory" required>
+                            <option value="">Sélectionnez une catégorie</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editBudgetPeriod" data-i18n="period">Période <span class="required">*</span></label>
+                        <select id="editBudgetPeriod" name="editBudgetPeriod" required>
+                            <option value="mensuel" data-i18n="monthly">Mensuel</option>
+                            <option value="hebdomadaire" data-i18n="weekly">Hebdomadaire</option>
+                            <option value="annuel" data-i18n="yearly">Annuel</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="btn-primary" data-i18n="save">Enregistrer</button>
@@ -241,5 +251,18 @@
     <script src="./js/notification.js"></script>
     <script src="./js/budget.js"></script>
 </body>
+ <!-- Modal de confirmation pour tout supprimer -->
+    <div id="confirmAllModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.18); z-index:99999; justify-content:center; align-items:center;">
+        <div class="modal-content confirm-box" style="margin:auto; box-shadow:0 8px 32px rgba(0,0,0,0.18);">
+            <i class="fas fa-exclamation-triangle warning-icon"></i>
+            <h2>Confirmation</h2>
+            <p>Voulez-vous vraiment supprimer <b>tous</b> les budgets ?</p>
+            <div class="confirm-btns">
+                <button id="cancelAllDelete" class="btn-secondary">Annuler</button>
+                <button id="confirmAllDelete" class="btn-danger">Supprimer tout</button>
+            </div>
+        </div>
+    </div>
+
 
 </html>
