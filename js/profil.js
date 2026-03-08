@@ -53,7 +53,60 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Sélecteurs Sécurité (Card 5)
     const exportBtn = document.getElementById('exportDataBtn');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', function() {
+                window.location.href = 'php/data/export_data.php';
+            });
+        }
     const deleteBtn = document.getElementById('deleteAccountBtn');
+    const deleteAccountModal = document.getElementById('deleteAccountModal');
+    const confirmDeleteAccountBtn = document.getElementById('confirmDeleteAccountBtn');
+    const cancelDeleteAccountBtn = document.getElementById('cancelDeleteAccountBtn');
+
+    if (deleteBtn && deleteAccountModal && confirmDeleteAccountBtn && cancelDeleteAccountBtn) {
+        deleteBtn.addEventListener('click', function() {
+            console.log('Bouton suppression cliqué');
+            if (deleteAccountModal) {
+                console.log('deleteAccountModal trouvé');
+                deleteAccountModal.classList.add('active');
+            } else {
+                console.log('deleteAccountModal introuvable');
+            }
+        });
+        cancelDeleteAccountBtn.addEventListener('click', function() {
+            console.log('Bouton annuler suppression cliqué');
+            deleteAccountModal.classList.remove('active');
+        });
+        confirmDeleteAccountBtn.addEventListener('click', function() {
+            console.log('Bouton confirmer suppression cliqué');
+            confirmDeleteAccountBtn.disabled = true;
+            fetch('php/data/delete_account.php', {
+                method: 'POST',
+                credentials: 'same-origin',
+            })
+            .then(resp => resp.json())
+            .then(result => {
+                console.log('Réponse suppression:', result);
+                confirmDeleteAccountBtn.disabled = false;
+                if (result.success) {
+                    window.location.href = 'index.html';
+                } else {
+                    confirmDeleteAccountBtn.textContent = 'Erreur';
+                    setTimeout(() => {
+                        confirmDeleteAccountBtn.textContent = 'Oui, supprimer';
+                    }, 2000);
+                }
+            })
+            .catch((err) => {
+                console.log('Erreur réseau suppression:', err);
+                confirmDeleteAccountBtn.disabled = false;
+                confirmDeleteAccountBtn.textContent = 'Erreur réseau';
+                setTimeout(() => {
+                    confirmDeleteAccountBtn.textContent = 'Oui, supprimer';
+                }, 2000);
+            });
+        });
+    }
 
     const links = document.querySelectorAll('aside .nav a');
 
@@ -79,8 +132,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 const creationDisplay = document.querySelector('.card4 .profil-detail-group:nth-child(2) span');
                 const lastLoginDisplay = document.querySelector('.card4 .profil-detail-group:nth-child(3) span');
                 if (idDisplay) idDisplay.textContent = user.id || '';
-                if (creationDisplay) creationDisplay.textContent = user.created_at || '';
-                if (lastLoginDisplay) lastLoginDisplay.textContent = user.last_login || '';
+                if (creationDisplay) {
+                    if (user.created_at) {
+                        const date = new Date(user.created_at);
+                        const options = { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+                        creationDisplay.textContent = date.toLocaleString('fr-FR', options).replace(',', ' à');
+                    } else {
+                        creationDisplay.textContent = '';
+                    }
+                }
+                if (lastLoginDisplay) {
+                    if (user.last_login) {
+                        // Format personnalisé : 8 mars 2026 à 14:23
+                        const date = new Date(user.last_login);
+                        const options = { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+                        lastLoginDisplay.textContent = date.toLocaleString('fr-FR', options).replace(',', ' à');
+                    } else {
+                        lastLoginDisplay.textContent = '';
+                    }
+                }
 
                 updateBudgetOverview();
             })
@@ -91,47 +161,66 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- 3. APERÇU BUDGÉTAIRE DYNAMIQUE ---
     function updateBudgetOverview() {
-        const totalBudget = parseFloat(localStorage.getItem('userBudgetInitial')) || 0;
-        const totalSpent = parseFloat(localStorage.getItem('userTotalSpent')) || 0;
-
-        // MODIFICATION : Calcul du restant bloqué à 0 minimum
-        const rawRemaining = totalBudget - totalSpent;
-        const remaining = Math.max(0, rawRemaining);
-
-        // MODIFICATION : Calcul du pourcentage bloqué à 100% maximum
-        const rawPercentage = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
-        const displayPercentage = Math.min(100, Math.round(rawPercentage));
-
-        const currencySymbol = localStorage.getItem('appCurrency') || '€';
-
-        if (statsValues.length >= 3) {
-            // On affiche le pourcentage plafonné à 100%
-            statsValues[0].textContent = `${displayPercentage}%`;
-            
-            // On affiche le montant restant plafonné à 0 €
-            statsValues[1].textContent = `${remaining.toFixed(2)} ${currencySymbol}`;
-            
-            // On garde le total dépensé réel (qui peut dépasser le budget)
-            statsValues[2].textContent = `${totalSpent.toFixed(2)} ${currencySymbol}`;
-
-            // Optionnel : Changer la couleur du montant restant en rouge s'il est épuisé (dépassé)
-            if (rawRemaining < 0) {
-                statsValues[1].style.color = '#ef4444';
-            } else {
-                statsValues[1].style.color = ''; // Reset à la couleur par défaut
-            }
-        }
-
-        if (budgetAdvice) {
-            // On utilise rawPercentage pour les conseils afin de détecter le dépassement réel
-            if (rawPercentage >= 100) {
-                budgetAdvice.innerHTML = `<i class="fas fa-exclamation-triangle"></i> <span style="color: #ef4444; font-weight:bold;">Alerte :</span> Budget dépassé !`;
-            } else if (rawPercentage > 80) {
-                budgetAdvice.innerHTML = `<i class="fas fa-info-circle"></i> <span style="color: #f59e0b; font-weight:bold;">Prudence :</span> Limite proche.`;
-            } else {
-                budgetAdvice.innerHTML = `<i class="fas fa-check-circle"></i> <span style="color: #10b981; font-weight:bold;">Conseil :</span> Gestion excellente.`;
-            }
-        }
+        fetch('./php/budgets/list.php')
+            .then(response => response.json())
+            .then(data => {
+                console.log('[APERÇU BUDGÉTAIRE] Réponse backend:', data);
+                const budgets = Array.isArray(data.data) ? data.data : [];
+                let totalBudget = 0;
+                let currencySymbol = '€';
+                // Récupérer les category_id des budgets actifs
+                const activeCategoryIds = budgets.map(b => b.category_id);
+                budgets.forEach(b => {
+                    totalBudget += parseFloat(b.amount) || 0;
+                });
+                fetch('./php/transactions/list.php')
+                    .then(resp => resp.json())
+                    .then(transData => {
+                        console.log('[APERÇU BUDGÉTAIRE] Transactions:', transData);
+                        const transactions = Array.isArray(transData.data) ? transData.data : [];
+                        let totalSpent = 0;
+                        let totalSpentActive = 0;
+                        let totalSpentAll = 0;
+                        transactions.forEach(t => {
+                            if (t.category_type === 'expense') {
+                                totalSpentAll += parseFloat(t.amount) || 0;
+                                if (activeCategoryIds.includes(t.category_id)) {
+                                    totalSpentActive += parseFloat(t.amount) || 0;
+                                }
+                            }
+                        });
+                        const rawPercentage = totalBudget > 0 ? (totalSpentActive / totalBudget) * 100 : 0;
+                        const displayPercentage = Math.min(100, Math.round(rawPercentage));
+                        if (statsValues.length >= 3) {
+                            // Carte orange : Utilisé
+                            statsValues[0].textContent = `${displayPercentage}%`;
+                            // Carte bleue : Total Budgétisé
+                            statsValues[1].textContent = `${totalBudget.toFixed(2)} ${currencySymbol}`;
+                            // Carte rouge : Dépensé (toutes transactions)
+                            statsValues[2].textContent = `${totalSpentAll.toFixed(2)} ${currencySymbol}`;
+                        }
+                        if (budgetAdvice) {
+                            if (rawPercentage > 100) {
+                                budgetAdvice.innerHTML = `<i class="fas fa-times-circle" style="color:#ef4444;"></i> <span style="color:#ef4444;font-weight:bold;">Budget dépassé</span>`;
+                            } else if (rawPercentage > 80) {
+                                budgetAdvice.innerHTML = `<i class="fas fa-exclamation" style="color:#f59e0b;"></i> <span style="color:#f59e0b;font-weight:bold;">Budget presque atteint</span>`;
+                            } else if (rawPercentage >= 50) {
+                                budgetAdvice.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:#f59e0b;"></i> <span style="color:#f59e0b;font-weight:bold;">Attention à vos dépenses</span>`;
+                            } else {
+                                budgetAdvice.innerHTML = `<i class="fas fa-check-square" style="color:#10b981;"></i> <span style="color:#10b981;font-weight:bold;">Gestion excellente</span>`;
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors du chargement des transactions:', error);
+                    });
+            })
+            .catch(error => {
+                console.error('Erreur lors du chargement des budgets:', error);
+                if (budgetAdvice) {
+                    budgetAdvice.innerHTML = `<i class=\"fas fa-exclamation-triangle\"></i> <span style=\"color: #ef4444; font-weight:bold;\">Erreur :</span> Impossible de charger les données budgétaires.`;
+                }
+            });
     }
 
     // --- 4. GESTION DES INFOS DE COMPTE ---
@@ -161,6 +250,9 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 if (data.success && data.image) {
                     avatarImage.src = data.image;
+                    // Mettre à jour tous les avatars du DOM si besoin
+                    const avatars = document.querySelectorAll('.avatar-image');
+                    avatars.forEach(img => { img.src = data.image; });
                     showSuccessToast("Photo mise à jour !");
                 } else {
                     showErrorToast(data.error || "Erreur lors de l'upload de la photo.");
@@ -193,7 +285,7 @@ document.addEventListener('DOMContentLoaded', function () {
         editForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const payload = {
-                name: inputName.value.trim(),
+                username: inputName.value.trim(),
                 email: inputEmail.value.trim(),
                 phone: inputPhone.value.trim() || null
             };
@@ -210,7 +302,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     closeModal();
                     showSuccessToast("Profil mis à jour !");
                 } else {
-                    showSuccessToast(result.message || 'Erreur lors de la mise à jour');
+                    showSuccessToast(result.error || result.message || 'Erreur lors de la mise à jour');
                 }
             })
             .catch(err => {

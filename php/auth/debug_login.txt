@@ -1,0 +1,72 @@
+Array
+(
+    [data] => Array
+        (
+            [email] => promoliga8@gmail.com
+            [password] => promoliga8@gmail.com
+        )
+
+    [user] => Array
+        (
+            [id] => 3
+            [password] => $2y$10$InHozgB0dmjZruZjcbrn0ut5JjmJ0KxaFx0EdbZGk/TVp9lrMk3Oq
+        )
+
+    [verify] => 1
+    [session_id] => 86v5a1tdviuuf4ondpial47fbg
+    [session_user_id] => 3
+)
+Array
+(
+    [data] => Array
+        (
+            [email] => promoliga8@gmail.com
+            [password] => promoliga8@gmail.com
+        )
+
+    [user] => Array
+        (
+            [id] => 3
+            [password] => $2y$10$InHozgB0dmjZruZjcbrn0ut5JjmJ0KxaFx0EdbZGk/TVp9lrMk3Oq
+        )
+
+    [verify] => 1
+    [session_id] => 86v5a1tdviuuf4ondpial47fbg
+    [session_user_id] => 3
+)
+Array
+(
+    [data] => Array
+        (
+            [email] => promoliga8@gmail.com
+            [password] => promoliga8@gmail.com
+        )
+
+    [user] => Array
+        (
+            [id] => 3
+            [password] => $2y$10$InHozgB0dmjZruZjcbrn0ut5JjmJ0KxaFx0EdbZGk/TVp9lrMk3Oq
+        )
+
+    [verify] => 1
+    [session_id] => 86v5a1tdviuuf4ondpial47fbg
+    [session_user_id] => 3
+)
+Array
+(
+    [data] => Array
+        (
+            [email] => promoliga8@gmail.com
+            [password] => promoliga8@gmail.com
+        )
+
+    [user] => Array
+        (
+            [id] => 3
+            [password] => $2y$10$InHozgB0dmjZruZjcbrn0ut5JjmJ0KxaFx0EdbZGk/TVp9lrMk3Oq
+        )
+
+    [verify] => 1
+    [session_id] => 86v5a1tdviuuf4ondpial47fbg
+    [session_user_id] => 3
+)

@@ -345,7 +345,7 @@ function handleAccountStats() {
                 });
                 const labels = Object.keys(dataMap);
                 const values = Object.values(dataMap);
-                const colors = ['#fc7592','#36A2EB','#FFCE56','#29bbbb','#4e3b23c7','#f08d2a','#8DD17E','#C9CBCF','#e2214ed8','#9D4EDD','#2C73D2'];
+                const colors = ['#fc7592','#36A2EB','#C9CBCF','#29bbbb','#4e3b23c7','#f08d2a','#8DD17E','#FFCE56','#e2214ed8','#9D4EDD','#2C73D2'];
                 pieChart.data = {
                     labels: labels,
                     datasets: [{ data: values, backgroundColor: colors.slice(0, labels.length) }]

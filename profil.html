@@ -55,7 +55,7 @@
                             </label>
                             <input id="avatarInput" class="avatar-input" type="file" accept=".png,.jpg,.jpeg">
                         </div>
-                        <h3>----ici nom de lutilisateur----</h3>
+                        <h3></h3>
                         <p class="statut-actif" data-i18n="activeAccount">Compte Actif</p>
                     </div>
 
@@ -102,8 +102,8 @@
                         </div>
 
                         <div class="stat-card color-info">
-                            <i class="fas fa-hand-holding-usd"></i>
-                            <span class="stat-label" data-i18n="remaining">Restant</span>
+                            <i class="fas fa-piggy-bank"></i>
+                            <span class="stat-label" data-i18n="totalBudgeted">Total Budgétisé</span>
                             <div class="stat-value">--</div>
                         </div>
 
@@ -179,6 +179,21 @@
             </form>
         </div>
     </div>
+    <!-- Pop-up confirmation suppression compte -->
+    <div id="deleteAccountModal" class="custom-modal2">
+        <div class="modal-content2">
+            <div class="modal-icon-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 style="text-align:center;">Suppression du compte</h3>
+            <p style="text-align:center;">Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.</p>
+            <div class="modal-buttons">
+                <button id="confirmDeleteAccountBtn" class="btn-danger">Oui, supprimer</button>
+                <button id="cancelDeleteAccountBtn" class="btn-cancel">Annuler</button>
+            </div>
+        </div>
+    </div>
+
     <div id="logoutModal" class="custom-modal2">
         <div class="modal-content2">
             <div class="modal-icon-warning" style="color: var(--primary-color);">

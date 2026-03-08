@@ -15,7 +15,7 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 
 if ($action === 'get') {
-    $stmt = $pdo->prepare("SELECT id, name as username, email, phone, created_at, image FROM users WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT id, name as username, email, phone, created_at, image, last_login FROM users WHERE id = ?");
     $stmt->execute([$user_id]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
     if ($user) {

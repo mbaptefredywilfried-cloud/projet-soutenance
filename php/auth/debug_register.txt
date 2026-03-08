@@ -1,6 +1,6 @@
 Array
 (
-    [name] => qrhtwqe@gmail.com
-    [email] => qrhtwqe@gmail.com
-    [password] => qrhtwqe@gmail.com
+    [name] => promoliga8@gmail.com
+    [email] => promoliga8@gmail.com
+    [password] => promoliga8@gmail.com
 )

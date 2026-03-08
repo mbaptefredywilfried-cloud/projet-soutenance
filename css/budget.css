@@ -571,6 +571,7 @@ aside {
         transform: translateY(16px);
         animation: budgetCardFadeIn 0.45s cubic-bezier(.4,0,.2,1) forwards;
     }
+    
 
     @keyframes budgetCardFadeIn {
         0% {
@@ -585,7 +586,10 @@ aside {
             opacity: 1;
             transform: translateY(0);
         }
-    }
+    
+}
+
+.budget-card {
     background: var(--card-background);
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
