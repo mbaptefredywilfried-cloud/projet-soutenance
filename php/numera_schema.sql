@@ -1,4 +1,4 @@
--- Structure de la table users pour Numera
+0-- Structure de la table users pour Numera
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(60) NOT NULL,
@@ -55,10 +55,15 @@ CREATE TABLE IF NOT EXISTS notifications (
 );
 
 -- Table des paramètres utilisateur (optionnel)
+
+-- Table des paramètres utilisateur (couleur d'accent, langue, devise)
 CREATE TABLE IF NOT EXISTS user_settings (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    language VARCHAR(10) DEFAULT 'fr',
-    theme VARCHAR(20) DEFAULT 'light',
+    accent_gradient VARCHAR(100) DEFAULT 'linear-gradient(180deg, #10b981 0%, #059669 100%)', -- Dégradé d'accent par défaut
+    language VARCHAR(10) DEFAULT 'fr', -- Langue par défaut
+    currency VARCHAR(10) DEFAULT 'EUR', -- Devise par défaut
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+

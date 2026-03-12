@@ -154,8 +154,8 @@ main h1 {
 .card {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 24px;
-    margin: 0px 40px 25px 0px;
+    gap: 8px;
+    margin: 0px 8px 25px 0px;
 }
 
 .card-item {

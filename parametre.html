@@ -25,9 +25,12 @@
                 </div>
                 <div class="separed"></div>
                 <div class="nav">
-                    <a href="./dasboard.html"><i class="fas fa-home"></i><span data-i18n="navDashboard">Dashboard</span></a>
-                    <a href="./transaction.html"><i class="fas fa-exchange-alt"></i><span data-i18n="navTransaction">Transaction</span></a>
-                    <a href="./budget.html"><i class="fas fa-piggy-bank"></i><span data-i18n="navBudget">Budget</span></a>
+                    <a href="./dasboard.html"><i class="fas fa-home"></i><span
+                            data-i18n="navDashboard">Dashboard</span></a>
+                    <a href="./transaction.html"><i class="fas fa-exchange-alt"></i><span
+                            data-i18n="navTransaction">Transaction</span></a>
+                    <a href="./budget.html"><i class="fas fa-piggy-bank"></i><span
+                            data-i18n="navBudget">Budget</span></a>
                     <a href="./profil.html"><i class="fas fa-user"></i><span data-i18n="navProfil">Profil</span></a>
                 </div>
             </div>
@@ -35,8 +38,10 @@
             <div class="side">
                 <div class="separed"></div>
                 <div class="nav">
-                    <a href="./parametre.html"><i class="fas fa-cog"></i><span data-i18n="navParametres">Parametres</span></a>
-                    <a href="./deconnexion.html" id="logoutLink"><i class="fas fa-right-from-bracket"></i><span data-i18n="navDeconnexion">Deconnexion</span></a>
+                    <a href="./parametre.html"><i class="fas fa-cog"></i><span
+                            data-i18n="navParametres">Parametres</span></a>
+                    <a href="./deconnexion.html" id="logoutLink"><i class="fas fa-right-from-bracket"></i><span
+                            data-i18n="navDeconnexion">Deconnexion</span></a>
                 </div>
             </div>
         </aside>
@@ -69,8 +74,7 @@
                             <small data-i18n="customizeUI">Personnaliser l'interface</small>
                         </div>
                         <div class="color">
-                            <div class="color-option" data-color="#2563eb"
-                                style="background: #36A2EB;"></div>
+                            <div class="color-option" data-color="#2563eb" style="background: #36A2EB;"></div>
                             <div class="color-option" data-color="#10b981"
                                 style="background: linear-gradient(180deg, #10b981 0%, #059669 100%);"></div>
                             <div class="color-option" data-color="#8b5cf6"
@@ -154,15 +158,18 @@
                     <div class="form-group">
                         <label data-i18n="changePassword">Nouveau mot de passe</label>
                         <div class="password-input">
-                            <input type="password" id="newPassword" placeholder="Nouveau mot de passe" data-placeholder="phNewPassword">
+                            <input type="password" id="newPassword" placeholder="Nouveau mot de passe"
+                                data-placeholder="phNewPassword">
                             <button type="button" class="toggle-password"><i class="fas fa-eye-slash"></i></button>
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Confirmer le nouveau mot de passe</label>
                         <div class="password-input">
-                            <input type="password" id="confirmPassword" placeholder="Confirmer votre nouveau mot de passe">
-                            <button type="button" class="toggle-password-confirm"><i class="fas fa-eye-slash"></i></button>
+                            <input type="password" id="confirmPassword"
+                                placeholder="Confirmer votre nouveau mot de passe">
+                            <button type="button" class="toggle-password-confirm"><i
+                                    class="fas fa-eye-slash"></i></button>
                         </div>
                     </div>
                     <button id="savePasswordBtn" class="btn-primary" style="width: 100%; margin-bottom: 16px;">
@@ -181,7 +188,7 @@
                     </div>
                     <button id="resetDataBtn" class="btn-danger" style="width: 100%;">
                         <i class="fas fa-trash"></i>
-                        <span>Réinitialiser les données locales</span>
+                        <span>Réinitialiser les données</span>
                     </button>
                 </div>
 
@@ -229,29 +236,32 @@
                         <label style="margin-top: 16px;">Envoyer un retour</label>
                         <textarea id="feedbackText" rows="3" placeholder="Partager vos suggestions..."></textarea>
                     </div>
-                    <button id="sendFeedbackBtn" class="btn-primary" style="width: 100%; margin-top: 16px; justify-content: center;">
+                    <button id="sendFeedbackBtn" class="btn-primary"
+                        style="width: 100%; margin-top: 16px; justify-content: center;">
                         <i class="far fa-paper-plane"></i>
                         <span>Envoyer</span>
                     </button>
                 </div>
-                
+
 
             </div>
         </main>
     </div>
     <div id="logoutModal" class="custom-modal2">
-    <div class="modal-content2">
-        <div class="modal-icon-warning" style="color: var(--primary-color);">
-            <i class="fas fa-sign-out-alt"></i>
-        </div>
-        <h3>Déconnexion</h3>
-        <p>Êtes-vous sûr de vouloir quitter votre session ?</p>
-        <div class="modal-buttons">
-            <button id="confirmLogoutBtn" class="btn-primary" style="background-color: var(--primary-color); border:none; padding: 10px 24px; border-radius: 8px; color: white; cursor: pointer; font-weight: 600;">Oui, me déconnecter</button>
-            <button id="cancelLogoutBtn" class="btn-cancel">Annuler</button>
+        <div class="modal-content2">
+            <div class="modal-icon-warning" style="color: var(--primary-color);">
+                <i class="fas fa-sign-out-alt"></i>
+            </div>
+            <h3>Déconnexion</h3>
+            <p>Êtes-vous sûr de vouloir quitter votre session ?</p>
+            <div class="modal-buttons">
+                <button id="confirmLogoutBtn" class="btn-primary"
+                    style="background-color: var(--primary-color); border:none; padding: 10px 24px; border-radius: 8px; color: white; cursor: pointer; font-weight: 600;">Oui,
+                    me déconnecter</button>
+                <button id="cancelLogoutBtn" class="btn-cancel">Annuler</button>
+            </div>
         </div>
     </div>
-</div>
 
     <script src="./js/common.js"></script>
     <script src="./js/traduction.js"></script>

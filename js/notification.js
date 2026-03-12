@@ -1,10 +1,4 @@
-﻿// notification.js
-
-// Reminder system for transactions
-// - Respects localStorage.notificationsRappel ("true" or "false")
-// - Exposes checkTransactionReminder() to check reminders on-demand
-// - Non-blocking toast-style UI, max one reminder per day
-// - Uses transaction.date values from localStorage.transactions (not save time)
+﻿
 
 (function () {
     // Small helper: format Date to YYYY-MM-DD

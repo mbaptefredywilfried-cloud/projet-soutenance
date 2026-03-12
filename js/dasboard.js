@@ -1,30 +1,17 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // --- 0. INITIALISATION DE L'ACCENT COULEUR ---
-    const savedAccentColor = localStorage.getItem('accentColor') || '#2563eb';
-    
-    // Fonction pour appliquer l'accent au dashboard
-    function applyDashboardAccentColor(color) {
-        // Appliquer la couleur au bouton "voir plus"
-        const viewMoreBtn = document.querySelector('.btn-view-more');
-        if (viewMoreBtn) {
-            viewMoreBtn.style.color = color;
-            viewMoreBtn.style.borderColor = color;
-        }
-        
-        // Appliquer aussi aux autres éléments si la fonction globale existe
-        if (typeof applyAccentColor === 'function') {
-            applyAccentColor(color);
-        }
+    // --- 0. SYNCHRONISATION DE LA COULEUR D'ACCENT ---
+    function setAccentColorVar(color) {
+        document.documentElement.style.setProperty('--accent-color', color);
     }
-    
-    // Appliquer l'accent initial
-    applyDashboardAccentColor(savedAccentColor);
-    
-    // Écouter les changements d'accent (depuis les paramètres)
+
+    const savedAccentColor = localStorage.getItem('accentColor') || '#2563eb';
+    setAccentColorVar(savedAccentColor);
+
+    // Réagit au changement de couleur d'accent (depuis paramètres)
     window.addEventListener('storage', (e) => {
         if (e.key === 'accentColor') {
             const newColor = e.newValue || '#2563eb';
-            applyDashboardAccentColor(newColor);
+            setAccentColorVar(newColor);
         }
     });
 
@@ -281,17 +268,51 @@ function handleAccountStats() {
         const barCtx = barCanvas.getContext('2d');
         
         if (pieChart) pieChart.destroy();
+        // Plugin pour texte centré
+        const centerTextPlugin = {
+            id: 'centerText',
+            afterDraw(chart) {
+                if (chart.config._centerText) {
+                    const ctx = chart.ctx;
+                    const txt = chart.config._centerText.text;
+                    const fontSize = chart.config._centerText.fontSize || 13;
+                    const color = chart.config._centerText.color || '#1e293b';
+                    ctx.save();
+                    ctx.font = `bold ${fontSize}px Inter, Arial, sans-serif`;
+                    ctx.fillStyle = color;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                        const meta = chart.getDatasetMeta(0);
+                        const arc = meta.data[0];
+                        let x = chart.width / 2;
+                        let y = chart.height / 2;
+                        if (arc) {
+                            x = arc.x;
+                            y = arc.y;
+                        }
+                    // Multi-ligne
+                    const lines = txt.split('\n');
+                    const lineHeight = fontSize * 1.3;
+                    const totalHeight = lineHeight * lines.length;
+                    lines.forEach((line, i) => {
+                        ctx.fillText(line, x, y - totalHeight/2 + i*lineHeight + lineHeight/2);
+                    });
+                    ctx.restore();
+                }
+            }
+        };
         pieChart = new Chart(pieCtx, { 
             type: 'doughnut', 
             data: { labels: [], datasets: [{ data: [], backgroundColor: [] }] },
             options: { 
                 responsive: true,
                 maintainAspectRatio: false,
-                cutout: '60%',
+                    cutout: '65%',
                 plugins: { 
-                    legend: { position: 'left' }
+                        legend: { position: 'right' }
                 }
-            }
+            },
+            plugins: [centerTextPlugin]
         });
 
         if (barChart) barChart.destroy();
@@ -334,6 +355,9 @@ function handleAccountStats() {
                         pieChart = null;
                     }
                     showEmptyPieState();
+                    // Cache le texte du centre
+                    const donutText = document.getElementById('donutCenterText');
+                    if (donutText) donutText.textContent = '';
                     return;
                 }
                 // 4. Si on a des dépenses, on s'assure que le canvas existe
@@ -345,10 +369,31 @@ function handleAccountStats() {
                 });
                 const labels = Object.keys(dataMap);
                 const values = Object.values(dataMap);
-                const colors = ['#fc7592','#36A2EB','#C9CBCF','#29bbbb','#4e3b23c7','#f08d2a','#8DD17E','#FFCE56','#e2214ed8','#9D4EDD','#2C73D2'];
+                // Même couleurs, nouvel ordre
+                const colors = [
+                    '#36A2EB', // Bleu
+                    '#fc7592', // Rose
+                    '#FFCE56', // Jaune
+                    '#C9CBCF', // Gris
+                    '#29bbbb', // Cyan
+                    '#c530ee', // Orange
+                    '#8DD17E', // Vert
+                    '#e2214ed8', // Rouge foncé
+                    '#4e3b23c7', // Marron
+                    '#2C73D2', // Bleu foncé
+                    '#9D4EDD'  // Violet
+                ];
                 pieChart.data = {
                     labels: labels,
                     datasets: [{ data: values, backgroundColor: colors.slice(0, labels.length) }]
+                };
+                // Ajout du texte centré via plugin
+                const totalDepense = values.reduce((sum, v) => sum + v, 0);
+                const currencySymbol = localStorage.getItem('appCurrency') || 'FCFA';
+                pieChart.config._centerText = {
+                    text: `Total dépenses :\n${formatAmountDash(totalDepense)} ${currencySymbol}`,
+                    fontSize: 13,
+                    color: '#1e293b'
                 };
                 pieChart.update();
             })

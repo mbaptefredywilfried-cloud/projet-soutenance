@@ -250,9 +250,6 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 if (data.success && data.image) {
                     avatarImage.src = data.image;
-                    // Mettre à jour tous les avatars du DOM si besoin
-                    const avatars = document.querySelectorAll('.avatar-image');
-                    avatars.forEach(img => { img.src = data.image; });
                     showSuccessToast("Photo mise à jour !");
                 } else {
                     showErrorToast(data.error || "Erreur lors de l'upload de la photo.");

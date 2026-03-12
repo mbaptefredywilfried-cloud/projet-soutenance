@@ -1,3 +1,18 @@
+/* --- ERREUR INPUT --- */
+.input-error {
+}
+.input-box input.input-error {
+  border-color: #ef4444 !important;
+  background: #fef2f2 !important;
+  box-shadow: 0 0 0 2px #fee2e2;
+}
+
+.error-message {
+  color: #ef4444;
+  font-size: 0.85em;
+  margin-top: 4px;
+  font-weight: 500;
+}
 /* --- VARIABLES --- */
 :root {
   --primary: #2563eb;
@@ -27,12 +42,29 @@ body {
   overflow-x: hidden;
 }
 
-/* La colonne de gauche (Professionnelle Slate) */
-body::before {
-  content: "";
-  flex: 1;
+/* Panel gauche personnalisé */
+#left-panel {
+  width: 50vw;
+  min-height: 100vh;
   background: var(--navy-dark);
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+#svg-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 40px;
+}
+#svg-container img {
+  width: 420px;
+  max-width: 90%;
+  height: auto;
 }
 
 /* --- HEADER / LOGO --- */

@@ -17,5 +17,5 @@ try {
     ]);
     exit;
 }
-session_start();
+session_start(); // Démarre la session pour gérer les utilisateurs connectés
 ?>

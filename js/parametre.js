@@ -141,63 +141,48 @@ document.addEventListener('DOMContentLoaded', function () {
             const newPass = newPasswordInput ? newPasswordInput.value.trim() : '';
             const confirmPass = confirmPasswordInput ? confirmPasswordInput.value.trim() : '';
 
-            // Validation
+            // Validation côté client
             if (!oldPass || !newPass || !confirmPass) {
-                showModernPopup(
-                    "Erreur",
-                    "Tous les champs de mot de passe sont obligatoires.",
-                    "error"
-                );
+                showModernPopup("Erreur", "Tous les champs de mot de passe sont obligatoires.", "error");
                 return;
             }
-
             if (newPass.length < 6) {
-                showModernPopup(
-                    "Erreur",
-                    "Le nouveau mot de passe doit contenir au moins 6 caractères.",
-                    "error"
-                );
+                showModernPopup("Erreur", "Le nouveau mot de passe doit contenir au moins 6 caractères.", "error");
                 return;
             }
-
             if (newPass !== confirmPass) {
-                showModernPopup(
-                    "Erreur",
-                    "Les nouveaux mots de passe ne correspondent pas.",
-                    "error"
-                );
+                showModernPopup("Erreur", "Les nouveaux mots de passe ne correspondent pas.", "error");
                 return;
             }
-
             if (oldPass === newPass) {
-                showModernPopup(
-                    "Erreur",
-                    "Le nouveau mot de passe doit être différent de l'ancien.",
-                    "error"
-                );
+                showModernPopup("Erreur", "Le nouveau mot de passe doit être différent de l'ancien.", "error");
                 return;
             }
 
-            // Check if old password matches stored password
-            const storedPassword = localStorage.getItem('userPassword') || '';
-            if (oldPass !== storedPassword) {
-                showModernPopup(
-                    "Erreur",
-                    "L'ancien mot de passe est incorrect.",
-                    "error"
-                );
-                return;
-            }
-
-            // Update password in localStorage
-            localStorage.setItem('userPassword', newPass);
-
-            // Clear fields
-            oldPasswordInput.value = '';
-            newPasswordInput.value = '';
-            confirmPasswordInput.value = '';
-
-            showToast('Mot de passe mis à jour avec succès !');
+            // Envoi au serveur
+            savePasswordBtn.disabled = true;
+            fetch('/PROJET/php/data/change_password.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify({ old_password: oldPass, new_password: newPass })
+            })
+            .then(resp => resp.json())
+            .then(result => {
+                savePasswordBtn.disabled = false;
+                oldPasswordInput.value = '';
+                newPasswordInput.value = '';
+                confirmPasswordInput.value = '';
+                if (result.success) {
+                    showModernPopup("Succès", result.message || 'Mot de passe mis à jour avec succès !', "success");
+                } else {
+                    showModernPopup("Erreur", result.error || 'Erreur lors du changement de mot de passe.', "error");
+                }
+            })
+            .catch(err => {
+                savePasswordBtn.disabled = false;
+                showModernPopup("Erreur", "Erreur réseau. Veuillez réessayer.", "error");
+            });
         });
     }
     // --- 4. EXPORTATION DES DONNÉES (AVEC POPUP ERREUR ET TOAST SUCCÈS) ---
@@ -324,26 +309,26 @@ function showResetConfirmModal(titre, message) {
 
     document.body.appendChild(overlay);
     document.getElementById('btnCancelReset').onclick = () => overlay.remove();
-    document.getElementById('btnConfirmReset').onclick = () => {
-        const email = localStorage.getItem('userEmail');
-        const pass = localStorage.getItem('userPassword');
-        const name = localStorage.getItem('userName');
-        const accent = localStorage.getItem('accentColor');
-        const theme = localStorage.getItem('darkMode');
-
-        localStorage.clear();
-
-        if(email) localStorage.setItem('userEmail', email);
-        if(pass) localStorage.setItem('userPassword', pass);
-        if(name) localStorage.setItem('userName', name);
-        if(accent) localStorage.setItem('accentColor', accent);
-        if(theme) localStorage.setItem('darkMode', theme);
-
-        localStorage.setItem("transactions", JSON.stringify([]));
-        localStorage.setItem('resetSuccess', 'true');
-        
-        window.location.reload(); 
-    };
+        document.getElementById('btnConfirmReset').onclick = () => {
+            fetch('/PROJET/php/data/reset_data.php', {
+                method: 'POST',
+                credentials: 'same-origin'
+            })
+            .then(resp => resp.json())
+            .then(result => {
+                overlay.remove();
+                if (result.success) {
+                    showModernPopup('Succès', result.message || 'Données réinitialisées avec succès.', 'success');
+                    setTimeout(() => window.location.reload(), 1500);
+                } else {
+                    showModernPopup('Erreur', result.error || 'Erreur lors de la réinitialisation.', 'error');
+                }
+            })
+            .catch(() => {
+                overlay.remove();
+                showModernPopup('Erreur', 'Erreur réseau. Veuillez réessayer.', 'error');
+            });
+        };
 }
 
 // --- 9. APPLICATION DE L'ACCENT & UTILITAIRES ---
