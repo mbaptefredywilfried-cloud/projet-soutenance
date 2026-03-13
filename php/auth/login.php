@@ -23,6 +23,6 @@ if ($user && password_verify($password, $user['password'])) {
     $stmtUpdate->execute([$user['id']]);
     echo json_encode(["status" => "success", "message" => "Connexion réussie"]);
 } else {
-    echo json_encode(["status" => "error", "message" => "Identifiants invalides"]);
+    echo json_encode(["status" => "error", "message" => "Email ou mot de passe incorrect"]);
 }
 ?>

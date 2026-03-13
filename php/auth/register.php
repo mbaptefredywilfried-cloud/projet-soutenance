@@ -24,6 +24,11 @@ $hash = password_hash($password, PASSWORD_DEFAULT);
 try {
     $stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
     $stmt->execute([$name, $email, $hash]);
+    // Connexion automatique après inscription
+    $userId = $pdo->lastInsertId();
+    $_SESSION['user_id'] = $userId;
+    $_SESSION['user_email'] = $email;
+    $_SESSION['user_name'] = $name;
     echo json_encode(["status" => "success", "message" => "Inscription réussie"]);
 } catch (PDOException $e) {
     if ($e->getCode() == 23000) {

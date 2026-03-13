@@ -1,6 +1,6 @@
 Array
 (
-    [name] => Henry Danger
-    [email] => Henrydanger@gmail.com
-    [password] => Henrydanger@gmail.com
+    [name] => mbaptefredywilfried@gmail.com
+    [email] => mbaptefredywilfried@gmail.com
+    [password] => mbaptefredywilfried@gmail.com
 )

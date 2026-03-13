@@ -1,3 +1,32 @@
+/* --- SUCCÈS INPUT --- */
+.input-box input.input-success {
+    border-color: #22c55e !important;
+    background: #e7f9ef !important; /* Vert très clair, bien visible */
+    box-shadow: 0 0 0 2px #bbf7d0;
+    border-radius: 12px !important;
+    padding-left: 48px !important;
+}
+.input-box input.input-success + i {
+    color: #22c55e !important;
+}
+/* --- ERREUR INPUT --- */
+.input-error {}
+.input-box input.input-error {
+    border-color: #ef4444 !important;
+    background: #fef2f2 !important;
+    box-shadow: 0 0 0 2px #fee2e2;
+    border-radius: 12px !important;
+    padding-left: 48px !important;
+}
+.input-box input.input-error + i {
+    color: #ef4444 !important;
+}
+.error-message {
+    color: #ef4444;
+    font-size: 0.85em;
+    margin-top: 4px;
+    font-weight: 500;
+}
 /* --- VARIABLES --- */
 :root {
     --primary: #2563eb;
@@ -217,6 +246,9 @@ nav h2 {
         align-items: center;
         padding: 20px;
     }
+        #svg-panel {
+            display: none !important;
+        }
 
     body::before { display: none; } /* On cache la colonne sombre */
 
@@ -235,7 +267,7 @@ nav h2 {
     #loginForm {
         padding: 40px 30px;
         border-radius: 24px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            box-shadow: none !important;
         max-width: 440px;
         width: 100%;
         animation: fadeInUp 0.6s ease-out;
@@ -352,70 +384,73 @@ nav h2 {
 
 
 
-/* --- POPUP ERREUR CONNEXION --- */
-.error-popup-overlay {
+
+/* --- POPUP ERREUR CENTRÉ (MODAL) --- */
+.modal-confirm-overlay {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(15, 23, 42, 0.7); /* Fond navy-dark transparent */
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.7);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 10001;
-    backdrop-filter: blur(4px);
+    z-index: 10000;
+    backdrop-filter: blur(5px);
 }
-
-.error-popup-content {
+.modal-confirm-content {
     background: white;
-    padding: 35px;
+    padding: 40px;
     border-radius: 20px;
     text-align: center;
-    max-width: 400px;
+    max-width: 420px;
     width: 90%;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; /* Effet de secousse */
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-
-.error-popup-content i {
-    font-size: 50px;
-    color: #ef4444; /* Rouge alerte */
+.modal-confirm-content i {
+    font-size: 60px;
+    color: #ef4444;
     margin-bottom: 20px;
+    display: block;
 }
-
-.error-popup-content h2 {
-    color: #1e293b;
-    margin-bottom: 10px;
-    font-size: 22px;
+.modal-confirm-content h2 {
+    font-size: 26px;
+    margin-bottom: 15px;
+    color: #ef4444;
+    font-weight: 800;
 }
-
-.error-popup-content p {
+.modal-confirm-content p {
     color: #64748b;
-    margin-bottom: 25px;
-    line-height: 1.5;
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 30px;
 }
-
-.btn-error-close {
-    background: #1e293b;
+.btn-confirm-ok {
+    background-color: #ef4444;
     color: white;
     border: none;
-    padding: 14px 25px;
-    border-radius: 12px;
+    padding: 14px 0;
     width: 100%;
-    font-weight: 600;
+    border-radius: 12px;
+    font-weight: 700;
     cursor: pointer;
-    transition: 0.3s;
+    font-size: 16px;
+    transition: all 0.3s;
 }
-
-.btn-error-close:hover {
-    background: #0f172a;
+.btn-confirm-ok:hover {
+    background-color: #b91c1c;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
 }
-
-/* Animation de secousse pour l'erreur */
-@keyframes shake {
-    10%, 90% { transform: translate3d(-1px, 0, 0); }
-    20%, 80% { transform: translate3d(2px, 0, 0); }
-    30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-    40%, 60% { transform: translate3d(4px, 0, 0); }
+@keyframes modalPop {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
 }

@@ -1,3 +1,35 @@
+/* --- MESSAGE GLOBAL D'ERREUR (ALERTE) --- */
+.alert-global-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: #fff6f6;
+  color: #b94a48;
+  border: 1px solid #e0b4b4;
+  border-radius: 2px;
+  padding: 8px 12px;
+  margin-bottom: 14px;
+  font-size: 1rem;
+  font-weight: normal;
+  box-shadow: none;
+  gap: 8px;
+}
+.alert-global-error i {
+  color: #ef4444;
+  font-size: 22px;
+}
+/* --- SUCCÈS INPUT --- */
+.input-box input.input-success {
+  border-color: #22c55e !important;
+  background: #e7f9ef !important; /* Vert très clair, bien visible */
+  box-shadow: 0 0 0 2px #bbf7d0;
+  border-radius: 12px !important;
+  padding-left: 48px !important;
+}
+.input-box input.input-success + i {
+  color: #22c55e !important;
+}
 /* --- ERREUR INPUT --- */
 .input-error {
 }
@@ -5,6 +37,12 @@
   border-color: #ef4444 !important;
   background: #fef2f2 !important;
   box-shadow: 0 0 0 2px #fee2e2;
+  border-radius: 12px !important;
+  padding-left: 48px !important;
+  margin-right: 8px;
+  font-size: 1.1em;
+  color: #b94a48;
+  flex-shrink: 0;
 }
 
 .error-message {
@@ -132,7 +170,7 @@ nav h2 {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 0 10% 0 8%;
+  padding: 0 5% 0 5%;
   max-width: 750px;
   background: white;
   z-index: 1;
@@ -169,6 +207,12 @@ nav h2 {
   transform: translateY(-50%);
   color: var(--text-muted);
   font-size: 14px;
+  pointer-events: none;
+  transition: color 0.2s;
+}
+.input-box input.input-error ~ i {
+  color: #ef4444 !important;
+  /* alignement identique, pas de changement de taille */
 }
 
 .input-box input {
@@ -227,6 +271,96 @@ nav h2 {
 }
 
 /* --- RESPONSIVE --- */
+@media (max-width: 900px) {
+    .text h3,
+    .text h6 {
+      text-align: center;
+      width: 100%;
+    }
+  #left-panel,
+  #svg-container,
+  #slogan-container {
+    display: none !important;
+  }
+  body {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: white !important;
+    padding: 0;
+    min-height: 100vh;
+  }
+  header {
+    position: relative;
+    top: 0;
+    left: 0;
+    margin-bottom: 0;
+    color: var(--text-main);
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    padding: 0;
+  }
+    #signupForm {
+      padding: 0 5% 0 5%;
+      background: white;
+      border-radius: 14px;
+      box-shadow: none !important;
+      max-width: 420px;
+      width: 100%;
+      margin: 0 auto;
+    }
+  #signupForm > .text {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+  .text h3 {
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+  .text h6 {
+    font-size: 13px;
+  }
+  .input-box input {
+    font-size: 14px;
+    padding: 12px 12px 12px 38px;
+    border-radius: 8px;
+  }
+  .input-box i {
+    left: 8px;
+    font-size: 12px;
+  }
+  .submit button {
+    padding: 12px;
+    font-size: 15px;
+    border-radius: 8px;
+  }
+  .modal-confirm-content {
+    padding: 18px 8px;
+    border-radius: 12px;
+    max-width: 98vw;
+  }
+  .modal-confirm-content i {
+    font-size: 38px;
+    margin-bottom: 12px;
+  }
+  .modal-confirm-content h2 {
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+  .modal-confirm-content p {
+    font-size: 13px;
+    margin-bottom: 18px;
+  }
+  .btn-confirm-ok {
+    padding: 10px 0;
+    font-size: 15px;
+    border-radius: 8px;
+  }
+}
 @media (max-width: 900px) {
   body::before,
   #slogan-container {
@@ -356,40 +490,37 @@ nav h2 {
   animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+
 .modal-confirm-content i {
   font-size: 60px;
-  color: #10b981; /* Vert succès */
+  color: #10b981;
   margin-bottom: 20px;
   display: block;
 }
-
 .modal-confirm-content h2 {
   font-size: 26px;
   margin-bottom: 15px;
-  color: #1e293b;
+  color: #10b981;
   font-weight: 800;
 }
-
 .modal-confirm-content p {
   color: #64748b;
   font-size: 16px;
   line-height: 1.6;
   margin-bottom: 30px;
 }
-
 .btn-confirm-ok {
   background-color: #10b981;
   color: white;
   border: none;
   padding: 14px 0;
-  width: 100%; /* Bouton large plus moderne */
+  width: 100%;
   border-radius: 12px;
   font-weight: 700;
   cursor: pointer;
   font-size: 16px;
   transition: all 0.3s;
 }
-
 .btn-confirm-ok:hover {
   background-color: #059669;
   transform: translateY(-2px);
