@@ -4,7 +4,7 @@ require_once '../config/database.php';
 
 // Exemple de récupération depuis la base de données
 try {
-    $stmt = $pdo->query("SELECT id, name, type FROM categories");
+    $stmt = $pdo->query("SELECT id, name, type, translation_key FROM categories");
     $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
     echo json_encode([
         "status" => "success",

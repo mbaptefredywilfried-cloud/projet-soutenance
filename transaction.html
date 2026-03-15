@@ -79,7 +79,7 @@
                     <div class="form-group">
                         <label for="transactionCategory" data-i18n="category">Catégorie</label>
                         <select name="transactionCategory" id="transactionCategory" required>
-                            <option value="" data-i18n="selectOption">Selectionner</option>
+                            <option value="" data-i18n="selectOption">Sélectionner</option>
                         </select>
                     </div>
 
@@ -88,7 +88,7 @@
                     <div class="form-group">
                         <label for="transactionAmount" data-i18n="amount">Montant</label>
                         <input type="number" id="transactionAmount" name="transactionAmount"
-                            placeholder="Veuillez inserez un montant... " required>
+                            placeholder="Veuillez saisir un montant..." data-placeholder="phTransactionAmount" required>
                     </div>
 
                     <!-- Date de la transaction -->
@@ -105,9 +105,9 @@
 
                 <!-- description de la transaction -->
                 <div class="description">
-                    <label for="transactionDescription" data-i18n="optionalDescription">Description (optionnel)</label>
+                    <label for="transactionDescription" data-i18n="optionalDescription">Description (optionnelle)</label>
                     <input type="text" id="transactionDescription" name="transactionDescription"
-                        placeholder="Description de la transaction..." data-placeholder="descriptionOptional">
+                        placeholder="Description de la transaction..." data-placeholder="phTransactionDescription">
                 </div>
             </div>
 
@@ -118,7 +118,7 @@
                     <button class="filter-btn" data-filter="expense" data-i18n="expenses">Dépenses</button>
                 </div>
                 <button id="deleteAllBtn" class="btn-danger-outline" data-i18n="deleteAllBtn">
-                    <i class="fas fa-trash-can"></i> Tous supprimer
+                    <i class="fas fa-trash-can"></i> Tout supprimer
                 </button>
             </div>
 
@@ -167,8 +167,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="editTransactionDescription" data-i18n="optionalDescription">Description (optionnel)</label>
-                        <input type="text" id="editTransactionDescription"  placeholder="Notez un détail..." data-placeholder="phNoteDetail">
+                        <label for="editTransactionDescription" data-i18n="optionalDescription">Description (optionnelle)</label>
+                        <input type="text" id="editTransactionDescription"  placeholder="Ajoutez un détail..." data-placeholder="phNoteDetail">
                     </div>
                 </div>
                 <div class="modal-footer">

@@ -363,9 +363,17 @@ function handleAccountStats() {
                 // 4. Si on a des dépenses, on s'assure que le canvas existe
                 ensurePieCanvasExists();
                 const dataMap = {};
+                // Détecte la langue courante
+                const currentLang = document.documentElement.lang || 'fr';
                 expenseDataOnly.forEach(t => {
-                    const cat = t.category_name ? (t.category_name.charAt(0).toUpperCase() + t.category_name.slice(1)) : 'Autre';
-                    dataMap[cat] = (dataMap[cat] || 0) + parseFloat(t.amount);
+                    let catLabel = 'Autre';
+                    // Utilise la clé de traduction si disponible
+                    if (t.category_translation_key && translations[currentLang] && translations[currentLang][t.category_translation_key]) {
+                        catLabel = translations[currentLang][t.category_translation_key];
+                    } else if (t.category_name) {
+                        catLabel = t.category_name.charAt(0).toUpperCase() + t.category_name.slice(1);
+                    }
+                    dataMap[catLabel] = (dataMap[catLabel] || 0) + parseFloat(t.amount);
                 });
                 const labels = Object.keys(dataMap);
                 const values = Object.values(dataMap);
@@ -390,8 +398,9 @@ function handleAccountStats() {
                 // Ajout du texte centré via plugin
                 const totalDepense = values.reduce((sum, v) => sum + v, 0);
                 const currencySymbol = localStorage.getItem('appCurrency') || 'FCFA';
+                let centerTextLabel = (translations[currentLang] && translations[currentLang].totalExpenses) ? translations[currentLang].totalExpenses : 'Total dépenses';
                 pieChart.config._centerText = {
-                    text: `${translations.fr.totalExpenses}\n${formatAmountDash(totalDepense)} ${currencySymbol}`,
+                    text: `${centerTextLabel}\n${formatAmountDash(totalDepense)} ${currencySymbol}`,
                     fontSize: 13,
                     color: '#1e293b'
                 };
@@ -499,6 +508,11 @@ function handleAccountStats() {
         });
     });
 
+    // Ajout : Met à jour le texte du pie chart lors du changement de langue
+    window.addEventListener('languageChanged', function() {
+        if (typeof updatePieChart === 'function') updatePieChart('7J');
+    });
+
     if (budgetSelect) {
         budgetSelect.addEventListener('change', function() {
             updateBarChart(this.value);
@@ -528,11 +542,13 @@ function showEmptyPieState() {
     const accentColor = localStorage.getItem('accentColor') || '#2563eb';
     if (!chartContainer) return;
 
+    const currentLang = document.documentElement.lang || 'fr';
+    const t = translations[currentLang] || translations['fr'];
     chartContainer.innerHTML = `
         <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 250px; text-align: center; color: #a0aec0;">
             <i class="fa-solid fa-chart-pie" style="font-size: 3.5rem; margin-bottom: 15px; color: ${accentColor}; opacity: 0.3;"></i>
-            <p style="font-weight: 600; color: #64748b; margin: 0; font-size: 18px;" data-i18n="noExpense">${translations.fr.noExpense}</p>
-            <span style="font-size: 0.85rem; font-weight: 500; margin-top: 5px;" data-i18n="addExpenseToSeeDistribution">${translations.fr.addExpenseToSeeDistribution}</span>
+            <p style="font-weight: 600; color: #64748b; margin: 0; font-size: 18px;" data-i18n="noExpense">${t.noExpense}</p>
+            <span style="font-size: 0.85rem; font-weight: 500; margin-top: 5px;" data-i18n="addExpenseToSeeDistribution">${t.addExpenseToSeeDistribution}</span>
         </div>
     `;
 }

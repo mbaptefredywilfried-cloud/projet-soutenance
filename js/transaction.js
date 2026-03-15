@@ -243,13 +243,23 @@ document.addEventListener('DOMContentLoaded', function () {
                 'Divers': {icon: 'fas fa-ellipsis', color: '#fff', bg: '#95A5A6'},
                 'Autre': {icon: 'fas fa-ellipsis-h', color: '#fff', bg: '#a3a3a3'}
             };
-            const cat = transaction.category_name || 'Autre';
-            const iconData = iconMap[cat] || iconMap['Autre'];
+            // Utilise la langue courante du document (html[lang])
+            let currentLang = document.documentElement.lang || 'fr';
+            let cat = transaction.category_name || 'Autre';
+            if (transaction.category_translation_key && translations[currentLang] && translations[currentLang][transaction.category_translation_key]) {
+                cat = translations[currentLang][transaction.category_translation_key];
+            }
+            const iconData = iconMap[transaction.category_name] || iconMap['Autre'];
             const isIncome = (transaction.category_type === 'income');
             const sign = isIncome ? '+' : '-';
             const amountColor = isIncome ? '#10b981' : '#ef4444';
             const date = new Date(transaction.transaction_date || transaction.date);
-            const dateStr = date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+            // Format dynamique selon la langue courante
+            let locale = document.documentElement.lang || 'fr';
+            // Pour l'anglais, on veut le format "en-US" ; pour le français, "fr-FR"
+            if (locale.startsWith('en')) locale = 'en-US';
+            else locale = 'fr-FR';
+            const dateStr = date.toLocaleDateString(locale, { day: '2-digit', month: 'short', year: 'numeric' });
             transactionItem.innerHTML = `
                 <div class="transaction-info" style="display:flex;align-items:center;gap:16px;">
                     <div class="transaction-icon" style="background:${iconData.bg};width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;font-size:22px;">
@@ -431,12 +441,19 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- LOGIQUE COMMUNE POUR LES CATEGORIES ---
     function updateCategoryOptions(typeSelect, targetCategorySelect) {
         const selectedType = typeSelect.value;
-        targetCategorySelect.innerHTML = '<option value="">Sélectionner</option>';
+        // Utilise la langue courante du document (html[lang])
+        let currentLang = document.documentElement.lang || 'fr';
+        targetCategorySelect.innerHTML = '<option value="">' + (translations[currentLang]?.selectOption || 'Sélectionner') + '</option>';
         if (selectedType && categories[selectedType]) {
             categories[selectedType].forEach(cat => {
                 const option = document.createElement("option");
                 option.value = cat.id;
-                option.textContent = cat.name;
+                // Utilise la clé de traduction si disponible
+                if (cat.translation_key && translations[currentLang] && translations[currentLang][cat.translation_key]) {
+                    option.textContent = translations[currentLang][cat.translation_key];
+                } else {
+                    option.textContent = cat.name;
+                }
                 targetCategorySelect.appendChild(option);
             });
         }
