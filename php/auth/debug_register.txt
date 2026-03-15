@@ -1,6 +1,6 @@
 Array
 (
-    [name] => mbaptefredywilfried@gmail.com
-    [email] => mbaptefredywilfried@gmail.com
-    [password] => mbaptefredywilfried@gmail.com
+    [name] => wweeg@gmail.com
+    [email] => wweeg@gmail.csom
+    [password] => wweeg@gmail.com
 )

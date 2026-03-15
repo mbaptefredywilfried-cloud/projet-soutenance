@@ -173,7 +173,7 @@ function handleAccountStats() {
             if (tableBody) {
                 tableBody.innerHTML = '';
                 if (filtered.length === 0) {
-                    tableBody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 60px 0;"><div style="display: flex; flex-direction: column; align-items: center; justify-content: center; color: #718096;"><i class="fas fa-folder-open" style="font-size: 32px; margin-bottom: 10px; opacity: 0.5;"></i><p style="margin: 0; font-size: 15px;">Aucune transaction récente effectuée</p></div></td></tr>`;
+                    tableBody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 60px 0;"><div style="display: flex; flex-direction: column; align-items: center; justify-content: center; color: #718096;"><i class="fas fa-folder-open" style="font-size: 32px; margin-bottom: 10px; opacity: 0.5;"></i><p style="margin: 0; font-size: 15px;" data-i18n="noRecentTransaction">${translations.fr.noRecentTransaction}</p></div></td></tr>`;
                     return;
                 }
                 displayList.forEach(t => {
@@ -195,7 +195,7 @@ function handleAccountStats() {
                 });
             }
         } catch (e) {
-            if (tableBody) tableBody.innerHTML = '<tr><td colspan="5">Erreur de chargement</td></tr>';
+            if (tableBody) tableBody.innerHTML = `<tr><td colspan="5" data-i18n="loadingError">${translations.fr.loadingError}</td></tr>`;
         }
     }
 
@@ -391,7 +391,7 @@ function handleAccountStats() {
                 const totalDepense = values.reduce((sum, v) => sum + v, 0);
                 const currencySymbol = localStorage.getItem('appCurrency') || 'FCFA';
                 pieChart.config._centerText = {
-                    text: `Total dépenses :\n${formatAmountDash(totalDepense)} ${currencySymbol}`,
+                    text: `${translations.fr.totalExpenses}\n${formatAmountDash(totalDepense)} ${currencySymbol}`,
                     fontSize: 13,
                     color: '#1e293b'
                 };
@@ -420,7 +420,7 @@ function handleAccountStats() {
                 }
                 const now = new Date();
                 // Noms des mois
-                const monthNames = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
+                const monthNames = translations.fr.monthsShort;
                 // Afficher les 3 derniers mois (glissants)
                 let months = [];
                 for (let i = 2; i >= 0; i--) {
@@ -531,8 +531,8 @@ function showEmptyPieState() {
     chartContainer.innerHTML = `
         <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 250px; text-align: center; color: #a0aec0;">
             <i class="fa-solid fa-chart-pie" style="font-size: 3.5rem; margin-bottom: 15px; color: ${accentColor}; opacity: 0.3;"></i>
-            <p style="font-weight: 600; color: #64748b; margin: 0; font-size: 18px;">Aucune dépense</p>
-            <span style="font-size: 0.85rem; font-weight: 500; margin-top: 5px;">Ajoutez des dépenses pour voir la répartition.</span>
+            <p style="font-weight: 600; color: #64748b; margin: 0; font-size: 18px;" data-i18n="noExpense">${translations.fr.noExpense}</p>
+            <span style="font-size: 0.85rem; font-weight: 500; margin-top: 5px;" data-i18n="addExpenseToSeeDistribution">${translations.fr.addExpenseToSeeDistribution}</span>
         </div>
     `;
 }

@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
 					if (input.parentNode.classList.contains('input-box')) {
 						input.parentNode.classList.add('input-error');
 					}
-					showFieldError(input, f.message);
+					// Ne plus afficher de message sous l'input
 				}
 			});
 

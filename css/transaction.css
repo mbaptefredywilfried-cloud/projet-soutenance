@@ -1,3 +1,18 @@
+/* Animation de fondu pour les transactions */
+.transaction-fade {
+    animation: transactionFadeIn 0.5s;
+}
+
+@keyframes transactionFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 /* CSS Variables for Professional Theming */
 :root {
     --primary-color: #2563eb;
@@ -1117,3 +1132,4 @@ main .card .description label {
 .transaction-amount.expense {
     color: #ef4444;
 }
+

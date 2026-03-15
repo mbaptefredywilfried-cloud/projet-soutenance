@@ -4,6 +4,7 @@ require_once '../config/database.php';
 require_once '../auth/require_auth.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
+
 $required = ['category_id', 'type', 'amount', 'description', 'transaction_date'];
 foreach ($required as $field) {
     if (!isset($data[$field])) {

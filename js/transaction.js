@@ -1,4 +1,47 @@
+    // Contrôle de l'animation : true = animation, false = pas d'animation
+    let animateTransactions = true;
 document.addEventListener('DOMContentLoaded', function () {
+            // --- MENU BURGER ---
+            const menuBurger = document.getElementById('menuBurger');
+            const sidebar = document.querySelector('aside');
+            const overlay = document.querySelector('.sidebar-overlay');
+            if (menuBurger && sidebar && overlay) {
+                menuBurger.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.classList.toggle('active');
+                    sidebar.classList.toggle('active');
+                    overlay.classList.toggle('active');
+                    if (sidebar.classList.contains('active')) {
+                        document.body.style.overflow = 'hidden';
+                        menuBurger.setAttribute('aria-expanded', 'true');
+                        menuBurger.setAttribute('aria-label', 'Fermer le menu');
+                        menuBurger.focus();
+                    } else {
+                        document.body.style.overflow = '';
+                        menuBurger.setAttribute('aria-expanded', 'false');
+                        menuBurger.setAttribute('aria-label', 'Ouvrir le menu');
+                    }
+                });
+                overlay.addEventListener('click', function() {
+                    menuBurger.classList.remove('active');
+                    sidebar.classList.remove('active');
+                    this.classList.remove('active');
+                    document.body.style.overflow = '';
+                    menuBurger.setAttribute('aria-expanded', 'false');
+                    menuBurger.setAttribute('aria-label', 'Ouvrir le menu');
+                });
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+                        menuBurger.classList.remove('active');
+                        sidebar.classList.remove('active');
+                        overlay.classList.remove('active');
+                        document.body.style.overflow = '';
+                        menuBurger.setAttribute('aria-expanded', 'false');
+                        menuBurger.setAttribute('aria-label', 'Ouvrir le menu');
+                    }
+                });
+            }
         // Gestion du filtre
         let currentFilter = 'all';
         const filterButtons = document.querySelectorAll('.filter-btn');
@@ -8,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     filterButtons.forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
                     currentFilter = this.dataset.filter;
+                    animateTransactions = true;
                     renderTransactions();
                 });
             });
@@ -56,10 +100,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 await fetchTransactions();
                 window.dispatchEvent(new Event('transactionsUpdated'));
             } else {
-                alert(data.message || 'Erreur lors de l\'ajout.');
+                showErrorPopup(data.message || 'Erreur lors de l\'ajout.');
             }
         } catch (err) {
-            alert('Erreur réseau ou serveur.');
+            showErrorPopup('Erreur réseau ou serveur.');
         }
     }
 
@@ -78,10 +122,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 await fetchTransactions();
                 window.dispatchEvent(new Event('transactionsUpdated'));
             } else {
-                alert(data.message || 'Erreur lors de la modification.');
+                showErrorPopup(data.message || 'Erreur lors de la modification.');
             }
         } catch (err) {
-            alert('Erreur réseau ou serveur.');
+            showErrorPopup('Erreur réseau ou serveur.');
         }
     }
 
@@ -100,10 +144,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 await fetchTransactions();
                 window.dispatchEvent(new Event('transactionsUpdated'));
             } else {
-                alert(data.message || 'Erreur lors de la suppression.');
+                showErrorPopup(data.message || 'Erreur lors de la suppression.');
             }
         } catch (err) {
-            alert('Erreur réseau ou serveur.');
+            showErrorPopup('Erreur réseau ou serveur.');
         }
     }
 
@@ -112,14 +156,33 @@ document.addEventListener('DOMContentLoaded', function () {
         transactionForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             const formData = new FormData(transactionForm);
-            const transaction = {
-                category_id: parseInt(formData.get('transactionCategory'), 10),
-                type: formData.get('transactionType'),
-                amount: parseFloat(formData.get('transactionAmount')),
-                description: formData.get('transactionDescription') || '',
-                transaction_date: formData.get('transactionDate')
-            };
-            await addTransaction(transaction);
+                let description = '';
+                const descriptionInput = document.getElementById('transactionDescription');
+                if (descriptionInput && typeof descriptionInput.value === 'string') {
+                    description = descriptionInput.value.trim();
+                }
+
+                let categoryId = formData.get('transactionCategory');
+                if (categoryId !== null && categoryId !== undefined && categoryId !== '') {
+                    categoryId = parseInt(categoryId, 10);
+                } else {
+                    categoryId = null;
+                }
+
+                const transaction = {
+                    type: formData.get('transactionType'),
+                    category_id: categoryId,
+                    amount: parseFloat(formData.get('transactionAmount')),
+                    transaction_date: formData.get('transactionDate'),
+                    description: description
+                };
+
+                if (!transaction.type || !transaction.category_id || isNaN(transaction.amount) || !transaction.transaction_date) {
+                    showErrorToast('Veuillez remplir tous les champs obligatoires.');
+                    return;
+                }
+
+                await addTransaction(transaction);
         });
     }
 
@@ -138,10 +201,20 @@ document.addEventListener('DOMContentLoaded', function () {
             transactionsContainer.innerHTML = `<div class="empty-state"><i class="fas fa-receipt"></i><p>Aucune transaction trouvée</p></div>`;
             return;
         }
-        filtered.forEach(transaction => {
+
+        // Limite d'affichage max
+        const maxDisplay = 15;
+        // Seuil à partir duquel on affiche le bouton Voir plus/moins
+        const showMoreThreshold = 10;
+
+        // On limite le nombre de transactions affichées à maxDisplay
+        let limitedTransactions = filtered.slice(0, maxDisplay);
+        // Si showAll est activé, on affiche tout (jusqu'à maxDisplay)
+        const toDisplay = showAll ? limitedTransactions : limitedTransactions.slice(0, showMoreThreshold);
+
+        toDisplay.forEach(transaction => {
             const transactionItem = document.createElement('div');
             transactionItem.className = 'transaction-item';
-            // ...existing code...
             const iconMap = {
                 'Alimentation': {icon: 'fas fa-utensils', color: '#fff', bg: '#00B894'},
                 'Transport': {icon: 'fas fa-gas-pump', color: '#fff', bg: '#0984E3'},
@@ -172,11 +245,9 @@ document.addEventListener('DOMContentLoaded', function () {
             };
             const cat = transaction.category_name || 'Autre';
             const iconData = iconMap[cat] || iconMap['Autre'];
-            // ...existing code...
             const isIncome = (transaction.category_type === 'income');
             const sign = isIncome ? '+' : '-';
             const amountColor = isIncome ? '#10b981' : '#ef4444';
-            // ...existing code...
             const date = new Date(transaction.transaction_date || transaction.date);
             const dateStr = date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
             transactionItem.innerHTML = `
@@ -204,7 +275,34 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
             `;
             transactionsContainer.appendChild(transactionItem);
+            // Animation uniquement si demandé
+            if (animateTransactions) {
+                void transactionItem.offsetWidth;
+                transactionItem.classList.add('transaction-fade');
+            }
         });
+
+        // Bouton Voir plus/moins si au moins 10 transactions (et max 15)
+        if (limitedTransactions.length > showMoreThreshold) {
+            const accentColor = localStorage.getItem('accentColor') || '#2563eb';
+            const toggleBtn = document.createElement('button');
+            toggleBtn.textContent = showAll ? `Voir moins` : `Voir plus (${limitedTransactions.length - showMoreThreshold})`;
+            toggleBtn.onclick = () => {
+                showAll = !showAll;
+                animateTransactions = false;
+                renderTransactions();
+            };
+            toggleBtn.style.cssText = `width: 100%; padding: 10px; margin-top: 10px; background: none; border: 1px dashed ${accentColor}; color: ${accentColor}; cursor: pointer; border-radius: 8px; font-weight: bold;`;
+            toggleBtn.onmouseenter = () => {
+                toggleBtn.style.background = accentColor;
+                toggleBtn.style.color = '#fff';
+            };
+            toggleBtn.onmouseleave = () => {
+                toggleBtn.style.background = 'none';
+                toggleBtn.style.color = accentColor;
+            };
+            transactionsContainer.appendChild(toggleBtn);
+        }
     }
 
     // Edition transaction (à adapter selon ton modal)
@@ -262,7 +360,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         const toast = document.createElement('div');
         toast.className = 'toast-custom';
-        toast.innerHTML = `<div class="toast-message">${message}</div>`;
+        toast.innerHTML = `
+            <span style="background:white; color:#10b981; border-radius:50%; width:20px; height:20px; display:inline-flex; align-items:center; justify-content:center; margin-right:8px; font-size:13px;">
+                <i class='fas fa-check'></i>
+            </span>
+            <span class="toast-message">${message}</span>
+        `;
         container.appendChild(toast);
         setTimeout(() => {
             toast.classList.add('fade-out');
@@ -492,10 +595,15 @@ document.addEventListener('DOMContentLoaded', function () {
             z-index: 10000;
             font-weight: 600;
             animation: slideInRight 0.3s ease;
+            display: flex; align-items: center;
         `;
-        toast.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+        toast.innerHTML = `
+            <span style="background:white; color:#ef4444; border-radius:50%; width:20px; height:20px; display:inline-flex; align-items:center; justify-content:center; margin-right:8px; font-size:13px;">
+                <i class='fas fa-exclamation-circle'></i>
+            </span>
+            <span class="toast-message">${message}</span>
+        `;
         container.appendChild(toast);
-        
         setTimeout(() => {
             toast.style.animation = 'slideOutRight 0.3s ease';
             setTimeout(() => toast.remove(), 300);
@@ -617,13 +725,57 @@ document.addEventListener('DOMContentLoaded', function () {
                         document.getElementById('transactionDate').value = today;
                         await fetchAndRenderTransactions();
                     } else {
-                        alert(data.message || 'Erreur lors de l\'ajout.');
+                        showErrorPopup(data.message || 'Erreur lors de l\'ajout.');
                     }
                 } catch (err) {
-                    alert('Erreur réseau ou serveur.');
+                    showErrorPopup('Erreur réseau ou serveur.');
                 }
             } else {
-                alert('Veuillez remplir tous les champs correctement.');
+                showErrorPopup('Veuillez remplir tous les champs correctement.');
+            function showErrorPopup(message) {
+                let modal = document.getElementById('customAlert');
+                if (!modal) {
+                    modal = document.createElement('div');
+                    modal.id = 'customAlert';
+                    modal.innerHTML = `
+                    <div class="custom-alert-overlay"></div>
+                    <div class="custom-alert-modal">
+                        <div class="custom-alert-icon-inner">
+                            <span class="custom-alert-x">&#10006;</span>
+                        </div>
+                        <div class="custom-alert-title">Erreur</div>
+                        <div class="custom-alert-message" id="customAlertMessage"></div>
+                        <button class="custom-alert-btn" id="customAlertBtn">OK</button>
+                    </div>`;
+                    document.body.appendChild(modal);
+                    // Ajout du CSS si pas déjà présent
+                    if (!document.getElementById('customAlertStyle')) {
+                        const style = document.createElement('style');
+                        style.id = 'customAlertStyle';
+                        style.textContent = `
+                        #customAlert { position: fixed; z-index: 9999; left: 0; top: 0; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; }
+                        .custom-alert-overlay { position: absolute; left: 0; top: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); backdrop-filter: blur(2px); }
+                        .custom-alert-modal { position: relative; background: #fff; border-radius: 28px; padding: 32px 24px 24px 24px; min-width: 320px; max-width: 95vw; min-height: 180px; display: flex; flex-direction: column; align-items: center; z-index: 2; box-shadow: 0 8px 40px rgba(0,0,0,0.18); }
+                        .custom-alert-icon-inner { background: #F55B5B; color: #fff; border-radius: 50%; width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; font-size: 36px; border: 6px solid #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.10); margin-top: -56px; margin-bottom: 8px; }
+                        .custom-alert-x { font-size: 36px; font-weight: bold; line-height: 1; }
+                        .custom-alert-title { color: #F55B5B; font-size: 1.7rem; font-weight: bold; margin-bottom: 10px; margin-top: 8px; text-align: center; letter-spacing: 0.5px; }
+                        .custom-alert-message { color: #6B7687; font-size: 1.05rem; margin-bottom: 24px; margin-top: 4px; text-align: center; }
+                        .custom-alert-btn { background: #F55B5B; color: #fff; border: none; border-radius: 12px; padding: 14px 0; width: 90%; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 10px; transition: background 0.2s; box-shadow: 0 2px 8px rgba(245,91,91,0.08); letter-spacing: 0.5px; }
+                        .custom-alert-btn:hover { background: #d13d3d; }
+                        @media (max-width: 500px) {
+                            .custom-alert-modal { min-width: 90vw; padding: 18px 4vw 14px 4vw; }
+                            .custom-alert-btn { font-size: 1rem; padding: 10px 0; }
+                        }
+                        `;
+                        document.head.appendChild(style);
+                    }
+                }
+                document.getElementById('customAlertMessage').textContent = message;
+                modal.style.display = 'flex';
+                document.getElementById('customAlertBtn').onclick = function() {
+                    modal.style.display = 'none';
+                };
+            }
             }
         });
     }
@@ -689,8 +841,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
         filteredTransactions.sort((a, b) => (new Date(b.date) - new Date(a.date)) || (b.id - a.id));
 
-        const limit = 3;
-        const toDisplay = showAll ? filteredTransactions : filteredTransactions.slice(0, limit);
+        // Limite d'affichage max
+        const maxDisplay = 15;
+        // Seuil à partir duquel on affiche le bouton Voir plus/moins
+        const showMoreThreshold = 10;
+
+        // On limite le nombre de transactions affichées à maxDisplay
+        let limitedTransactions = filteredTransactions.slice(0, maxDisplay);
+        // Si showAll est activé, on affiche tout (jusqu'à maxDisplay)
+        const toDisplay = showAll ? limitedTransactions : limitedTransactions.slice(0, showMoreThreshold);
         const currencySymbol = localStorage.getItem('appCurrency') || '€';
 
         toDisplay.forEach(transaction => {
@@ -729,22 +888,17 @@ document.addEventListener('DOMContentLoaded', function () {
             transactionsContainer.appendChild(transactionItem);
         });
 
-        // BASCULE "VOIR PLUS / MOINS"
-        if (filteredTransactions.length > limit) {
+        // Bouton Voir plus/moins si au moins 10 transactions (et max 15)
+        if (limitedTransactions.length > showMoreThreshold) {
             const toggleBtn = document.createElement('button');
-            toggleBtn.textContent = showAll ? `Voir moins` : `Voir plus (${filteredTransactions.length - limit})`;
-            toggleBtn.onclick = () => { showAll = !showAll; renderTransactions(); };
-
+            toggleBtn.textContent = showAll ? `Voir moins` : `Voir plus (${limitedTransactions.length - showMoreThreshold})`;
+            toggleBtn.onclick = () => {
+                showAll = !showAll;
+                renderTransactions();
+            };
             toggleBtn.style.cssText = `width: 100%; padding: 10px; margin-top: 10px; background: none; border: 1px dashed ${accentColor}; color: ${accentColor}; cursor: pointer; border-radius: 8px; font-weight: bold;`;
-            
-            toggleBtn.onmouseenter = () => {
-                toggleBtn.style.backgroundColor = accentColor;
-                toggleBtn.style.color = 'white';
-            };
-            toggleBtn.onmouseleave = () => {
-                toggleBtn.style.backgroundColor = 'transparent';
-                toggleBtn.style.color = accentColor;
-            };
+            toggleBtn.onmouseenter = () => { toggleBtn.style.background = accentColor + '22'; };
+            toggleBtn.onmouseleave = () => { toggleBtn.style.background = 'none'; };
             transactionsContainer.appendChild(toggleBtn);
         }
     }
