@@ -50,6 +50,7 @@
                     <div class="side-header">
                         <div class="avatar-wrapper">
                             <img class="avatar-image" src="./assets/default-avatar.png">
+                            <span class="avatar-placeholder"><i class="fas fa-user"></i></span>
                             <label class="avatar-upload-btn" for="avatarInput" aria-label="Changer la photo de profil">
                                 <i class="fas fa-camera"></i>
                             </label>
@@ -130,22 +131,22 @@
                             <span></span>
                         </div>
                         <div class="profil-detail-group">
-                            <label>Dernière connexion</label>
+                            <label data-i18n="lastLogin">Dernière connexion</label>
                             <span></span>
                         </div>
                     </div>
                 </div>
 
                 <div class="card5">
-                    <h2>Sécurité et Données</h2>
-                    <p>Gérez vos données de compte, exportez vos transactions ou supprimez votre profil.</p>
+                    <h2 data-i18n="securityData">Sécurité et Données</h2>
+                    <p data-i18n="manageAccountData">Gérez vos données de compte, exportez vos transactions ou supprimez votre profil.</p>
 
                     <div class="button">
                         <button class="btn-primary" id="exportDataBtn">
-                            <i class="fas fa-file-export"></i>Exporter les données
+                            <i class="fas fa-file-export"></i><span data-i18n="exportData">Exporter les données</span>
                         </button>
                         <button class="btn-danger" id="deleteAccountBtn">
-                            <i class="fas fa-trash"></i>Supprimer le compte
+                            <i class="fas fa-trash"></i><span data-i18n="deleteAccount">Supprimer le compte</span>
                         </button>
                     </div>
                 </div>
@@ -156,7 +157,7 @@
     <div id="editModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Modifier les informations</h2>
+                <h2 data-i18n="editInfoTitle">Modifier les informations</h2>
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
             <form id="editProfileForm">
@@ -173,8 +174,8 @@
                     <input type="text" id="editPhone" placeholder="Non spécifié">
                 </div>
                 <div class="modal-actions">
-                    <button type="button" class="btn-secondary" id="cancelBtn">Annuler</button>
-                    <button type="submit" class="btn-primary">Enregistrer les modifications</button>
+                    <button type="button" class="btn-secondary" id="cancelBtn" data-i18n="cancel">Annuler</button>
+                    <button type="submit" class="btn-primary" data-i18n="saveChanges">Enregistrer les modifications</button>
                 </div>
             </form>
         </div>
@@ -185,11 +186,11 @@
             <div class="modal-icon-warning">
                 <i class="fas fa-exclamation-triangle"></i>
             </div>
-            <h3 style="text-align:center;">Suppression du compte</h3>
-            <p style="text-align:center;">Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.</p>
+            <h3 style="text-align:center;" data-i18n="deleteAccountTitle">Suppression du compte</h3>
+            <p style="text-align:center;" data-i18n="deleteAccountConfirm">Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.</p>
             <div class="modal-buttons">
-                <button id="confirmDeleteAccountBtn" class="btn-danger">Oui, supprimer</button>
-                <button id="cancelDeleteAccountBtn" class="btn-cancel">Annuler</button>
+                <button id="confirmDeleteAccountBtn" class="btn-danger" data-i18n="confirmDelete">Oui, supprimer</button>
+                <button id="cancelDeleteAccountBtn" class="btn-cancel" data-i18n="cancel">Annuler</button>
             </div>
         </div>
     </div>
@@ -199,13 +200,12 @@
             <div class="modal-icon-warning" style="color: var(--primary-color);">
                 <i class="fas fa-sign-out-alt"></i>
             </div>
-            <h3>Déconnexion</h3>
-            <p>Êtes-vous sûr de vouloir quitter votre session ?</p>
+            <h3 data-i18n="logoutTitle">Déconnexion</h3>
+            <p data-i18n="logoutConfirm">Êtes-vous sûr de vouloir quitter votre session ?</p>
             <div class="modal-buttons">
                 <button id="confirmLogoutBtn" class="btn-primary"
-                    style="background-color: var(--primary-color); border:none; padding: 10px 24px; border-radius: 8px; color: white; cursor: pointer; font-weight: 600;">Oui,
-                    me déconnecter</button>
-                <button id="cancelLogoutBtn" class="btn-cancel">Annuler</button>
+                    style="background-color: var(--primary-color); border:none; padding: 10px 24px; border-radius: 8px; color: white; cursor: pointer; font-weight: 600;" data-i18n="confirmLogout">Oui, me déconnecter</button>
+                <button id="cancelLogoutBtn" class="btn-cancel" data-i18n="cancel">Annuler</button>
             </div>
         </div>
     </div>

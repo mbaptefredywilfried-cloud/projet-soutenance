@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             const data = await response.json();
             if (data.status === 'success') {
-                showSuccessToast('Transaction ajoutée !');
+                showSuccessToast('transactionAdded');
                 transactionForm.reset();
                 await fetchTransactions();
                 window.dispatchEvent(new Event('transactionsUpdated'));
@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             const data = await response.json();
             if (data.status === 'success') {
-                showSuccessToast('Transaction modifiée !');
+                showSuccessToast('transactionModified');
                 await fetchTransactions();
                 window.dispatchEvent(new Event('transactionsUpdated'));
             } else {
@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             const data = await response.json();
             if (data.status === 'success') {
-                showSuccessToast('Transaction supprimée !');
+                showSuccessToast('transactionDeleted');
                 await fetchTransactions();
                 window.dispatchEvent(new Event('transactionsUpdated'));
             } else {
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 };
 
                 if (!transaction.type || !transaction.category_id || isNaN(transaction.amount) || !transaction.transaction_date) {
-                    showErrorToast('Veuillez remplir tous les champs obligatoires.');
+                    showErrorPopup('fillAllFields');
                     return;
                 }
 
@@ -198,8 +198,10 @@ document.addEventListener('DOMContentLoaded', function () {
             filtered = transactions.filter(t => t.category_type === 'expense');
         }
         if (filtered.length === 0) {
-            transactionsContainer.innerHTML = `<div class="empty-state"><i class="fas fa-receipt"></i><p>Aucune transaction trouvée</p></div>`;
-            return;
+                const lang = document.documentElement.lang || 'fr';
+                const currentLang = lang.startsWith('en') ? 'en' : (lang.startsWith('fr') ? 'fr' : 'en');
+                const noTransactions = (typeof translations !== 'undefined' && translations[currentLang] && translations[currentLang].noTransactionsFound) ? translations[currentLang].noTransactionsFound : 'No transactions found';
+                transactionsContainer.innerHTML = `<div class="empty-state"><i class="fas fa-receipt"></i><p>${noTransactions}</p></div>`;
         }
 
         // Limite d'affichage max
@@ -296,7 +298,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (limitedTransactions.length > showMoreThreshold) {
             const accentColor = localStorage.getItem('accentColor') || '#2563eb';
             const toggleBtn = document.createElement('button');
-            toggleBtn.textContent = showAll ? `Voir moins` : `Voir plus (${limitedTransactions.length - showMoreThreshold})`;
+            let currentLang = document.documentElement.lang || 'fr';
+            let txtMore = (typeof translations !== 'undefined' && translations[currentLang] && translations[currentLang].viewMore) ? translations[currentLang].viewMore : 'Voir plus';
+            let txtLess = (typeof translations !== 'undefined' && translations[currentLang] && translations[currentLang].viewLess) ? translations[currentLang].viewLess : 'Voir moins';
+            toggleBtn.textContent = showAll ? txtLess : `${txtMore} (${limitedTransactions.length - showMoreThreshold})`;
             toggleBtn.onclick = () => {
                 showAll = !showAll;
                 animateTransactions = false;
@@ -361,12 +366,22 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     // Toast de succès
-    function showSuccessToast(message) {
+    function showSuccessToast(keyOrMessage) {
         let container = document.getElementById('toast-container');
         if (!container) {
             container = document.createElement('div');
             container.id = 'toast-container';
             document.body.appendChild(container);
+        }
+        let rawLang = document.documentElement.lang || 'fr';
+        let currentLang = rawLang.startsWith('en') ? 'en' : (rawLang.startsWith('fr') ? 'fr' : 'en');
+        let message = keyOrMessage;
+        if (typeof translations !== 'undefined') {
+            if (translations[currentLang] && translations[currentLang][keyOrMessage]) {
+                message = translations[currentLang][keyOrMessage];
+            } else if (translations['en'] && translations['en'][keyOrMessage]) {
+                message = translations['en'][keyOrMessage];
+            }
         }
         const toast = document.createElement('div');
         toast.className = 'toast-custom';
@@ -528,7 +543,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 renderTransactions();
                 editModal.style.display = 'none';
-                showSuccessToast("Transaction modifié !");
+                showSuccessToast('transactionModified');
             }
         });
     }
@@ -563,10 +578,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 const selectedDateStr = transactionDateInput.value;
                 
                 if (selectedDateStr > todayStr) {
-                    showErrorToast('Les dates futures sont interdites');
+                    showErrorToast('futuresDatesNotAllowed');
                     transactionDateInput.value = todayStr;
                 } else if (selectedDateStr < minDateStr) {
-                    showErrorToast('Vous ne pouvez pas sélectionner une date antérieure à 1 mois');
+                    showErrorToast('dateTooOld');
                     transactionDateInput.value = todayStr;
                 }
             });
@@ -581,23 +596,35 @@ document.addEventListener('DOMContentLoaded', function () {
                 const selectedDateStr = editTransactionDateInput.value;
                 
                 if (selectedDateStr > todayStr) {
-                    showErrorToast('Les dates futures sont interdites');
+                    showErrorToast('futuresDatesNotAllowed');
                     editTransactionDateInput.value = todayStr;
                 } else if (selectedDateStr < minDateStr) {
-                    showErrorToast('Vous ne pouvez pas sélectionner une date antérieure à 1 mois');
+                    showErrorToast('dateTooOld');
                     editTransactionDateInput.value = todayStr;
                 }
             });
         }
     }
     
-    function showErrorToast(message) {
+    function showErrorToast(keyOrMessage) {
         let container = document.getElementById('toast-container');
         if (!container) {
             container = document.createElement('div');
             container.id = 'toast-container';
             document.body.appendChild(container);
         }
+
+        let rawLang = document.documentElement.lang || 'fr';
+        let currentLang = rawLang.startsWith('en') ? 'en' : (rawLang.startsWith('fr') ? 'fr' : 'en');
+        let message = keyOrMessage;
+        if (typeof translations !== 'undefined') {
+            if (translations[currentLang] && translations[currentLang][keyOrMessage]) {
+                message = translations[currentLang][keyOrMessage];
+            } else if (translations['en'] && translations['en'][keyOrMessage]) {
+                message = translations['en'][keyOrMessage];
+            }
+        }
+
         const toast = document.createElement('div');
         toast.className = 'toast-custom';
         toast.style.cssText = `
@@ -696,7 +723,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         transactions = [];
                         localStorage.setItem('transactions', JSON.stringify([]));
                         renderTransactions();
-                        showSuccessToast("Historique vidé !");
+                        // Correction : on affiche toujours le texte traduit, jamais la clé brute
+                        let rawLang = document.documentElement.lang || 'fr';
+                        let currentLang = rawLang.startsWith('en') ? 'en' : (rawLang.startsWith('fr') ? 'fr' : 'en');
+                        let message = (typeof translations !== 'undefined' && translations[currentLang] && translations[currentLang].historyCleared)
+                            ? translations[currentLang].historyCleared
+                            : (translations['en'] && translations['en'].historyCleared ? translations['en'].historyCleared : 'History cleared!');
+                        showSuccessToast(message);
                     } else {
                         showErrorToast("Erreur lors de la suppression");
                     }
@@ -737,7 +770,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                     const data = await response.json();
                     if (data.status === 'success') {
-                        showSuccessToast('Transaction ajoutée !');
+                        showSuccessToast('transactionAdded');
                         transactionForm.reset();
                         document.getElementById('transactionDate').value = today;
                         await fetchAndRenderTransactions();
@@ -748,9 +781,20 @@ document.addEventListener('DOMContentLoaded', function () {
                     showErrorPopup('Erreur réseau ou serveur.');
                 }
             } else {
-                showErrorPopup('Veuillez remplir tous les champs correctement.');
+                showErrorPopup('fillAllFields');
             function showErrorPopup(message) {
+                let rawLang = document.documentElement.lang || 'fr';
+                let currentLang = rawLang.startsWith('en') ? 'en' : (rawLang.startsWith('fr') ? 'fr' : 'en');
                 let modal = document.getElementById('customAlert');
+                // Traduction dynamique du titre, du bouton et du message
+                let title = (typeof translations !== 'undefined' && translations[currentLang] && translations[currentLang].errorTitle) ? translations[currentLang].errorTitle : (currentLang === 'fr' ? 'Erreur' : 'Error');
+                let okBtn = (typeof translations !== 'undefined' && translations[currentLang] && translations[currentLang].okBtn) ? translations[currentLang].okBtn : (currentLang === 'fr' ? 'OK' : 'OK');
+                let msg = message;
+                if (typeof translations !== 'undefined' && translations[currentLang] && translations[currentLang][message]) {
+                    msg = translations[currentLang][message];
+                } else if (typeof translations !== 'undefined' && translations['en'] && translations['en'][message]) {
+                    msg = translations['en'][message];
+                }
                 if (!modal) {
                     modal = document.createElement('div');
                     modal.id = 'customAlert';
@@ -760,9 +804,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         <div class="custom-alert-icon-inner">
                             <span class="custom-alert-x">&#10006;</span>
                         </div>
-                        <div class="custom-alert-title">Erreur</div>
+                        <div class="custom-alert-title" id="customAlertTitle"></div>
                         <div class="custom-alert-message" id="customAlertMessage"></div>
-                        <button class="custom-alert-btn" id="customAlertBtn">OK</button>
+                        <button class="custom-alert-btn" id="customAlertBtn"></button>
                     </div>`;
                     document.body.appendChild(modal);
                     // Ajout du CSS si pas déjà présent
@@ -787,7 +831,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         document.head.appendChild(style);
                     }
                 }
-                document.getElementById('customAlertMessage').textContent = message;
+                document.getElementById('customAlertTitle').textContent = title;
+                document.getElementById('customAlertMessage').textContent = msg;
+                document.getElementById('customAlertBtn').textContent = okBtn;
                 modal.style.display = 'flex';
                 document.getElementById('customAlertBtn').onclick = function() {
                     modal.style.display = 'none';
@@ -847,14 +893,17 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (filteredTransactions.length === 0) {
-        transactionsContainer.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-receipt"></i>
-                <p>Aucune transaction trouvée</p>
-            </div>
-        `;
-        return; // On arrête la fonction ici
-    }
+            const lang = document.documentElement.lang || 'fr';
+            const currentLang = lang.startsWith('en') ? 'en' : (lang.startsWith('fr') ? 'fr' : 'en');
+            const noTransactions = (typeof translations !== 'undefined' && translations[currentLang] && translations[currentLang].noTransactionsFound) ? translations[currentLang].noTransactionsFound : 'No transactions found';
+            transactionsContainer.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-receipt"></i>
+                    <p>${noTransactions}</p>
+                </div>
+            `;
+            return; // On arrête la fonction ici
+        }
 
         filteredTransactions.sort((a, b) => (new Date(b.date) - new Date(a.date)) || (b.id - a.id));
 
@@ -931,7 +980,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 localStorage.setItem('transactions', JSON.stringify(transactions));
                 renderTransactions();
                 if (deleteModal) deleteModal.style.display = 'none';
-                showSuccessToast("Transaction supprimée !");
+                showSuccessToast('transactionDeleted');
                 transactionToDelete = null;
             }
         };

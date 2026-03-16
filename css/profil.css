@@ -61,6 +61,26 @@ aside {
     flex-direction: column;
 }
 
+html {
+    overflow-x: hidden !important;
+    width: 100vw !important;
+}
+body {
+    overflow-x: hidden !important;
+    width: 100vw !important;
+}
+.content {
+    overflow-x: hidden !important;
+    width: 100vw !important;
+}
+main {
+    overflow-x: hidden !important;
+    width: 100vw !important;
+}
+main {
+    overflow-x: hidden !important;
+}
+
 .img {
     width: 100%;
     height: 80px;
@@ -70,11 +90,9 @@ aside {
     gap: 16px;
     padding-left: 8px;
 }
-
 .img svg {
     color: #ffffff;
 }
-
 .img p {
     font-size: 30px;
     font-weight: 700;
@@ -260,6 +278,24 @@ main > header {
 }
 
 .avatar-upload-btn i { font-size: 18px; }
+
+.avatar-placeholder {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 90px;
+    color: #fff;
+    background: none;
+    pointer-events: none;
+    z-index: 2;
+}
+.avatar-placeholder.hidden {
+    display: none;
+}
 
 .avatar-input { display: none; }
 

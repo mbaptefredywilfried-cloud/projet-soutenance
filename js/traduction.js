@@ -1,5 +1,15 @@
 const translations = {
   fr: {
+        activeAccount: "Compte Actif",
+      // Placeholders
+      phBudgetExample: "Ex: Courses alimentaires",
+      phAmountZero: "0.00",
+      selectCategory: "Sélectionnez une catégorie",
+      category: "Catégorie",
+      period: "Période",
+      status: "Statut",
+      errorTitle: "Erreur",
+      okBtn: "OK",
     // Placeholders
     phBudgetExample: "Ex: Courses alimentaires",
     phAmountZero: "0.00",
@@ -213,8 +223,8 @@ const translations = {
     // Error Messages
     futuresDatesNotAllowed: "Les dates futures sont interdites",
     dateTooOld: "Vous ne pouvez pas sélectionner une date antérieure à 1 mois",
-    budgetExceeded: "Budget dépassé !",
-    budgetExceededAlert: "Alerte : Budget dépassé !",
+    budgetExceeded: "Budget exceeded!",
+    budgetExceededAlert: "Alert: Budget exceeded!",
     
     // Placeholders
     phBudgetName: "Ex: Courses alimentaires",
@@ -248,7 +258,6 @@ const translations = {
     yourActiveBudgets: "Vos Budgets Actifs",
     filterBudgets: "Filtrer",
     clearAllBudgets: "Tout supprimer",
-    activeAccount: "Compte Actif",
     quickNavigation: "Navigation rapide",
     accessDashboard: "Accéder au Tableau de bord",
     manageBudgets: "Gérer vos budgets",
@@ -271,12 +280,19 @@ const translations = {
     creationDate: "Date de création",
     lastLogin: "Dernière connexion",
 
-    securityAndData: "Sécurité et données",
-    manageAccountData: "Gérez vos données de compte, exportez vos transactions",
-    deleteProfile: "Ou supprimez votre profil",
+    securityData: "Sécurité et Données",
+    manageAccountData: "Gérez vos données de compte, exportez vos transactions ou supprimez votre profil.",
     exportData: "Exporter les données",
     deleteAccount: "Supprimer le compte",
-    editInfo: "Modifier les informations",
+    editInfoTitle: "Modifier les informations",
+    cancel: "Annuler",
+    saveChanges: "Enregistrer les modifications",
+    deleteAccountTitle: "Suppression du compte",
+    deleteAccountConfirm: "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.",
+    confirmDelete: "Oui, supprimer",
+    logoutTitle: "Déconnexion",
+    logoutConfirm: "Êtes-vous sûr de vouloir quitter votre session ?",
+    confirmLogout: "Oui, me déconnecter",
 
     // Apparence
     appearance: "Apparence",
@@ -290,7 +306,6 @@ const translations = {
     language: "Langue",
     frenchLang: "Français",
     englishLang: "Anglais",
-    spanishLang: "Espagnol",
   },
 
 
@@ -300,9 +315,32 @@ const translations = {
 
 
   en: {
+          activeAccount: "Active Account",
+        securityData: "Security and Data",
+        manageAccountData: "Manage your account data, export your transactions or delete your profile.",
+        exportData: "Export data",
+        deleteAccount: "Delete account",
+        editInfoTitle: "Edit information",
+        cancel: "Cancel",
+        saveChanges: "Save changes",
+        deleteAccountTitle: "Delete account",
+        deleteAccountConfirm: "Are you sure you want to delete your account? This action is irreversible.",
+        confirmDelete: "Yes, delete",
+        logoutTitle: "Logout",
+        logoutConfirm: "Are you sure you want to end your session?",
+        confirmLogout: "Yes, log me out",
+      errorTitle: "Error",
+      okBtn: "OK",
+    transactionAdded: "Transaction added!",
+    futuresDatesNotAllowed: "Future dates are not allowed",
+    dateTooOld: "You cannot select a date older than 1 month",
     // Placeholders
     phBudgetExample: "Ex: Grocery shopping",
     phAmountZero: "0.00",
+    selectCategory: "Select a category",
+    category: "Category",
+    period: "Period",
+    status: "Status",
     phEmail: "Enter your email address",
     phPassword: "Password",
     phUsername: "Username",
@@ -312,6 +350,7 @@ const translations = {
     phFeedback: "Share your suggestions...",
     phNotSpecified: "Not specified",
     phEnterAmount: "Please enter an amount...",
+    phTransactionAmount: "Please enter an amount...",
     phTransactionDescription: "Transaction description...",
     phNoteDetail: "Note a detail...",
 
@@ -338,9 +377,11 @@ const translations = {
     totalBalance: "Total balance",
     monthlyIncome: "Monthly income",
     monthlyExpense: "Monthly expense",
-      totalExpenses: "Total expenses:",
-      noExpense: "No expense",
-      addExpenseToSeeDistribution: "Add expenses to see the distribution.",
+    noRecentTransaction: "No recent transaction performed",
+    totalExpenses: "Total expenses:",
+    noExpense: "No expense",
+    addExpenseToSeeDistribution: "Add expenses to see the distribution.",
+    monthsShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
     financialAnalysis: "Financial flow analysis",
     expenseDistribution: "Expense distribution",
     flowAnalysis: "Flow Analysis",
@@ -382,7 +423,7 @@ const translations = {
     all: "All",
     deleteAll: "Delete all",
     deleteAllBtn: "Delete all",
-    revenues: "Revenues",
+    revenues: "Income",
     expenses: "Expenses",
 
     editTransaction: "Edit transaction",

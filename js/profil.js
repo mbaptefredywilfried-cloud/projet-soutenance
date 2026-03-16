@@ -121,11 +121,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (fullNameDisplay) fullNameDisplay.textContent = user.username || user.name || '';
                 if (emailDisplay) emailDisplay.textContent = user.email || '';
                 if (phoneDisplay) phoneDisplay.textContent = user.phone || '';
+                const avatarPlaceholder = document.querySelector('.avatar-placeholder');
                 if (user.image && avatarImage) {
                     avatarImage.src = user.image;
+                    if (avatarPlaceholder) avatarPlaceholder.classList.add('hidden');
                 } else if (avatarImage) {
                     avatarImage.src = './assets/default-avatar.png';
+                    if (avatarPlaceholder) avatarPlaceholder.classList.remove('hidden');
                 }
+
+                // Détection de la langue courante (html lang ou navigateur)
+                let lang = document.documentElement.lang || navigator.language || 'fr';
+                if (lang.startsWith('en')) lang = 'en';
+                else lang = 'fr';
 
                 // Mettre à jour les éléments de compte
                 const idDisplay = document.querySelector('.card4 .profil-detail-group:nth-child(1) span');
@@ -136,17 +144,20 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (user.created_at) {
                         const date = new Date(user.created_at);
                         const options = { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
-                        creationDisplay.textContent = date.toLocaleString('fr-FR', options).replace(',', ' à');
+                        let formatted = date.toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR', options);
+                        if (lang === 'fr') formatted = formatted.replace(',', ' à');
+                        creationDisplay.textContent = formatted;
                     } else {
                         creationDisplay.textContent = '';
                     }
                 }
                 if (lastLoginDisplay) {
                     if (user.last_login) {
-                        // Format personnalisé : 8 mars 2026 à 14:23
                         const date = new Date(user.last_login);
                         const options = { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
-                        lastLoginDisplay.textContent = date.toLocaleString('fr-FR', options).replace(',', ' à');
+                        let formatted = date.toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR', options);
+                        if (lang === 'fr') formatted = formatted.replace(',', ' à');
+                        lastLoginDisplay.textContent = formatted;
                     } else {
                         lastLoginDisplay.textContent = '';
                     }
@@ -225,13 +236,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- 4. GESTION DES INFOS DE COMPTE ---
     function handleAccountStats() {
-        const idDisplay = document.querySelector('.card4 .profil-detail-group:nth-child(1) span');
-        const creationDisplay = document.querySelector('.card4 .profil-detail-group:nth-child(2) span');
-        const lastLoginDisplay = document.querySelector('.card4 .profil-detail-group:nth-child(3) span');
-
-        if (idDisplay) idDisplay.textContent = localStorage.getItem('userId') || 'AD_565';
-        if (creationDisplay) creationDisplay.textContent = localStorage.getItem('userCreationDate') || '2023-01-01';
-        if (lastLoginDisplay) lastLoginDisplay.textContent = localStorage.getItem('lastLoginTime') || 'Session actuelle';
+        // Cette fonction n'est plus utilisée car les données dynamiques viennent du backend
     }
 
     // --- 5. GESTION DE LA PHOTO ---

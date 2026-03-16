@@ -173,27 +173,44 @@ function handleAccountStats() {
             if (tableBody) {
                 tableBody.innerHTML = '';
                 if (filtered.length === 0) {
-                    tableBody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 60px 0;"><div style="display: flex; flex-direction: column; align-items: center; justify-content: center; color: #718096;"><i class="fas fa-folder-open" style="font-size: 32px; margin-bottom: 10px; opacity: 0.5;"></i><p style="margin: 0; font-size: 15px;" data-i18n="noRecentTransaction">${translations.fr.noRecentTransaction}</p></div></td></tr>`;
+                    const currentLang = document.documentElement.lang || 'fr';
+                    const t = translations[currentLang] || translations['fr'];
+                    tableBody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 60px 0;"><div style="display: flex; flex-direction: column; align-items: center; justify-content: center; color: #718096;"><i class="fas fa-folder-open" style="font-size: 32px; margin-bottom: 10px; opacity: 0.5;"></i><p style="margin: 0; font-size: 15px;" data-i18n="noRecentTransaction">${t.noRecentTransaction}</p></div></td></tr>`;
                     return;
                 }
                 displayList.forEach(t => {
                     const row = document.createElement('tr');
                     const isInc = t.category_type === 'income';
-                    // Correction affichage date : utiliser t.date (toujours présent)
                     let dateAffiche = '-';
                     if (t.date) {
                         const d = new Date(t.date);
                         if (!isNaN(d.getTime())) {
                             dateAffiche = d.toLocaleDateString('fr-FR');
                         } else {
-                            // Si format non ISO, afficher brut
                             dateAffiche = t.date;
                         }
                     }
-                    row.innerHTML = `<td>${dateAffiche}</td><td>${t.description || '-'} </td><td>${t.category_name}</td><td><span class="badge ${isInc ? 'badge-income' : 'badge-expense'}">${isInc ? 'Revenu' : 'Dépense'}</span></td><td class="${isInc ? 'amount-income' : 'amount-expense'}">${isInc ? '+' : '-'}${parseFloat(t.amount).toLocaleString()} ${currencySymbol}</td>`;
+                    const currentLang = document.documentElement.lang || 'fr';
+                    const translationsObj = window.translations || translations;
+                    const typeLabel = translationsObj[currentLang]?.[isInc ? 'income' : 'expense'] || (isInc ? 'Revenu' : 'Dépense');
+                    // Traduction de la catégorie
+                    let categoryLabel = t.category_name;
+                    if (t.category_translation_key && translationsObj[currentLang] && translationsObj[currentLang][t.category_translation_key]) {
+                        categoryLabel = translationsObj[currentLang][t.category_translation_key];
+                    }
+                    row.innerHTML = `<td>${dateAffiche}</td><td>${t.description || '-'} </td><td>${categoryLabel}</td><td><span class="badge ${isInc ? 'badge-income' : 'badge-expense'}">${typeLabel}</span></td><td class="${isInc ? 'amount-income' : 'amount-expense'}">${isInc ? '+' : '-'}${parseFloat(t.amount).toLocaleString()} ${currencySymbol}</td>`;
                     tableBody.appendChild(row);
                 });
             }
+        // Met à jour dynamiquement le message "Aucune transaction récente effectuée" lors du changement de langue
+        window.addEventListener('languageChanged', function() {
+            const tableBody = document.getElementById('dashboardTransactionBody');
+            if (tableBody && tableBody.querySelector('[data-i18n="noRecentTransaction"]')) {
+                const currentLang = document.documentElement.lang || 'fr';
+                const t = translations[currentLang] || translations['fr'];
+                tableBody.querySelector('[data-i18n="noRecentTransaction"]').textContent = t.noRecentTransaction;
+            }
+        });
         } catch (e) {
             if (tableBody) tableBody.innerHTML = `<tr><td colspan="5" data-i18n="loadingError">${translations.fr.loadingError}</td></tr>`;
         }
@@ -428,8 +445,12 @@ function handleAccountStats() {
                     transactions = data.data;
                 }
                 const now = new Date();
-                // Noms des mois
-                const monthNames = translations.fr.monthsShort;
+                // Noms des mois dynamiques selon la langue
+                const currentLang = document.documentElement.lang || 'fr';
+                const t = translations[currentLang] || translations['fr'];
+                const monthNames = t.monthsShort || [
+                    'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'
+                ];
                 // Afficher les 3 derniers mois (glissants)
                 let months = [];
                 for (let i = 2; i >= 0; i--) {
@@ -459,12 +480,12 @@ function handleAccountStats() {
                     labels: labels,
                     datasets: [
                         { 
-                            label: 'Revenu', 
+                            label: t.income || 'Revenu', 
                             data: revenueByMonth,
                             backgroundColor: '#36A2EB' 
                         },
                         { 
-                            label: 'Dépense', 
+                            label: t.expense || 'Dépense', 
                             data: expenseByMonth,
                             backgroundColor: '#FF6384' 
                         }
@@ -484,16 +505,31 @@ function handleAccountStats() {
     }
 
     function updateCategoryFilter() {
-        const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
         if (!filterCategory) return;
-        const uniqueCategories = [...new Set(transactions.map(t => (t.category ? t.category.trim() : '')))].filter(cat => cat);
-        filterCategory.innerHTML = '<option value="all">Toutes les catégories</option>';
-        uniqueCategories.forEach(cat => {
-            const option = document.createElement('option');
-            option.value = cat;
-            option.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
-            filterCategory.appendChild(option);
-        });
+        fetch('php/transactions/list.php', { credentials: 'same-origin' })
+            .then(response => response.json())
+            .then(data => {
+                let transactions = [];
+                if (data.status === 'success') {
+                    transactions = data.data;
+                }
+                const uniqueCategories = [...new Set(transactions.map(t => (t.category_name ? t.category_name.trim() : '')))].filter(cat => cat);
+                filterCategory.innerHTML = `<option value="all">${translationsObj[document.documentElement.lang]?.allCategories || 'Toutes les catégories'}</option>`;
+                uniqueCategories.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat;
+                    // Recherche la clé de traduction associée à cette catégorie
+                    let translationKey = null;
+                    const transaction = transactions.find(t => t.category_name === cat);
+                    if (transaction && transaction.category_translation_key && translationsObj[document.documentElement.lang] && translationsObj[document.documentElement.lang][transaction.category_translation_key]) {
+                        translationKey = transaction.category_translation_key;
+                        option.textContent = translationsObj[document.documentElement.lang][translationKey];
+                    } else {
+                        option.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+                    }
+                    filterCategory.appendChild(option);
+                });
+            });
     }
 
     // 5. ÉCOUTEURS D'ÉVÉNEMENTS

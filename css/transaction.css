@@ -8,15 +8,31 @@
         opacity: 0;
         transform: translateY(20px);
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+html {
+    overflow-x: hidden !important;
+    width: 100vw !important;
+}
+body {
+    overflow-x: hidden !important;
+    width: 100vw !important;
+}
+.content {
+    overflow-x: hidden !important;
+    width: 100vw !important;
+}
+main {
+    overflow-x: hidden !important;
+    width: 100vw !important;
+}
 }
 /* CSS Variables for Professional Theming */
 :root {
     --primary-color: #2563eb;
+        overflow-x: hidden !important;
     --primary-dark: #1d4ed8;
+    main {
+        overflow-x: hidden !important;
+    }
     --secondary-color: #64748b;
     --success-color: #10b981;
     --warning-color: #f59e0b;

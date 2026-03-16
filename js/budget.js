@@ -167,25 +167,38 @@ class BudgetManager {
     populateCategorySelect() {
         const select = document.getElementById('budgetCategory');
         if (!select) return;
-        select.innerHTML = '<option value="">Sélectionnez une catégorie</option>';
+        let currentLang = document.documentElement.lang || 'fr';
+        select.innerHTML = '<option value="">' + (typeof translations !== 'undefined' && translations[currentLang] && translations[currentLang].selectCategory ? translations[currentLang].selectCategory : 'Sélectionnez une catégorie') + '</option>';
         this.categories.forEach(cat => {
             const option = document.createElement('option');
             option.value = cat.id;
-            option.textContent = cat.name;
+            // Utilise la clé de traduction si disponible
+            if (cat.translation_key && typeof translations !== 'undefined' && translations[currentLang] && translations[currentLang][cat.translation_key]) {
+                option.textContent = translations[currentLang][cat.translation_key];
+            } else {
+                option.textContent = cat.name;
+            }
             select.appendChild(option);
         });
+        setBudgetFormPlaceholders(); // Pour la traduction dynamique
     }
 
     populateFilterCategory() {
         const filterSelect = document.getElementById('filterCategory');
         if (!filterSelect) return;
-        filterSelect.innerHTML = '<option value="">Catégorie</option>';
+        let currentLang = document.documentElement.lang || 'fr';
+        filterSelect.innerHTML = '<option value="">' + (typeof translations !== 'undefined' && translations[currentLang] && translations[currentLang].category ? translations[currentLang].category : 'Catégorie') + '</option>';
         this.categories.forEach(cat => {
             const option = document.createElement('option');
             option.value = cat.id;
-            option.textContent = cat.name;
+            if (cat.translation_key && typeof translations !== 'undefined' && translations[currentLang] && translations[currentLang][cat.translation_key]) {
+                option.textContent = translations[currentLang][cat.translation_key];
+            } else {
+                option.textContent = cat.name;
+            }
             filterSelect.appendChild(option);
         });
+        setBudgetFormPlaceholders(); // Pour la traduction dynamique
     }
 
     setupFilterListeners() {
@@ -632,3 +645,31 @@ class BudgetManager {
 
 const budgetManager = new BudgetManager();
 window.budgetManager = budgetManager;
+
+// Remplit dynamiquement les placeholders et options du formulaire budget selon la langue
+function setBudgetFormPlaceholders() {
+    const currentLang = document.documentElement.lang || 'fr';
+    const t = (typeof translations !== 'undefined' && translations[currentLang]) ? translations[currentLang] : {};
+    // Champ nom du budget
+    const nameInput = document.getElementById('budgetName');
+    if (nameInput) nameInput.placeholder = t.phBudgetExample || 'Ex: Courses alimentaires';
+    // Champ montant
+    const amountInput = document.getElementById('budgetAmount');
+    if (amountInput) amountInput.placeholder = t.phAmountZero || '0.00';
+    // Select catégorie (option vide)
+    const catSelect = document.getElementById('budgetCategory');
+    if (catSelect && catSelect.options.length > 0) catSelect.options[0].textContent = t.selectCategory || 'Sélectionnez une catégorie';
+    // Select période (option vide)
+    const periodSelect = document.getElementById('budgetPeriod');
+    if (periodSelect && periodSelect.options.length > 0) periodSelect.options[0].textContent = t.period || 'Période';
+    // Filtres (option vide)
+    const filterCat = document.getElementById('filterCategory');
+    if (filterCat && filterCat.options.length > 0) filterCat.options[0].textContent = t.category || 'Catégorie';
+    const filterPeriod = document.getElementById('filterPeriod');
+    if (filterPeriod && filterPeriod.options.length > 0) filterPeriod.options[0].textContent = t.period || 'Période';
+    const filterStatus = document.getElementById('filterStatus');
+    if (filterStatus && filterStatus.options.length > 0) filterStatus.options[0].textContent = t.status || 'Statut';
+}
+
+document.addEventListener('DOMContentLoaded', setBudgetFormPlaceholders);
+window.addEventListener('languageChanged', setBudgetFormPlaceholders);

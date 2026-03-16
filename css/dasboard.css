@@ -1,6 +1,7 @@
 /* ========== Responsive Dashboard ========== */
 @media (max-width: 767px) {
-    aside {
+    html {
+        overflow-x: hidden;
         left: -280px;
         width: 280px;
         position: fixed;
@@ -9,12 +10,14 @@
     }
     aside.active { left: 0; }
     .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; }
+        overflow-x: hidden;
     .sidebar-overlay.active { display: block; }
     .mobile-header { display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 65px; background: #fff; align-items: center; padding: 0 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); z-index: 998; }
     .menu-burger { width: 28px; height: 18px; background: none; border: none; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; padding: 0; }
     .menu-burger span { display: block; width: 100%; height: 2.5px; background: var(--primary-color); border-radius: 2px; transition: all 0.3s; }
     .menu-burger.active span:nth-child(1) { transform: rotate(45deg) translate(4px, 4px); }
     .menu-burger.active span:nth-child(2) { opacity: 0; }
+        overflow-x: hidden;
     .menu-burger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -5px); }
     .header-title { position: absolute; left: 50%; transform: translateX(-50%); font-size: 18px; font-weight: 600; color: var(--text-primary); margin: 0; }
     .header-profile { margin-left: auto; }
@@ -98,7 +101,8 @@
     display: block;
 }
 /* CSS Variables for Professional Theming */
-:root {
+html {
+    overflow-x: hidden !important;
     --primary-color: #2563eb;
     --primary-dark: #1d4ed8;
     --secondary-color: #64748b;
@@ -107,13 +111,18 @@
     --danger-color: #ef4444;
     --background-color: #f8fafc;
     --card-background: #ffffff;
+    overflow-x: hidden !important;
     --text-primary: #1e293b;
     --text-secondary: #64748b;
     --border-color: #e2e8f0;
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     --border-radius: 8px;
+    overflow-x: hidden !important;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+main {
+    overflow-x: hidden !important;
+}
 }
 
 * {

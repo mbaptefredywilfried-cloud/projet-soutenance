@@ -1,6 +1,6 @@
 Array
 (
-    [name] => wqrgetwh
-    [email] => fcwallas17@gmail.com
-    [password] => fcwallas17@gmail.com
+    [name] => sqa@gmail.com
+    [email] => sqa@gmail.com
+    [password] => sqa@gmail.com
 )

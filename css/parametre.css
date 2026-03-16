@@ -1,3 +1,19 @@
+html {
+    overflow-x: hidden !important;
+    width: 100vw !important;
+}
+body {
+    overflow-x: hidden !important;
+    width: 100vw !important;
+}
+.content {
+    overflow-x: hidden !important;
+    width: 100vw !important;
+}
+main {
+    overflow-x: hidden !important;
+    width: 100vw !important;
+}
 /* CSS Variables for Professional Theming */
 :root {
     --primary-color: #2563eb;
