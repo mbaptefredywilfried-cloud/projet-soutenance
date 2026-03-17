@@ -1,6 +1,0 @@
-Array
-(
-    [name] => sqa@gmail.com
-    [email] => sqa@gmail.com
-    [password] => sqa@gmail.com
-)

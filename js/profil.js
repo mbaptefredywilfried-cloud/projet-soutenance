@@ -130,11 +130,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (avatarPlaceholder) avatarPlaceholder.classList.remove('hidden');
                 }
 
-                // Détection de la langue courante (html lang ou navigateur)
-                let lang = document.documentElement.lang || navigator.language || 'fr';
-                if (lang.startsWith('en')) lang = 'en';
-                else lang = 'fr';
-
+                // Détection de la langue courante depuis <html lang>
+                const lang = document.documentElement.lang || 'fr';
                 // Mettre à jour les éléments de compte
                 const idDisplay = document.querySelector('.card4 .profil-detail-group:nth-child(1) span');
                 const creationDisplay = document.querySelector('.card4 .profil-detail-group:nth-child(2) span');
@@ -145,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         const date = new Date(user.created_at);
                         const options = { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
                         let formatted = date.toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR', options);
-                        if (lang === 'fr') formatted = formatted.replace(',', ' à');
+                        if (lang !== 'en') formatted = formatted.replace(',', ' à');
                         creationDisplay.textContent = formatted;
                     } else {
                         creationDisplay.textContent = '';
@@ -156,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         const date = new Date(user.last_login);
                         const options = { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
                         let formatted = date.toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR', options);
-                        if (lang === 'fr') formatted = formatted.replace(',', ' à');
+                        if (lang !== 'en') formatted = formatted.replace(',', ' à');
                         lastLoginDisplay.textContent = formatted;
                     } else {
                         lastLoginDisplay.textContent = '';
@@ -211,14 +208,16 @@ document.addEventListener('DOMContentLoaded', function () {
                             statsValues[2].textContent = `${totalSpentAll.toFixed(2)} ${currencySymbol}`;
                         }
                         if (budgetAdvice) {
+                            const lang = document.documentElement.lang || 'fr';
+                            const t = translations[lang] || {};
                             if (rawPercentage > 100) {
-                                budgetAdvice.innerHTML = `<i class="fas fa-times-circle" style="color:#ef4444;"></i> <span style="color:#ef4444;font-weight:bold;">Budget dépassé</span>`;
+                                budgetAdvice.innerHTML = `<i class="fas fa-times-circle" style="color:#ef4444;"></i> <span style="color:#ef4444;font-weight:bold;">${t.budgetAdviceExceeded || 'Budget dépassé'}</span>`;
                             } else if (rawPercentage > 80) {
-                                budgetAdvice.innerHTML = `<i class="fas fa-exclamation" style="color:#f59e0b;"></i> <span style="color:#f59e0b;font-weight:bold;">Budget presque atteint</span>`;
+                                budgetAdvice.innerHTML = `<i class="fas fa-exclamation" style="color:#f59e0b;"></i> <span style="color:#f59e0b;font-weight:bold;">${t.budgetAdviceAlmostReached || 'Budget presque atteint'}</span>`;
                             } else if (rawPercentage >= 50) {
-                                budgetAdvice.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:#f59e0b;"></i> <span style="color:#f59e0b;font-weight:bold;">Attention à vos dépenses</span>`;
+                                budgetAdvice.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:#f59e0b;"></i> <span style="color:#f59e0b;font-weight:bold;">${t.budgetAdviceWarning || 'Attention à vos dépenses'}</span>`;
                             } else {
-                                budgetAdvice.innerHTML = `<i class="fas fa-check-square" style="color:#10b981;"></i> <span style="color:#10b981;font-weight:bold;">Gestion excellente</span>`;
+                                budgetAdvice.innerHTML = `<i class="fas fa-check-square" style="color:#10b981;"></i> <span style="color:#10b981;font-weight:bold;">${t.budgetAdviceExcellent || 'Gestion excellente'}</span>`;
                             }
                         }
                     })
@@ -229,14 +228,18 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => {
                 console.error('Erreur lors du chargement des budgets:', error);
                 if (budgetAdvice) {
-                    budgetAdvice.innerHTML = `<i class=\"fas fa-exclamation-triangle\"></i> <span style=\"color: #ef4444; font-weight:bold;\">Erreur :</span> Impossible de charger les données budgétaires.`;
+                    const lang = document.documentElement.lang || 'fr';
+                    const t = translations[lang] || {};
+                    budgetAdvice.innerHTML = `<i class=\"fas fa-exclamation-triangle\"></i> <span style=\"color: #ef4444; font-weight:bold;\">${t.errorTitle || 'Erreur'} :</span> ${t.budgetAdviceError || 'Impossible de charger les données budgétaires.'}`;
                 }
             });
     }
 
     // --- 4. GESTION DES INFOS DE COMPTE ---
     function handleAccountStats() {
-        // Cette fonction n'est plus utilisée car les données dynamiques viennent du backend
+        // Cette fonction n'est plus utilisée, car les données dynamiques sont gérées côté backend ou via loadUserData()
+        // et la langue est gérée dynamiquement via <html lang>.
+        // (Gardée pour compatibilité, mais vide)
     }
 
     // --- 5. GESTION DE LA PHOTO ---
@@ -255,7 +258,8 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 if (data.success && data.image) {
                     avatarImage.src = data.image;
-                    showSuccessToast("Photo mise à jour !");
+                    const lang = document.documentElement.lang || 'fr';
+                    showSuccessToast(translations[lang]?.photoUpdated || "Photo mise à jour !");
                 } else {
                     showErrorToast(data.error || "Erreur lors de l'upload de la photo.");
                 }
@@ -302,14 +306,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (result.success) {
                     loadUserData();
                     closeModal();
-                    showSuccessToast("Profil mis à jour !");
+                    const lang = document.documentElement.lang || 'fr';
+                    showSuccessToast(translations[lang]?.profileUpdated || "Profil mis à jour !");
                 } else {
-                    showSuccessToast(result.error || result.message || 'Erreur lors de la mise à jour');
+                    const lang = document.documentElement.lang || 'fr';
+                    showSuccessToast(result.error || result.message || translations[lang]?.profileUpdateError || 'Erreur lors de la mise à jour');
                 }
             })
             .catch(err => {
                 console.error('Update profile failed', err);
-                showSuccessToast('Erreur réseau');
+                const lang = document.documentElement.lang || 'fr';
+                showSuccessToast(translations[lang]?.networkError || 'Erreur réseau');
             });
         });
     }
@@ -324,9 +331,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const user = result.user || {};
                     const data = {
                         nom: user.username,
-                        email: user.email,
-                        budget: localStorage.getItem('userBudgetInitial') || null,
-                        depenses: localStorage.getItem('userTotalSpent') || null
+                        email: user.email
                     };
                     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
                     const url = URL.createObjectURL(blob);
@@ -334,9 +339,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     a.href = url;
                     a.download = 'mon_profil_data.json';
                     a.click();
-                    showSuccessToast("Données exportées !");
+                    // Utilise la langue courante pour le toast
+                    const lang = document.documentElement.lang || 'fr';
+                    showSuccessToast(translations[lang]?.dataExported || "Données exportées !");
                 })
-                .catch(() => showSuccessToast('Impossible d\'exporter : utilisateur non authentifié'));
+                .catch(() => {
+                    const lang = document.documentElement.lang || 'fr';
+                    showSuccessToast(translations[lang]?.profileExportError || "Impossible d'exporter : utilisateur non authentifié");
+                });
         });
     }
 

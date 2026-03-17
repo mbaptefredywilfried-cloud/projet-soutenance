@@ -20,7 +20,7 @@ if (!$transaction) {
     exit;
 }
 
-$fields = ['category_id', 'type', 'amount', 'description', 'transaction_date'];
+$fields = ['category_id', 'type', 'amount', 'description', 'date'];
 $updates = [];
 $params = [];
 
@@ -67,6 +67,12 @@ $params[] = $id;
 $params[] = $user_id;
 
 $sql = "UPDATE transactions SET " . implode(', ', $updates) . " WHERE id = ? AND user_id = ?";
+
+// Log debug
+$logFile = __DIR__ . '/debug_update_transaction.txt';
+$logMsg = "SQL: $sql\nPARAMS: " . print_r($params, true) . "\n";
+file_put_contents($logFile, $logMsg, FILE_APPEND);
+
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 

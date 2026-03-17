@@ -1,8 +1,0 @@
-Array
-(
-    [type] => income
-    [category_id] => 2
-    [amount] => 5636
-    [transaction_date] => 2026-03-03
-    [description] => debug
-)

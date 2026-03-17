@@ -519,32 +519,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Enregistrer les modifications
     if (editForm) {
-        editForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const id = parseInt(document.getElementById('editTransactionId').value);
-            const index = transactions.findIndex(t => t.id === id);
-
-            if (index !== -1) {
-                const updatedTransaction = {
-                    id: id,
-                    type: document.getElementById('editTransactionType').value,
-                    category: document.getElementById('editTransactionCategory').value,
-                    amount: parseFloat(document.getElementById('editTransactionAmount').value),
-                    date: document.getElementById('editTransactionDate').value,
-                    description: document.getElementById('editTransactionDescription').value
-                };
-                
-                transactions[index] = updatedTransaction;
-
-                localStorage.setItem('transactions', JSON.stringify(transactions));
-                // Check for budget overrun if this is an expense
-                if (updatedTransaction.type === 'expense' && typeof checkBudgetOverrun === 'function') {
-                    checkBudgetOverrun(updatedTransaction.category);
+            editForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const id = parseInt(document.getElementById('editTransactionId').value);
+                const type = document.getElementById('editTransactionType').value;
+                const category_id = parseInt(document.getElementById('editTransactionCategory').value);
+                const amount = parseFloat(document.getElementById('editTransactionAmount').value);
+                const date = document.getElementById('editTransactionDate').value;
+                const description = document.getElementById('editTransactionDescription').value;
+                const updatedTransaction = { id, type, category_id, amount, date, description };
+                await updateTransaction(updatedTransaction);
+                // Vérification du dépassement de budget si dépense
+                if (type === 'expense' && typeof checkBudgetOverrun === 'function') {
+                    checkBudgetOverrun(category_id);
                 }
-                renderTransactions();
                 editModal.style.display = 'none';
                 showSuccessToast('transactionModified');
-            }
         });
     }
 

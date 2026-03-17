@@ -73,7 +73,7 @@
                 </div>
 
                 <div class="card2">
-                    <h2 data-i18n="personalInfo">Informations Personnelles</h2>
+                    <div class="card-header" data-i18n="personalInfo">Informations Personnelles</div>
                     <div class="info">
                         <div class="profil-detail-group">
                             <label data-i18n="fullName">Nom complet</label>
@@ -88,13 +88,13 @@
                             <p id="display-phone" data-i18n="notSpecified">Non spécifié</p>
                         </div>
                     </div>
-                    <button class="btn-primary" id="openEditModal" data-i18n="editProfile">
-                        <i class="fas fa-edit"></i><span>Modifier le profil</span>
+                    <button class="btn-primary" id="openEditModal">
+                        <i class="fas fa-edit"></i> <span data-i18n="editProfile">Modifier le profil</span>
                     </button>
                 </div>
 
                 <div class="card3">
-                    <h2 data-i18n="budgetOverview">Aperçu Budgétaire</h2>
+                    <div class="card-header" data-i18n="budgetOverview">Aperçu Budgétaire</div>
                     <div class="stat-budget">
                         <div class="stat-card color-warning">
                             <i class="fas fa-percent"></i>
@@ -120,7 +120,7 @@
                 </div>
 
                 <div class="card4">
-                    <h2 data-i18n="accountInfo">Informations de compte</h2>
+                    <div class="card-header" data-i18n="accountInfo">Informations de compte</div>
                     <div class="group">
                         <div class="profil-detail-group">
                             <label data-i18n="userId">Identifiant Utilisateur</label>
@@ -138,7 +138,7 @@
                 </div>
 
                 <div class="card5">
-                    <h2 data-i18n="securityData">Sécurité et Données</h2>
+                    <div class="card-header" data-i18n="securityData">Sécurité et Données</div>
                     <p data-i18n="manageAccountData">Gérez vos données de compte, exportez vos transactions ou supprimez votre profil.</p>
 
                     <div class="button">
@@ -162,16 +162,16 @@
             </div>
             <form id="editProfileForm">
                 <div class="input-group">
-                    <label for="editName">Nom complet</label>
-                    <input type="text" id="editName" value="Fredy 2.0" required>
+                    <label for="editName" data-i18n="fullName">Nom complet</label>
+                    <input type="text" id="editName" required data-placeholder="phUsername">
                 </div>
                 <div class="input-group">
-                    <label for="editEmail">Email</label>
-                    <input type="email" id="editEmail" value="Fredy2.0@gmail.com" required>
+                    <label for="editEmail" data-i18n="email">Email</label>
+                    <input type="email" id="editEmail" required data-placeholder="phEmail">
                 </div>
                 <div class="input-group">
-                    <label for="editPhone">Téléphone</label>
-                    <input type="text" id="editPhone" placeholder="Non spécifié">
+                    <label for="editPhone" data-i18n="phone">Téléphone</label>
+                    <input type="text" id="editPhone" data-placeholder="phNotSpecified">
                 </div>
                 <div class="modal-actions">
                     <button type="button" class="btn-secondary" id="cancelBtn" data-i18n="cancel">Annuler</button>

@@ -1,5 +1,10 @@
 const translations = {
   fr: {
+          budgetAdviceExceeded: "Budget dépassé",
+          budgetAdviceAlmostReached: "Budget presque atteint",
+          budgetAdviceWarning: "Attention à vos dépenses",
+          budgetAdviceExcellent: "Gestion excellente",
+          budgetAdviceError: "Impossible de charger les données budgétaires.",
         activeAccount: "Compte Actif",
       // Placeholders
       phBudgetExample: "Ex: Courses alimentaires",
@@ -215,10 +220,13 @@ const translations = {
     budgetCreatedSuccess: "Budget créé avec succès!",
     budgetDeleted: "Budget supprimé",
     allBudgetsDeleted: "Tous les budgets supprimés!",
-    photoUpdated: "Photo mise à jour !",
-    profileUpdated: "Profil mis à jour !",
-    dataExported: "Données exportées !",
+    photoUpdated: "Photo de profil mise à jour avec succès !",
+    profileUpdated: "Profil mis à jour avec succès !",
+    profileUpdateError: "Erreur lors de la mise à jour du profil.",
+    networkError: "Erreur réseau. Veuillez réessayer plus tard.",
+    dataExported: "Données exportées avec succès !",
     languageChanged: "Langue changée avec succès !",
+    profileExportError: "Impossible d'exporter : utilisateur non authentifié",
     
     // Error Messages
     futuresDatesNotAllowed: "Les dates futures sont interdites",
@@ -253,6 +261,7 @@ const translations = {
     createBudgetBtn: "Créer le Budget",
     resetBtn: "Réinitialiser",
     budgetCreated: "Budget créé avec succès!",
+    
     budgetUpdated: "Budget mis à jour!",
     
     yourActiveBudgets: "Vos Budgets Actifs",
@@ -315,6 +324,11 @@ const translations = {
 
 
   en: {
+            budgetAdviceExceeded: "Budget exceeded",
+            budgetAdviceAlmostReached: "Budget almost reached",
+            budgetAdviceWarning: "Watch your spending",
+            budgetAdviceExcellent: "Excellent management",
+            budgetAdviceError: "Unable to load budget data.",
           activeAccount: "Active Account",
         securityData: "Security and Data",
         manageAccountData: "Manage your account data, export your transactions or delete your profile.",
@@ -487,6 +501,12 @@ const translations = {
     yearly: "Yearly",
     renewalFrequency: "Set renewal frequency",
     createBudget: "Create budget",
+        profileExportError: "Export failed: user not authenticated",
+    dataExported: "Data exported successfully!",
+    photoUpdated: "Profile photo updated successfully!",
+    profileUpdated: "Profile updated successfully!",
+    profileUpdateError: "Error updating profile.",
+    networkError: "Network error. Please try again later.",
     reset: "Reset",
 
     yourActiveBudgets: "Your active budgets",

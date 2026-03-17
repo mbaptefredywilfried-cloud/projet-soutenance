@@ -582,6 +582,12 @@ main > header {
     margin-bottom: 20px;
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 10px;
+    background: var(--accent-gradient);
+    color: #fff;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    margin: -30px -30px 20px -30px; /* Colle le header au bord du popup */
+    padding: 16px 20px;
 }
 
 .close-modal {
@@ -589,7 +595,7 @@ main > header {
     border: none;
     font-size: 24px;
     cursor: pointer;
-    color: var(--text-secondary);
+    color: #fff;
 }
 
 /* Formulaire interne */
@@ -749,6 +755,21 @@ main > header {
 
 
 /* --- Styles pour le Modal de Déconnexion (custom-modal2) --- */
+/* Header coloré pour les cartes card2, card3, card4, card5 */
+.card-header {
+    background: repeating-linear-gradient(135deg, rgba(24,27,31,0.92) 0px, rgba(24,27,31,0.92) 24px, rgba(40,44,48,0.85) 24px, rgba(40,44,48,0.85) 48px);
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    padding: 16px 20px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    margin: -20px -20px 20px -20px; /* Pour coller le header au bord de la carte */
+    text-align: left;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #d4d4d4;
+    border-top: 2px solid #d4d4d4;
+}
 .custom-modal2 {
     display: none; /* Piloté par le JS */
     position: fixed;
