@@ -181,6 +181,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 budgets.forEach(b => {
                     totalBudget += parseFloat(b.amount) || 0;
                 });
+                // CONSEIL : aucun budget défini
+                if (totalBudget === 0) {
+                    if (statsValues.length >= 3) {
+                        statsValues[0].textContent = '--%';
+                        statsValues[1].textContent = `0.00 ${currencySymbol}`;
+                        statsValues[2].textContent = `0.00 ${currencySymbol}`;
+                    }
+                    if (budgetAdvice) {
+                        const lang = document.documentElement.lang || 'fr';
+                        const t = translations[lang] || {};
+                        budgetAdvice.innerHTML = `<i class="fas fa-info-circle" style="color:#2563eb;"></i> <span style="color:#2563eb;font-weight:bold;">${t.budgetAdviceNoBudget || 'Aucun budget défini'}</span>`;
+                    }
+                    return;
+                }
                 fetch('./php/transactions/list.php')
                     .then(resp => resp.json())
                     .then(transData => {

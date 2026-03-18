@@ -757,8 +757,8 @@ main > header {
 /* --- Styles pour le Modal de Déconnexion (custom-modal2) --- */
 /* Header coloré pour les cartes card2, card3, card4, card5 */
 .card-header {
-    background: repeating-linear-gradient(135deg, rgba(24,27,31,0.92) 0px, rgba(24,27,31,0.92) 24px, rgba(40,44,48,0.85) 24px, rgba(40,44,48,0.85) 48px);
-    color: #fff;
+    background: #f4f4f4;
+    color: #1e293b;
     font-size: 18px;
     font-weight: 700;
     padding: 16px 20px;

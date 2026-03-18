@@ -1,4 +1,3 @@
-document.addEventListener('DOMContentLoaded', function () {
 
     if (localStorage.getItem('resetSuccess') === 'true') {
         showToast("Données réinitialisées !");
@@ -61,6 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
             localStorage.setItem('appCurrency', selected);
             showToast('Devise principale mise à jour !');
         });
+
     }
     
     // --- 3.c GESTION DES RAPPELS DE SAISIE ---
@@ -239,8 +239,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 "Êtes-vous sûr ? Toutes vos transactions et vos budgets seront définitivement supprimés."
             );
         });
-    }
-});
 
 // --- 6. FONCTION TOAST (SUCCÈS) ---
 function showToast(message) {
@@ -384,32 +382,4 @@ function darkenColor(color, percent) {
         (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
         (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
 }
-
-// --- FONCTION TOAST (Notifications en bas à droite) ---
-function showToast(message) {
-    const toast = document.createElement('div');
-    toast.style = `
-        position: fixed; 
-        bottom: 20px; 
-        right: 20px; 
-        background: #10b981; 
-        color: white;
-        padding: 15px 25px; 
-        border-radius: 12px; 
-        box-shadow: 0 10px 15px rgba(0,0,0,0.2);
-        z-index: 10005; 
-        display: flex; 
-        align-items: center; 
-        gap: 10px;
-        font-weight: 600; 
-        font-family: sans-serif; 
-        animation: slideInRight 0.5s ease forwards;
-    `;
-    toast.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
-    document.body.appendChild(toast);
-
-    setTimeout(() => {
-        toast.style.animation = "slideOutRight 0.5s ease forwards";
-        setTimeout(() => toast.remove(), 500);
-    }, 3000);
 }

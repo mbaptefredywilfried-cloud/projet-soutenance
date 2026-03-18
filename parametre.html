@@ -106,9 +106,9 @@
                     <div class="form-group">
                         <label data-i18n="language">Langue</label>
                         <select id="languageSelect">
-                            <option value="">Selectionnez une langue</option>
-                            <option value="fr">Français</option>
-                            <option value="en">Anglais</option>
+                            <option value="" data-i18n="selectLanguage">Selectionnez une langue</option>
+                            <option value="fr" data-i18n="frenchLang">Français</option>
+                            <option value="en" data-i18n="englishLang">Anglais</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -131,8 +131,8 @@
                     </div>
                     <div class="setting-item">
                         <div class="label">
-                            <strong>Rappels de saisie</strong>
-                            <small>Recevoir des rappels pour enregistrer vos transactions</small>
+                            <strong data-i18n="entryReminders">Rappels de saisie</strong>
+                            <small data-i18n="entryRemindersDesc">Recevoir des rappels pour enregistrer vos transactions</small>
                         </div>
                         <label class="switch">
                             <input type="checkbox" id="reminderToggle">
@@ -149,27 +149,24 @@
                         <h3 data-i18n="security">Sécurité</h3>
                     </div>
                     <div class="form-group">
-                        <label>Ancien mot de passe</label>
+                        <label data-i18n="oldPassword">Ancien mot de passe</label>
                         <div class="password-input">
-                            <input type="password" id="oldPassword" placeholder="Entrez votre mot de passe actuel">
+                            <input type="password" id="oldPassword" placeholder="Entrez votre mot de passe actuel" data-placeholder="phOldPassword">
                             <button type="button" class="toggle-password-old"><i class="fas fa-eye-slash"></i></button>
                         </div>
                     </div>
                     <div class="form-group">
                         <label data-i18n="changePassword">Nouveau mot de passe</label>
                         <div class="password-input">
-                            <input type="password" id="newPassword" placeholder="Nouveau mot de passe"
-                                data-placeholder="phNewPassword">
+                            <input type="password" id="newPassword" placeholder="Nouveau mot de passe" data-placeholder="phNewPassword">
                             <button type="button" class="toggle-password"><i class="fas fa-eye-slash"></i></button>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>Confirmer le nouveau mot de passe</label>
+                        <label data-i18n="confirmNewPassword">Confirmer le nouveau mot de passe</label>
                         <div class="password-input">
-                            <input type="password" id="confirmPassword"
-                                placeholder="Confirmer votre nouveau mot de passe">
-                            <button type="button" class="toggle-password-confirm"><i
-                                    class="fas fa-eye-slash"></i></button>
+                            <input type="password" id="confirmPassword" placeholder="Confirmer votre nouveau mot de passe" data-placeholder="phConfirmNewPassword">
+                            <button type="button" class="toggle-password-confirm"><i class="fas fa-eye-slash"></i></button>
                         </div>
                     </div>
                     <button id="savePasswordBtn" class="btn-primary" style="width: 100%; margin-bottom: 16px;">
@@ -188,7 +185,7 @@
                     </div>
                     <button id="resetDataBtn" class="btn-danger" style="width: 100%;">
                         <i class="fas fa-trash"></i>
-                        <span>Réinitialiser les données</span>
+                        <span data-i18n="resetData">Réinitialiser les données</span>
                     </button>
                 </div>
 
@@ -197,18 +194,18 @@
                         <div class="icon-box">
                             <i class="fas fa-rotate-right"></i>
                         </div>
-                        <h3>Synchronisation</h3>
+                        <h3 data-i18n="sync">Synchronisation</h3>
                     </div>
                     <div class="info">
-                        <strong>Dernière sauvegarde</strong>
-                        <span id="lastBackupSpan">Aucune sauvegarde</span>
+                        <strong data-i18n="lastBackup">Dernière sauvegarde</strong>
+                        <span id="lastBackupSpan" data-i18n="noBackup">Aucune sauvegarde</span>
                     </div>
                     <button id="exportCSVBtn" class="btn-primary" style="width: 100%; margin: 16px 0;">
                         <i class="fas fa-file-export"></i>
-                        <span>Exporter les données</span>
+                        <span data-i18n="exportData">Exporter les données</span>
                     </button>
                     <div class="form-group">
-                        <label>Importer un fichier</label>
+                        <label data-i18n="importFile">Importer un fichier</label>
                         <input type="file" id="importFile">
                     </div>
                 </div>
@@ -218,28 +215,28 @@
                         <div class="icon-box">
                             <i class="fas fa-info-circle"></i>
                         </div>
-                        <h3>À propos</h3>
+                        <h3 data-i18n="about">À propos</h3>
                     </div>
                     <div class="info">
-                        <strong>Version</strong>
-                        <span>--</span>
+                        <strong data-i18n="version">Version</strong>
+                        <span data-i18n="versionValue">--</span>
                     </div>
                     <div class="info">
-                        <strong>Crédits</strong>
-                        <span>Numera</span>
+                        <strong data-i18n="credits">Crédits</strong>
+                        <span data-i18n="creditsValue">Numera</span>
                     </div>
                     <div class="info" style="border-bottom: 1px solid var(--border-color);">
-                        <strong>Confidentialité</strong>
-                        <a href="#" style="color: var(--primary-color); text-decoration: none;">Lire la politique</a>
+                        <strong data-i18n="privacy">Confidentialité</strong>
+                        <a href="#" style="color: var(--primary-color); text-decoration: none;" data-i18n="readPolicy">Lire la politique</a>
                     </div>
                     <div class="form-group">
-                        <label style="margin-top: 16px;">Envoyer un retour</label>
-                        <textarea id="feedbackText" rows="3" placeholder="Partager vos suggestions..."></textarea>
+                        <label style="margin-top: 16px;" data-i18n="sendFeedback">Envoyer un retour</label>
+                        <textarea id="feedbackText" rows="3" data-i18n="feedbackPlaceholder" placeholder="Partager vos suggestions..."></textarea>
                     </div>
                     <button id="sendFeedbackBtn" class="btn-primary"
                         style="width: 100%; margin-top: 16px; justify-content: center;">
                         <i class="far fa-paper-plane"></i>
-                        <span>Envoyer</span>
+                        <span data-i18n="send">Envoyer</span>
                     </button>
                 </div>
 
@@ -252,13 +249,12 @@
             <div class="modal-icon-warning" style="color: var(--primary-color);">
                 <i class="fas fa-sign-out-alt"></i>
             </div>
-            <h3>Déconnexion</h3>
-            <p>Êtes-vous sûr de vouloir quitter votre session ?</p>
+            <h3 data-i18n="logout">Déconnexion</h3>
+            <p data-i18n="logoutConfirm">Êtes-vous sûr de vouloir quitter votre session ?</p>
             <div class="modal-buttons">
                 <button id="confirmLogoutBtn" class="btn-primary"
-                    style="background-color: var(--primary-color); border:none; padding: 10px 24px; border-radius: 8px; color: white; cursor: pointer; font-weight: 600;">Oui,
-                    me déconnecter</button>
-                <button id="cancelLogoutBtn" class="btn-cancel">Annuler</button>
+                    style="background-color: var(--primary-color); border:none; padding: 10px 24px; border-radius: 8px; color: white; cursor: pointer; font-weight: 600;" data-i18n="logoutYes">Oui, me déconnecter</button>
+                <button id="cancelLogoutBtn" class="btn-cancel" data-i18n="logoutCancel">Annuler</button>
             </div>
         </div>
     </div>
