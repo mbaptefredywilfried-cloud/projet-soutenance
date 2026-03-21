@@ -338,19 +338,24 @@ main .containt .current .card .stats-value{
 }
 
 main .graphic{
-    display: inline-flex;
-    justify-content: space-between;
-    padding: 20px;
-    gap: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 2%;
+        padding: 0;
+        margin-bottom: 20px;
+        align-items: stretch;
+    align-items: flex-start;
 }
 
 main .graphic .graph{
-    width: 50%;
+    width: 49%;
     border: none;
     border-radius: 13px;
     height: 400px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        height: 420px;
     background-color: #fff;
+    margin-bottom: 0;
 }
 
 main .graphic .graph .text{
@@ -409,11 +414,56 @@ main .graphic .graph .dashed{
 
 main .category {
     border: none;
-    width: 50%;
+    width: 49%;
     border-radius: 13px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    background-color: #fff;
+        background-color: #fff;
+        height: 420px;
     padding: 20px;
+    margin-bottom: 0;
+}
+/* Linechart occupe toute la largeur sous les deux autres */
+.linechart-card {
+    width: 100%;
+    margin-top: 18px;
+    background: var(--card-background, #fff);
+    border-radius: var(--border-radius, 13px);
+    box-shadow: var(--shadow, 0 4px 6px rgba(0,0,0,0.2));
+    padding: 20px;
+        min-height: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.linechart-card .budget-card {
+    margin-bottom: 10px;
+}
+.linechart-card canvas {
+    width: 100% !important;
+    height: 220px !important;
+    max-height: 260px;
+}
+@media (max-width: 1023px) {
+    main .graphic {
+        flex-direction: column;
+        gap: 18px;
+        padding: 0 0 20px 0;
+    }
+    main .graphic .graph,
+    main .graphic .category,
+    .linechart-card {
+        width: 100% !important;
+        min-width: 0;
+        max-width: 100%;
+        margin-top: 0;
+    }
+    .linechart-card {
+        min-height: 220px;
+        padding: 12px;
+    }
+    .linechart-card canvas {
+        height: 160px !important;
+    }
 }
 
 main .category .budget-card{

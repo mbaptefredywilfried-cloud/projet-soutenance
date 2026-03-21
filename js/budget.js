@@ -480,14 +480,22 @@ class BudgetManager {
             'Autre': {icon: 'fas fa-ellipsis-h', color: '#fff', bg: '#a3a3a3'}
         };
 
+        const t = (typeof translations !== 'undefined' && translations[document.documentElement.lang]) ? translations[document.documentElement.lang] : {};
         filteredBudgets.forEach(budget => {
             // Calcul du montant dépensé pour ce budget (transactions de même catégorie et même période)
             const spent = transactions
                 .filter(t => t.category_id == budget.category_id && t.category_type === 'expense' && (t.month === budget.month || !t.month))
                 .reduce((sum, t) => sum + Number(t.amount), 0);
             const percent = Math.min(100, budget.amount > 0 ? (spent / budget.amount) * 100 : 0);
-            const cat = budget.category_name || 'Autre';
-            const iconData = iconMap[cat] || iconMap['Autre'];
+            // Traduction catégorie
+            let cat = budget.category_name || (t.other || 'Autre');
+            if (this.categories && this.categories.length > 0) {
+                const foundCat = this.categories.find(c => c.id == budget.category_id);
+                if (foundCat && foundCat.translation_key && t[foundCat.translation_key]) {
+                    cat = t[foundCat.translation_key];
+                }
+            }
+            const iconData = iconMap[budget.category_name] || iconMap['Autre'];
             const budgetName = budget.name || '';
 
             // Couleur de la barre selon le pourcentage
@@ -501,9 +509,9 @@ class BudgetManager {
             // Affichage du reste ou du dépassement
             let bottomLabel = '';
             if (spent > budget.amount) {
-                bottomLabel = '<span style="color:#ef4444;font-weight:600">Dépassé</span>';
+                bottomLabel = `<span style="color:#ef4444;font-weight:600">${t.exceededBudgets || 'Dépassé'}</span>`;
             } else {
-                bottomLabel = `<span>${Number(budget.amount - spent).toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ${currency} restants</span>`;
+                bottomLabel = `<span>${Number(budget.amount - spent).toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ${currency} ${(t.remaining || 'restants')}</span>`;
             }
 
             const budgetDiv = document.createElement('div');
@@ -517,22 +525,33 @@ class BudgetManager {
                         <h3 style="margin:0;font-size:1.1rem;">${budgetName}</h3>
                         <div style="font-size:0.95em;color:#a3bffa;">${cat}</div>
                     </div>
-                    <span class="budget-period">${budget.month || ''}</span>
+                    <span class="budget-period">${(() => {
+                        if (!budget.month) return '';
+                        let key = budget.month.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '');
+                        // Fallback explicite pour les valeurs typiques
+                        const periodMap = {
+                            'mensuel': t.monthly,
+                            'annuel': t.yearly,
+                            'hebdomadaire': t.weekly
+                        };
+                        if (periodMap[key]) return periodMap[key];
+                        return t[key] || t[budget.month] || budget.month;
+                    })()}</span>
                 </div>
                 <div class="budget-content">
                     <div class="budget-details">
                         <div class="detail-item">
-                            <div class="label">Montant budgétisé</div>
+                            <div class="label">${t.totalBudgeted || 'Montant budgétisé'}</div>
                             <div class="value">${Number(budget.amount).toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ${currency}</div>
                         </div>
                         <div class="detail-item">
-                            <div class="label">Dépensé</div>
+                            <div class="label">${t.totalSpent || 'Dépensé'}</div>
                             <div class="value" style="color:${percent >= 100 ? '#ef4444' : '#1e293b'};">${Number(spent).toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ${currency}</div>
                         </div>
                     </div>
                     <div class="progress-container">
                         <div class="progress-label">
-                            <span>${percent.toFixed(0)}% utilisé</span>
+                            <span>${percent.toFixed(0)}% ${(t.used || 'utilisé')}</span>
                             ${bottomLabel}
                         </div>
                         <div class="progress-bar">
@@ -540,8 +559,8 @@ class BudgetManager {
                         </div>
                     </div>
                     <div class="budget-actions">
-                            <button class="btn-edit" title="Modifier" data-budget-id="${budget.id}"><i class="fas fa-pen"></i> <span>Modifier</span></button>
-                        <button class="btn-delete" title="Supprimer" onclick="window.budgetManager.deleteBudget && window.budgetManager.deleteBudget(${budget.id})"><i class="fas fa-trash"></i> <span>Supprimer</span></button>
+                        <button class="btn-edit" title="${t.editButtonLabel || 'Modifier'}" data-budget-id="${budget.id}"><i class="fas fa-pen"></i> <span>${t.editButtonLabel || 'Modifier'}</span></button>
+                        <button class="btn-delete" title="${t.deleteButtonLabel || 'Supprimer'}" onclick="window.budgetManager.deleteBudget && window.budgetManager.deleteBudget(${budget.id})"><i class="fas fa-trash"></i> <span>${t.deleteButtonLabel || 'Supprimer'}</span></button>
                     </div>
                 </div>
             `;
@@ -560,11 +579,17 @@ class BudgetManager {
                         // Remplir le select catégorie
                         const catSelect = document.getElementById('editBudgetCategory');
                         if (catSelect) {
-                            catSelect.innerHTML = '<option value="">Sélectionnez une catégorie</option>';
+                            const t = (typeof translations !== 'undefined' && translations[document.documentElement.lang]) ? translations[document.documentElement.lang] : {};
+                            catSelect.innerHTML = `<option value="">${t.selectCategory || 'Sélectionnez une catégorie'}</option>`;
                             this.categories.forEach(cat => {
                                 const option = document.createElement('option');
                                 option.value = cat.id;
-                                option.textContent = cat.name;
+                                // Utilise la clé de traduction si disponible
+                                if (cat.translation_key && t[cat.translation_key]) {
+                                    option.textContent = t[cat.translation_key];
+                                } else {
+                                    option.textContent = cat.name;
+                                }
                                 if (cat.id == budget.category_id) option.selected = true;
                                 catSelect.appendChild(option);
                             });

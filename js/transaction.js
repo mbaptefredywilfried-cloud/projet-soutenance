@@ -48,13 +48,18 @@ document.addEventListener('DOMContentLoaded', function () {
         if (filterButtons.length) {
             filterButtons.forEach(btn => {
                 btn.addEventListener('click', function() {
-                    filterButtons.forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
+                    filterButtons.forEach(b => b.classList.remove('active-time'));
+                    this.classList.add('active-time');
                     currentFilter = this.dataset.filter;
                     animateTransactions = true;
                     renderTransactions();
                 });
             });
+            // Initialisation : appliquer la classe active-time au bouton actif par défaut
+            const defaultBtn = document.querySelector('.filter-btn.active');
+            if (defaultBtn) {
+                defaultBtn.classList.add('active-time');
+            }
         }
     // ...menu burger et responsive inchangé...
 

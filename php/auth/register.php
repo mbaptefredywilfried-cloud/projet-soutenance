@@ -29,6 +29,14 @@ try {
     $_SESSION['user_id'] = $userId;
     $_SESSION['user_email'] = $email;
     $_SESSION['user_name'] = $name;
+
+    // Thème vert par défaut à la création du compte
+    $accent_gradient = 'linear-gradient(180deg, #10b981 0%, #059669 100%)';
+    $lang = 'fr';
+    $currency = 'EUR';
+    $stmt2 = $pdo->prepare("INSERT INTO user_settings (user_id, accent_gradient, language, currency) VALUES (?, ?, ?, ?)");
+    $stmt2->execute([$userId, $accent_gradient, $lang, $currency]);
+
     echo json_encode(["status" => "success", "message" => "Inscription réussie"]);
 } catch (PDOException $e) {
     if ($e->getCode() == 23000) {

@@ -3,12 +3,33 @@
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    const accentColor = localStorage.getItem('accentColor') || '#3b82f6';
-    console.log('Accent color from localStorage:', accentColor);
-    
-    applyAccentColor(accentColor);
-    updateActiveMenu(); // Ajout de la vérification du menu actif
-    enforceAuth();
+    // Charger les paramètres utilisateur (notamment la couleur d'accent) depuis le serveur
+    fetch('/PROJET/php/data/user_profile.php?action=get', {
+        method: 'GET',
+        credentials: 'same-origin'
+    })
+    .then(resp => resp.json())
+    .then(data => {
+        let accent = '#3b82f6'; // couleur par défaut
+        if (data && data.settings && data.settings.accent_gradient) {
+            accent = data.settings.accent_gradient;
+        }
+        console.log('[DEBUG accent_gradient]', accent, data);
+        // Si c'est un gradient, on extrait la couleur de départ pour la compatibilité
+        let color = accent;
+        const match = accent.match(/#([0-9a-fA-F]{6})/);
+        if (match) color = match[0];
+        applyAccentColor(color);
+        updateActiveMenu();
+        enforceAuth();
+    })
+    .catch((e) => {
+        console.log('[DEBUG accent_gradient] fallback', e);
+        // fallback couleur par défaut
+        applyAccentColor('#3b82f6');
+        updateActiveMenu();
+        enforceAuth();
+    });
 });
 
 // Vérifie si l'utilisateur est authentifié pour accéder aux pages protégées
@@ -57,17 +78,25 @@ function updateActiveMenu() {
 }
 
 
-function applyAccentColor(color) {
-    const darkerColor = darkenColor(color, 30);
-    const gradient = `linear-gradient(180deg, ${color} 0%, ${darkerColor} 100%)`;
+function applyAccentColor(colorOrGradient) {
+    // Si c'est un gradient, on l'utilise tel quel, sinon on génère le gradient
+    let gradient = colorOrGradient;
+    let color = colorOrGradient;
+    if (!colorOrGradient.startsWith('linear-gradient')) {
+        const darkerColor = darkenColor(colorOrGradient, 30);
+        gradient = `linear-gradient(180deg, ${colorOrGradient} 0%, ${darkerColor} 100%)`;
+    } else {
+        // Extraire la première couleur du gradient pour les bordures, etc.
+        const match = colorOrGradient.match(/#([0-9a-fA-F]{6})/);
+        if (match) color = match[0];
+    }
 
     // Exposer des variables CSS globales pour que le CSS puisse les utiliser
     try {
         document.documentElement.style.setProperty('--accent-color', color);
         document.documentElement.style.setProperty('--accent-gradient', gradient);
-    } catch (e) {
-        // silent fallback pour navigateurs non supportés (très rares)
-    }
+    } catch (e) {}
+
     // Aside
     const aside = document.querySelector('aside');
     if (aside) {

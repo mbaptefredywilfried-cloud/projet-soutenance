@@ -139,6 +139,7 @@ function handleAccountStats() {
     const toggleBtn = document.getElementById('toggleTransactions');
     
     let pieChart, barChart;
+    let lineChart;
 
     // 3. FONCTIONS DE RENDU
     // Formatage spécifique pour les cartes du dashboard : espace milliers + point décimal 2 décimales
@@ -278,12 +279,13 @@ function handleAccountStats() {
     function initCharts() {
         const pieCanvas = document.getElementById('piechart');
         const barCanvas = document.getElementById('barchart');
-        
-        if (!pieCanvas || !barCanvas) return;
+        const lineCanvas = document.getElementById('linechart');
+        if (!pieCanvas || !barCanvas || !lineCanvas) return;
 
         const pieCtx = pieCanvas.getContext('2d');
         const barCtx = barCanvas.getContext('2d');
-        
+        const lineCtx = lineCanvas.getContext('2d');
+
         if (pieChart) pieChart.destroy();
         // Plugin pour texte centré
         const centerTextPlugin = {
@@ -299,14 +301,14 @@ function handleAccountStats() {
                     ctx.fillStyle = color;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                        const meta = chart.getDatasetMeta(0);
-                        const arc = meta.data[0];
-                        let x = chart.width / 2;
-                        let y = chart.height / 2;
-                        if (arc) {
-                            x = arc.x;
-                            y = arc.y;
-                        }
+                    const meta = chart.getDatasetMeta(0);
+                    const arc = meta.data[0];
+                    let x = chart.width / 2;
+                    let y = chart.height / 2;
+                    if (arc) {
+                        x = arc.x;
+                        y = arc.y;
+                    }
                     // Multi-ligne
                     const lines = txt.split('\n');
                     const lineHeight = fontSize * 1.3;
@@ -324,9 +326,9 @@ function handleAccountStats() {
             options: { 
                 responsive: true,
                 maintainAspectRatio: false,
-                    cutout: '65%',
+                cutout: '65%',
                 plugins: { 
-                        legend: { position: 'right' }
+                    legend: { position: 'right' }
                 }
             },
             plugins: [centerTextPlugin]
@@ -334,9 +336,160 @@ function handleAccountStats() {
 
         if (barChart) barChart.destroy();
         barChart = new Chart(barCtx, { type: 'bar', options: { responsive: true, scales: { y: { beginAtZero: true } } } });
-        
+
+        if (lineChart) lineChart.destroy();
+        lineChart = new Chart(lineCtx, {
+            type: 'line',
+            data: { labels: [], datasets: [] },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            generateLabels: function(chart) {
+                                // Couleurs pleines pour la légende
+                                const legendColors = ['#10b981', '#FF6384'];
+                                const datasets = chart.data.datasets;
+                                return datasets.map((ds, i) => ({
+                                    text: ds.label,
+                                    fillStyle: legendColors[i] || ds.borderColor,
+                                    strokeStyle: legendColors[i] || ds.borderColor,
+                                    lineWidth: 0,
+                                    hidden: !chart.isDatasetVisible(i),
+                                    index: i,
+                                    pointStyle: 'rectRounded',
+                                    borderRadius: 2,
+                                    boxWidth: 32,
+                                    boxHeight: 16
+                                }));
+                            },
+                            usePointStyle: true,
+                            pointStyle: 'rectRounded',
+                            boxWidth: 32,
+                            boxHeight: 16
+                        }
+                    },
+                    tooltip: {
+                        enabled: true
+                    }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
         updatePieChart('7J');
         updateBarChart('Mois');
+        updateLineChart();
+    }
+    // Line Chart Dépense vs Revenu
+    function updateLineChart() {
+        if (!lineChart) return;
+        fetch('php/transactions/list.php', { credentials: 'same-origin' })
+            .then(response => response.json())
+            .then(data => {
+                let transactions = [];
+                if (data.status === 'success') {
+                    transactions = data.data;
+                }
+                // DEBUG LOGS
+                console.log('[DEBUG] Transactions reçues pour line chart:', transactions);
+                // Afficher les dates extraites
+                transactions.forEach(t => {
+                    const dateStr = t.transaction_date || t.date;
+                    console.log('[DEBUG] Transaction:', t, 'Date utilisée:', dateStr, 'Type:', t.category_type, 'Montant:', t.amount);
+                });
+                // Grouper par semaine (5 dernières semaines)
+                const now = new Date();
+                const weeks = [];
+                for (let i = 4; i >= 0; i--) {
+                    // Fin de semaine à 23:59:59.999
+                    const end = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (i * 7));
+                    end.setHours(23, 59, 59, 999);
+                    const start = new Date(end);
+                    start.setDate(end.getDate() - 6);
+                    start.setHours(0, 0, 0, 0);
+                    weeks.push({ start, end });
+                }
+                // Labels dynamiques type 'Mar 02–08'
+                const currentLang = document.documentElement.lang || 'fr';
+                const t = translations[currentLang] || translations['fr'];
+                const monthNames = t.monthsShort || [
+                    'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'
+                ];
+                function pad2(n) { return n < 10 ? '0' + n : n; }
+                const labels = weeks.map(w => {
+                    const m = monthNames[w.start.getMonth()];
+                    const d1 = pad2(w.start.getDate());
+                    const d2 = pad2(w.end.getDate());
+                    if (w.start.getMonth() === w.end.getMonth()) {
+                        return `${m} ${d1}–${d2}`;
+                    } else {
+                        const m2 = monthNames[w.end.getMonth()];
+                        return `${m} ${d1}–${m2} ${d2}`;
+                    }
+                });
+                // Calculer revenus et dépenses par semaine
+                const revenueByWeek = weeks.map(w => {
+                    return transactions
+                        .filter(t => {
+                            const dateStr = t.transaction_date || t.date;
+                            if (!dateStr) return false;
+                            const d = new Date(dateStr);
+                            // DEBUG
+                            if (t.category_type === 'income') {
+                                console.log('[DEBUG] Vérif revenu:', d, 'entre', w.start, 'et', w.end, d >= w.start && d <= w.end);
+                            }
+                            return d >= w.start && d <= w.end && t.category_type === 'income';
+                        })
+                        .reduce((sum, t) => sum + parseFloat(t.amount), 0);
+                });
+                const expenseByWeek = weeks.map(w => {
+                    return transactions
+                        .filter(t => {
+                            const dateStr = t.transaction_date || t.date;
+                            if (!dateStr) return false;
+                            const d = new Date(dateStr);
+                            // DEBUG
+                            if (t.category_type === 'expense') {
+                                console.log('[DEBUG] Vérif dépense:', d, 'entre', w.start, 'et', w.end, d >= w.start && d <= w.end);
+                            }
+                            return d >= w.start && d <= w.end && t.category_type === 'expense';
+                        })
+                        .reduce((sum, t) => sum + parseFloat(t.amount), 0);
+                });
+                lineChart.data = {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: t.income || 'Revenu',
+                            data: revenueByWeek,
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                            fill: '+1',
+                            tension: 0.3
+                        },
+                        {
+                            label: t.expense || 'Dépense',
+                            data: expenseByWeek,
+                            borderColor: '#FF6384',
+                            backgroundColor: 'rgba(255, 99, 132, 0.15)',
+                            fill: true,
+                            tension: 0.3
+                        }
+                    ]
+                };
+                // Formatage axe Y
+                if (lineChart.options && lineChart.options.scales && lineChart.options.scales.y) {
+                    lineChart.options.scales.y.ticks.callback = function(value) {
+                        return formatAmountForChart(value);
+                    };
+                }
+                lineChart.update();
+            });
     }
 
    function updatePieChart(period) {
@@ -482,7 +635,7 @@ function handleAccountStats() {
                         { 
                             label: t.income || 'Revenu', 
                             data: revenueByMonth,
-                            backgroundColor: '#36A2EB' 
+                            backgroundColor: '#10b981' // vert
                         },
                         { 
                             label: t.expense || 'Dépense', 
@@ -569,6 +722,7 @@ function handleAccountStats() {
         updateCategoryFilter();
         if (typeof updatePieChart === 'function') updatePieChart('7J');
         if (typeof updateBarChart === 'function') updateBarChart('Mois');
+        if (typeof updateLineChart === 'function') updateLineChart();
     });
 });
 

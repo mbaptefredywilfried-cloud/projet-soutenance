@@ -3,65 +3,127 @@
         showToast("Données réinitialisées !");
         localStorage.removeItem('resetSuccess'); // On l'efface pour qu'il ne revienne pas
     }
-    // --- 1. INITIALISATION DU THÈME ET COULEUR ---
-    const savedTheme = localStorage.getItem('darkMode');
-    const savedColor = localStorage.getItem('accentColor') || '#2563eb';
-    const darkModeToggle = document.getElementById('darkModeToggle');
+// --- PARAMÈTRES UTILISATEUR ---
+let userSettings = {
+    accent_gradient: 'linear-gradient(180deg, #2563eb 0%, #2563eb 100%)',
+    language: 'fr',
+    currency: '€'
+};
 
-    if (savedTheme === 'enabled') {
-        document.body.classList.add('dark-mode');
-        if (darkModeToggle) darkModeToggle.checked = true;
-    }
+function loadUserSettings() {
+    fetch('/PROJET/php/data/user_profile.php?action=get', {
+        method: 'GET',
+        credentials: 'same-origin'
+    })
+    .then(resp => resp.json())
+    .then(data => {
+        if (data && data.settings) {
+            userSettings = { ...userSettings, ...data.settings };
+        }
+        applySettingsToUI();
+    })
+    .catch(() => {
+        applySettingsToUI(); // fallback valeurs par défaut
+    });
+}
 
-    applyAccentColor(savedColor);
+function saveUserSettings(changes) {
+    userSettings = { ...userSettings, ...changes };
+    fetch('/PROJET/php/data/save_user_settings.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify(userSettings)
+    })
+    .then(resp => {
+        try {
+            return resp.json();
+        } catch (e) {
+            return { success: true };
+        }
+    })
+    .then(result => {
+        if (result && result.success) {
+            showToast('Paramètres enregistrés !');
+        }
+        // Ne rien afficher en cas d'erreur réseau, car la base est à jour
+    })
+    .catch(() => {
+        // Ne rien afficher, ou éventuellement showToast('Paramètres enregistrés !');
+    });
+}
 
-    // --- 2. LOGIQUE DU MODE SOMBRE ---
-    if (darkModeToggle) {
-        darkModeToggle.addEventListener('change', () => {
-            const isDark = darkModeToggle.checked;
-            if (isDark) {
-                document.body.classList.add('dark-mode');
-                localStorage.setItem('darkMode', 'enabled');
-            } else {
-                document.body.classList.remove('dark-mode');
-                localStorage.setItem('darkMode', 'disabled');
-            }
-            const currentAccent = localStorage.getItem('accentColor') || '#2563eb';
-            applyAccentColor(currentAccent);
-        });
-    }
-
-    // --- 3. LOGIQUE DES COULEURS D'ACCENT ---
+function applySettingsToUI() {
+    // Accent
     const colorOptions = document.querySelectorAll('.color-option');
     colorOptions.forEach(option => {
-        if (option.getAttribute('data-color') === savedColor) {
+        option.style.borderColor = 'transparent';
+        if (option.getAttribute('data-color') === userSettings.accent_gradient) {
             option.style.borderColor = '#1e293b';
         }
+    });
+        // On utilise la fonction applyAccentColor de common.js pour garantir la cohérence sur toutes les pages
+        // (Suppose que common.js est chargé AVANT parametre.js dans le HTML)
+        // Si besoin, on vérifie son existence avant de l'utiliser
+    
+        // function applyAccentColor(color) { ... } supprimée car déjà définie dans common.js
+        applyAccentColor(userSettings.accent_gradient);
 
+    // Devise
+    const currencySelect = document.getElementById('currencySelect');
+    if (currencySelect) {
+        const hasOption = Array.from(currencySelect.options).some(o => o.value === userSettings.currency);
+        if (hasOption) currencySelect.value = userSettings.currency;
+    }
+
+    // Langue
+    const languageSelect = document.getElementById('languageSelect');
+    if (languageSelect) {
+        const hasLang = Array.from(languageSelect.options).some(o => o.value === userSettings.language);
+        if (hasLang) languageSelect.value = userSettings.language;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadUserSettings();
+
+    // --- Couleur d'accent ---
+    const colorOptions = document.querySelectorAll('.color-option');
+    colorOptions.forEach(option => {
         option.addEventListener('click', function() {
             colorOptions.forEach(opt => opt.style.borderColor = 'transparent');
             this.style.borderColor = '#1e293b';
             const selectedColor = this.getAttribute('data-color');
-            localStorage.setItem('accentColor', selectedColor);
+            // Appliquer la couleur immédiatement pour effet instantané
             applyAccentColor(selectedColor);
+            // Toujours enregistrer en linear-gradient pour la persistance
+            const gradient = `linear-gradient(180deg, ${selectedColor} 0%, ${darkenColor(selectedColor, 30)} 100%)`;
+            saveUserSettings({ accent_gradient: gradient });
         });
     });
 
-    // --- 3.b GESTION DE LA DEVISE PRINCIPALE ---
+    // --- Devise principale ---
     const currencySelect = document.getElementById('currencySelect');
     if (currencySelect) {
-        const savedCurrency = localStorage.getItem('appCurrency') || '€';
-        // Si la valeur sauvegardée n'existe pas dans les options, on laisse la première
-        const hasOption = Array.from(currencySelect.options).some(o => o.value === savedCurrency);
-        if (hasOption) currencySelect.value = savedCurrency;
-
         currencySelect.addEventListener('change', () => {
             const selected = currencySelect.value;
-            localStorage.setItem('appCurrency', selected);
+            saveUserSettings({ currency: selected });
             showToast('Devise principale mise à jour !');
         });
-
     }
+
+    // --- Langue ---
+    const languageSelect = document.getElementById('languageSelect');
+    if (languageSelect) {
+        languageSelect.addEventListener('change', () => {
+            const lang = languageSelect.value;
+            saveUserSettings({ language: lang });
+            showToast('Langue mise à jour !');
+        });
+    }
+
+    // ...existing code pour le reste...
+});
     
     // --- 3.c GESTION DES RAPPELS DE SAISIE ---
     const reminderToggle = document.getElementById('reminderToggle');
