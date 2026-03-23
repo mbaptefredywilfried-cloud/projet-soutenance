@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 $data = json_decode(file_get_contents('php://input'), true);
 
-$accent = isset($data['accent_gradient']) ? $data['accent_gradient'] : 'linear-gradient(180deg, #2563eb 0%, #2563eb 100%)';
+$accent = isset($data['accent_gradient']) ? $data['accent_gradient'] : 'linear-gradient(180deg, #36A2EB 0%, #36A2EB 100%)';
 $lang = isset($data['language']) ? $data['language'] : 'fr';
 $currency = isset($data['currency']) ? $data['currency'] : 'EUR';
 

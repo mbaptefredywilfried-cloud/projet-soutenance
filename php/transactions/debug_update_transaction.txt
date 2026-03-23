@@ -34,3 +34,27 @@ PARAMS: Array
     [6] => 6
 )
 
+SQL: UPDATE transactions SET category_id = ?, type = ?, amount = ?, description = ?, date = ? WHERE id = ? AND user_id = ?
+PARAMS: Array
+(
+    [0] => 6
+    [1] => expense
+    [2] => 5742
+    [3] => 
+    [4] => 2026-03-13
+    [5] => 135
+    [6] => 6
+)
+
+SQL: UPDATE transactions SET category_id = ?, type = ?, amount = ?, description = ?, date = ? WHERE id = ? AND user_id = ?
+PARAMS: Array
+(
+    [0] => 14
+    [1] => income
+    [2] => 75854
+    [3] => 
+    [4] => 2026-03-22
+    [5] => 201
+    [6] => 3
+)
+

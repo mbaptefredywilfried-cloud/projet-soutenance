@@ -15,7 +15,6 @@ $user_id = $_SESSION['user_id'];
 try {
     $pdo->prepare('DELETE FROM transactions WHERE user_id = ?')->execute([$user_id]);
     $pdo->prepare('DELETE FROM budgets WHERE user_id = ?')->execute([$user_id]);
-    $pdo->prepare('DELETE FROM categories WHERE user_id = ?')->execute([$user_id]);
     echo json_encode(['success' => true, 'message' => 'Toutes vos données ont été réinitialisées.']);
 } catch (Exception $e) {
     echo json_encode(['success' => true, 'message' => 'Toutes vos données ont été réinitialisées.']);

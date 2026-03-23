@@ -53,13 +53,14 @@
 }
 /* --- VARIABLES --- */
 :root {
-  --primary: #2563eb;
+  --primary: #36A2EB;
   --primary-dark: #1e40af;
   --text-main: #0f172a;
   --text-muted: #64748b;
   --border: #e2e8f0;
   --bg-light: #f8fafc;
   --navy-dark: #0f172a; /* Ta nouvelle couleur pro */
+  --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
 }
 
 /* --- STRUCTURE SPLIT-SCREEN --- */
@@ -84,7 +85,7 @@ body {
 #left-panel {
   width: 50vw;
   min-height: 100vh;
-  background: var(--navy-dark);
+  background: var(--gradient-primary);
   display: flex;
   flex-direction: column;
   align-items: center;

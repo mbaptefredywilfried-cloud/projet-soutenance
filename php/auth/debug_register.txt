@@ -1,0 +1,6 @@
+Array
+(
+    [name] => wrhy@gmail.com
+    [email] => wrhy@gmail.com
+    [password] => wrhy@gmail.com
+)

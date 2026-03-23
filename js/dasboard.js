@@ -4,54 +4,18 @@ document.addEventListener('DOMContentLoaded', function () {
         document.documentElement.style.setProperty('--accent-color', color);
     }
 
-    const savedAccentColor = localStorage.getItem('accentColor') || '#2563eb';
+    const savedAccentColor = localStorage.getItem('accentColor') || '#36A2EB';
     setAccentColorVar(savedAccentColor);
 
     // Réagit au changement de couleur d'accent (depuis paramètres)
     window.addEventListener('storage', (e) => {
         if (e.key === 'accentColor') {
-            const newColor = e.newValue || '#2563eb';
+            const newColor = e.newValue || '#36A2EB';
             setAccentColorVar(newColor);
         }
     });
 
-    // ============ AJOUT: MENU BURGER POUR MOBILE ============
-    const menuBurger = document.getElementById('menuBurger');
-    const sidebar = document.querySelector('aside');
-    const overlay = document.querySelector('.sidebar-overlay');
-    
-    if (menuBurger && sidebar && overlay) {
-        menuBurger.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            this.classList.toggle('active');
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
-            
-            if (sidebar.classList.contains('active')) {
-                document.body.style.overflow = 'hidden';
-            } else {
-                document.body.style.overflow = '';
-            }
-        });
-        
-        overlay.addEventListener('click', function() {
-            menuBurger.classList.remove('active');
-            sidebar.classList.remove('active');
-            this.classList.remove('active');
-            document.body.style.overflow = '';
-        });
-        
-        // Mettre à jour la photo de profil mobile si elle existe
-        const mobilePhoto = document.getElementById('mobileUserPhoto');
-        if (mobilePhoto) {
-            const userPhoto = localStorage.getItem('userImage');
-            if (userPhoto && userPhoto.trim() !== "") {
-                mobilePhoto.src = userPhoto;
-            }
-        }
-    }
+    // ...existing code...
 
     // 1. GESTION DU PROFIL (MISE À JOUR AVEC ICÔNE PAR DÉFAUT)
     // Charger le profil utilisateur depuis le serveur (session)
@@ -338,47 +302,20 @@ function handleAccountStats() {
         barChart = new Chart(barCtx, { type: 'bar', options: { responsive: true, scales: { y: { beginAtZero: true } } } });
 
         if (lineChart) lineChart.destroy();
-        lineChart = new Chart(lineCtx, {
-            type: 'line',
-            data: { labels: [], datasets: [] },
-            options: {
-                responsive: true,
+        lineChart = new Chart(lineCtx, { 
+            type: 'line', 
+            options: { 
+                responsive: true, 
                 maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        labels: {
-                            generateLabels: function(chart) {
-                                // Couleurs pleines pour la légende
-                                const legendColors = ['#10b981', '#FF6384'];
-                                const datasets = chart.data.datasets;
-                                return datasets.map((ds, i) => ({
-                                    text: ds.label,
-                                    fillStyle: legendColors[i] || ds.borderColor,
-                                    strokeStyle: legendColors[i] || ds.borderColor,
-                                    lineWidth: 0,
-                                    hidden: !chart.isDatasetVisible(i),
-                                    index: i,
-                                    pointStyle: 'rectRounded',
-                                    borderRadius: 2,
-                                    boxWidth: 32,
-                                    boxHeight: 16
-                                }));
-                            },
-                            usePointStyle: true,
-                            pointStyle: 'rectRounded',
-                            boxWidth: 32,
-                            boxHeight: 16
-                        }
-                    },
-                    tooltip: {
-                        enabled: true
-                    }
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
                 },
-                scales: {
-                    y: { beginAtZero: true }
-                }
-            }
+                plugins: {
+                    legend: { position: 'top' }
+                },
+                scales: { y: { beginAtZero: true } } 
+            } 
         });
 
         updatePieChart('7J');
@@ -729,7 +666,7 @@ function handleAccountStats() {
 // GESTION DE L'ÉTAT VIDE DES GRAPHIQUES
 function showEmptyPieState() {
     const chartContainer = document.querySelector('.dashed');
-    const accentColor = localStorage.getItem('accentColor') || '#2563eb';
+    const accentColor = localStorage.getItem('accentColor') || '#36A2EB';
     if (!chartContainer) return;
 
     const currentLang = document.documentElement.lang || 'fr';

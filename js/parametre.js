@@ -5,7 +5,7 @@
     }
 // --- PARAMÈTRES UTILISATEUR ---
 let userSettings = {
-    accent_gradient: 'linear-gradient(180deg, #2563eb 0%, #2563eb 100%)',
+    accent_gradient: 'linear-gradient(180deg, #36A2EB 0%, #36A2EB 100%)',
     language: 'fr',
     currency: '€'
 };
@@ -325,7 +325,7 @@ function showModernPopup(titre, message, type = "error") {
     const overlay = document.createElement('div');
     overlay.style = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);display:flex;justify-content:center;align-items:center;z-index:10002;animation:fadeIn 0.3s ease;";
     
-    const color = type === "error" ? "#ef4444" : "#3b82f6";
+    const color = type === "error" ? "#ef4444" : "#36A2EB";
     const icon = type === "error" ? "fa-exclamation-circle" : "fa-info-circle";
 
     overlay.innerHTML = `

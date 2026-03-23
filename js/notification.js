@@ -1,4 +1,4 @@
-Ôªø
+
 
 (function () {
     // Small helper: format Date to YYYY-MM-DD
@@ -139,9 +139,9 @@
             if (latestISO === today) return;
             let message = null;
             if (latestISO === null || daysSince >= 7) {
-                message = "Aucune transaction enregistr√©e depuis plus de 7 jours. Pensez √† suivre vos d√©penses.";
+                message = "Aucune transaction enregistrÈe depuis plus de 7 jours. Pensez ‡ suivre vos dÈpenses.";
             } else if (daysSince >= 1) {
-                message = "Aucune transaction enregistr√©e aujourd'hui. N'oubliez pas d'ajouter vos d√©penses.";
+                message = "Aucune transaction enregistrÈe aujourd'hui. N'oubliez pas d'ajouter vos dÈpenses.";
             }
             if (message) {
                 createToast(message, 'Saisir', 'transaction.html');
@@ -204,12 +204,12 @@
                 }
 
                 const excess = (spent - budget.amount).toFixed(2);
-                const currencySymbol = localStorage.getItem('appCurrency') || '‚Ç¨';
+                const currencySymbol = localStorage.getItem('appCurrency') || 'Ä';
                 
                 // Show toast notification
                 showBudgetOverrunToast(
-                    `‚ö†Ô∏è D√©passement de budget: ${budget.name}`,
-                    `Vous avez d√©pass√© de ${excess} ${currencySymbol}`,
+                    `?? DÈpassement de budget: ${budget.name}`,
+                    `Vous avez dÈpassÈ de ${excess} ${currencySymbol}`,
                     'budget.html'
                 );
 
@@ -256,7 +256,7 @@
         `;
 
         const btnClose = document.createElement('button');
-        btnClose.innerHTML = '‚úï';
+        btnClose.innerHTML = '?';
         btnClose.style = `
             background: none;
             border: none;

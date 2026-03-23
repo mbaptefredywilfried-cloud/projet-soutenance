@@ -1,32 +1,20 @@
 document.addEventListener('DOMContentLoaded', function () {
     // --- 0. INITIALISATION DE L'ACCENT COULEUR ---
-    const savedAccentColor = localStorage.getItem('accentColor') || '#2563eb';
-    
-    // Fonction pour appliquer l'accent au profil
-    function applyProfileAccentColor(color) {
+    function applyProfileAccentColor() {
+        // Récupère la couleur d'accent dynamique depuis la variable CSS
+        const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color')?.trim() || '#36A2EB';
         // Appliquer la couleur au bouton upload avatar
         const avatarBtn = document.querySelector('.avatar-upload-btn');
         if (avatarBtn) {
-            avatarBtn.style.color = color;
-            avatarBtn.style.borderColor = color;
-        }
-        
-        // Appliquer aussi aux autres éléments si la fonction globale existe
-        if (typeof applyAccentColor === 'function') {
-            applyAccentColor(color);
+            avatarBtn.style.color = accentColor;
+            avatarBtn.style.borderColor = accentColor;
         }
     }
-    
-    // Appliquer l'accent initial
-    applyProfileAccentColor(savedAccentColor);
-    
-    // Écouter les changements d'accent (depuis les paramètres)
-    window.addEventListener('storage', (e) => {
-        if (e.key === 'accentColor') {
-            const newColor = e.newValue || '#2563eb';
-            applyProfileAccentColor(newColor);
-        }
-    });
+    // Appliquer l'accent initial au chargement
+    applyProfileAccentColor();
+    // Réappliquer si la couleur d'accent change (par exemple, après un changement de paramètres)
+    const observer = new MutationObserver(applyProfileAccentColor);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['style'] });
 
     // --- 1. SÉLECTEURS ---
     const avatarInput = document.getElementById('avatarInput');
@@ -38,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
     
     // Sélecteurs Aperçu Budgétaire (Card 3)
     const statsValues = document.querySelectorAll('.card3 .stat-value');
-    const budgetAdvice = document.querySelector('.card3 p');
+    const budgetAdvice = document.querySelector('.card3 .budget-tip');
     
     // Sélecteurs de la Modale
     const modal = document.getElementById('editModal');
@@ -133,9 +121,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Détection de la langue courante depuis <html lang>
                 const lang = document.documentElement.lang || 'fr';
                 // Mettre à jour les éléments de compte
-                const idDisplay = document.querySelector('.card4 .profil-detail-group:nth-child(1) span');
-                const creationDisplay = document.querySelector('.card4 .profil-detail-group:nth-child(2) span');
-                const lastLoginDisplay = document.querySelector('.card4 .profil-detail-group:nth-child(3) span');
+                const idDisplay = document.querySelector('.account-info-id span');
+                const creationDisplay = document.querySelector('.account-info-group .profil-detail-group:nth-child(1) span');
+                const lastLoginDisplay = document.querySelector('.account-info-group .profil-detail-group:nth-child(2) span');
                 if (idDisplay) idDisplay.textContent = user.id || '';
                 if (creationDisplay) {
                     if (user.created_at) {
@@ -191,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (budgetAdvice) {
                         const lang = document.documentElement.lang || 'fr';
                         const t = translations[lang] || {};
-                        budgetAdvice.innerHTML = `<i class="fas fa-info-circle" style="color:#2563eb;"></i> <span style="color:#2563eb;font-weight:bold;">${t.budgetAdviceNoBudget || 'Aucun budget défini'}</span>`;
+                        budgetAdvice.innerHTML = `<i class="fas fa-info-circle" style="color:#36A2EB;"></i> <span style="color:#36A2EB;font-weight:bold;">${t.budgetAdviceNoBudget || 'Aucun budget défini'}</span>`;
                     }
                     return;
                 }

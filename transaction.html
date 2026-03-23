@@ -6,24 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transaction - Numera</title>
     <link rel="stylesheet" href="./css/transaction.css">
+    <link rel="stylesheet" href="./css/responsive.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/svg+xml" href="./img/icon.svg">
 </head>
 
 <body>
-    <!-- Overlay pour fermer la sidebar -->
-<div class="sidebar-overlay"></div>
 
-<!-- Header Mobile SIMPLE (sans profil) -->
-<header class="mobile-header">
-    <button class="menu-burger" id="menuBurger">
-        <span></span>
-        <span></span>
-        <span></span>
-    </button>
-    
-    <h2 class="header-title">Transactions</h2>
-</header>
+
     <div class="content">
         <aside>
 
@@ -60,7 +50,7 @@
         <main>
 
             <!-- ajouter une transaction -->
-            <h1 data-i18n="addTransaction">Transactions</h1>
+            <h1 data-i18n="navTransaction">Transaction</h1>
             <div class="card">
                 <h3 data-i18n="addTransactionForm">Ajouter une transaction</h3>
                 <form id="transactionForm">
@@ -124,7 +114,6 @@
 
             <div id="transactionsContainer">
             </div>
-            <!-- historique des transactions  -->
             
         </main>
 
@@ -213,6 +202,7 @@
     <script src="./js/langue.js"></script>
     <script src="./js/notification.js"></script>
     <script src="./js/transaction.js"></script>
+    <script src="./js/responsive.js"></script>
 </body>
 
 </html>

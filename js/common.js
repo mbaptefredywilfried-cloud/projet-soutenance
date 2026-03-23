@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     })
     .then(resp => resp.json())
     .then(data => {
-        let accent = '#3b82f6'; // couleur par défaut
+        let accent = '#36A2EB'; // couleur par défaut
         if (data && data.settings && data.settings.accent_gradient) {
             accent = data.settings.accent_gradient;
         }
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
     .catch((e) => {
         console.log('[DEBUG accent_gradient] fallback', e);
         // fallback couleur par défaut
-        applyAccentColor('#3b82f6');
+        applyAccentColor('#36A2EB');
         updateActiveMenu();
         enforceAuth();
     });

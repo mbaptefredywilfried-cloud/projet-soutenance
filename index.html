@@ -1,30 +1,118 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Numera - Maîtrisez vos Finances</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Numera - Gestion Financière Simplifiée</title>
     <link rel="icon" type="image/svg+xml" href="./img/icon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        /* --- VARIABLES --- */
+        /* ============================================
+           NUMERA - Welcome Page (Fusionnée)
+           Light = numera_no_images | Dark = numera_dark
+           Toggle = numera_theme_toggle
+           ============================================ */
+
+        /* === LIGHT MODE (défaut) === */
         :root {
-            --primary: #2563eb;
-            --primary-dark: #1e40af;
-            --navy-dark: #0f172ac7;
-            --navy-light: #1e293b;
-            --white: #ffffff;
-            --text-light: rgba(255, 255, 255, 0.9);
-            --text-muted: #94a3b8;
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --primary-light: #60a5fa;
+            --secondary: #ec4899;
+            --accent: #06b6d4;
+            --background: #f0f4f8;
+            --surface: #ffffff;
+            --surface-light: #f1f5f9;
+            --foreground: #1e293b;
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --text-muted: #64748b;
+            --text-light: #94a3b8;
+            --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+            --gradient-secondary: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            --gradient-accent: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            --gradient-blue: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+            --gradient-cyan: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            --gradient-purple: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            --gradient-green: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            /* Light-specific surface tokens */
+            --navbar-bg: rgba(255, 255, 255, 0.8);
+            --navbar-border: rgba(226, 232, 240, 0.5);
+            --stat-card-bg: rgba(255, 255, 255, 0.6);
+            --stat-card-border: rgba(255, 255, 255, 0.8);
+            --feature-card-bg: rgba(255, 255, 255, 0.7);
+            --feature-card-border: rgba(255, 255, 255, 0.8);
+            --feature-card-hover-border: rgba(59, 130, 246, 0.3);
+            --cta-card-bg: linear-gradient(135deg, rgba(224, 242, 254, 0.6), rgba(240, 249, 255, 0.6));
+            --cta-card-border: rgba(59, 130, 246, 0.2);
+            --footer-bg: rgba(255, 255, 255, 0.4);
+            --footer-border: rgba(226, 232, 240, 0.5);
+            --footer-bottom-border: rgba(226, 232, 240, 0.5);
+            --badge-bg: rgba(59, 130, 246, 0.1);
+            --badge-border: rgba(59, 130, 246, 0.2);
+            --badge-color: #1e40af;
+            --avatar-border: white;
+            --body-bg: linear-gradient(to bottom right, #f0f4f8, #e2e8f0, #f0f4f8);
         }
 
-        /* --- RESET & BASE --- */
+        /* === DARK MODE === */
+        body.dark-mode {
+            --primary: #8b5cf6;
+            --primary-dark: #7c3aed;
+            --primary-light: #a78bfa;
+            --secondary: #ec4899;
+            --accent: #06b6d4;
+            --background: #0f172a;
+            --surface: #1e293b;
+            --surface-light: #334155;
+            --foreground: #f1f5f9;
+            --card-bg: #1e293b;
+            --card-border: rgba(139, 92, 246, 0.2);
+            --text-muted: #cbd5e1;
+            --text-light: #94a3b8;
+            --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            --gradient-secondary: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%);
+            --gradient-accent: linear-gradient(135deg, #ec4899 0%, #f97316 100%);
+            --gradient-blue: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            --gradient-cyan: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%);
+            --gradient-purple: linear-gradient(135deg, #ec4899 0%, #f97316 100%);
+            --gradient-green: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.5);
+            --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.6);
+            --navbar-bg: rgba(15, 23, 42, 0.8);
+            --navbar-border: rgba(139, 92, 246, 0.2);
+            --stat-card-bg: rgba(30, 41, 59, 0.8);
+            --stat-card-border: rgba(139, 92, 246, 0.2);
+            --feature-card-bg: rgba(30, 41, 59, 0.6);
+            --feature-card-border: rgba(139, 92, 246, 0.2);
+            --feature-card-hover-border: rgba(139, 92, 246, 0.5);
+            --cta-card-bg: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%);
+            --cta-card-border: rgba(139, 92, 246, 0.3);
+            --footer-bg: rgba(15, 23, 42, 0.8);
+            --footer-border: rgba(139, 92, 246, 0.2);
+            --footer-bottom-border: rgba(139, 92, 246, 0.2);
+            --badge-bg: rgba(139, 92, 246, 0.15);
+            --badge-border: rgba(139, 92, 246, 0.3);
+            --badge-color: var(--primary-light);
+            --avatar-border: var(--surface);
+            --body-bg: linear-gradient(135deg, #0f172a 0%, #1a1f35 50%, #0f172a 100%);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', -apple-system, sans-serif;
         }
 
         html {
@@ -32,174 +120,634 @@
         }
 
         body {
-            background-color: var(--navy-dark);
-            color: white;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--body-bg);
+            color: var(--foreground);
+            line-height: 1.6;
             overflow-x: hidden;
+            opacity: 0;
+            transition: opacity 0.5s ease-in, background 0.3s ease, color 0.3s ease;
         }
 
-        /* --- HEADER --- */
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
+        body.loaded {
+            opacity: 1;
+        }
+
+        .container {
             width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                padding: 0 2rem;
+            }
+        }
+
+        /* ============================================
+           THEME TOGGLE BUTTON
+           ============================================ */
+
+        .controls-container {
+            position: fixed;
+            top: 1.25rem;
+            right: 1.25rem;
+            z-index: 200;
             display: flex;
-            justify-content: space-between;
+            gap: 0.75rem;
             align-items: center;
-            padding: 20px 50px;
-            z-index: 1000;
-            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .theme-toggle {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background: var(--surface);
+            border: 2px solid var(--primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: var(--primary);
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .language-select {
+            padding: 0.625rem 1rem;
+            border-radius: 0.75rem;
+            background: var(--surface);
+            border: 2px solid var(--primary);
+            color: var(--foreground);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-lg);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .language-select:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .language-select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .language-select option {
+            background: var(--card-bg);
+            color: var(--foreground);
+            padding: 0.5rem;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(20deg);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .theme-toggle i {
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:active i {
+            transform: rotate(180deg);
+        }
+
+        /* ============================================
+           BUTTONS
+           ============================================ */
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: 'Inter', sans-serif;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        body.dark-mode .btn-primary {
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        body.dark-mode .btn-primary:hover {
+            box-shadow: 0 8px 30px rgba(139, 92, 246, 0.6);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--foreground);
+            border: 1px solid var(--card-border);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.5);
+            border-color: var(--primary);
+        }
+
+        body.dark-mode .btn-outline {
+            border: 2px solid var(--primary);
+        }
+
+        body.dark-mode .btn-outline:hover {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: var(--secondary);
+        }
+
+        .btn-lg {
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+        }
+
+        /* ============================================
+           NAVBAR
+           ============================================ */
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
             backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--navbar-bg);
+            border-bottom: 1px solid var(--navbar-border);
+            box-shadow: var(--shadow-sm);
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        .navbar-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 0;
         }
 
         .logo {
             display: flex;
             align-items: center;
-            gap: 12px;
-            color: white;
+            gap: 0.75rem;
             text-decoration: none;
+            color: var(--foreground);
         }
 
-        .logo h2 {
-            font-size: 24px;
-            font-weight: 800;
-            letter-spacing: -1px;
-        }
-
-        .nav-btns {
-            display: flex;
-            gap: 15px;
-        }
-
-        .btn {
-            padding: 10px 24px;
-            border-radius: 10px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-size: 15px;
-        }
-
-        .btn-login {
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .btn-login:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .btn-signup {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
-        }
-
-        .btn-signup:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-
-        /* --- SECTION HERO (VIDEO BG) --- */
-        .hero {
-            position: relative;
-            height: 100vh;
-            width: 100%;
+        .logo-icon {
+            width: 2.5rem;
+            height: 2.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
-            padding: 0 20px;
-        }
-
-        .video-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
             overflow: hidden;
+            flex-shrink: 0;
         }
 
-        #bg-video {
+        .logo-icon img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: brightness(0.3);
         }
 
-        .overlay {
+        .logo h1 {
+            font-family: 'Geist', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .logo p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .nav-menu {
+            display: none;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .nav-menu {
+                display: flex;
+            }
+        }
+
+        .nav-menu a {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-menu a::after {
+            content: '';
             position: absolute;
-            top: 0;
+            bottom: -5px;
             left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-menu a:hover::after {
             width: 100%;
-            height: 100%;
-            background: linear-gradient(to bottom, rgba(15, 23, 42, 0.2), var(--navy-dark));
-            z-index: -1;
+        }
+
+        .nav-menu a:hover {
+            color: var(--primary);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 0.75rem;
+            /* leave room for the fixed toggle button */
+            padding-right: 3.5rem;
+        }
+
+        .nav-buttons .btn-outline {
+            display: none;
+        }
+
+        @media (min-width: 640px) {
+            .nav-buttons .btn-outline {
+                display: inline-flex;
+            }
+        }
+
+        /* ============================================
+           HERO SECTION
+           ============================================ */
+
+        .hero {
+            padding: 5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* dark mode ambient glows */
+        body.dark-mode .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        body.dark-mode .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        @media (min-width: 768px) {
+            .hero {
+                padding: 8rem 0;
+            }
         }
 
         .hero-content {
-            max-width: 900px;
-            z-index: 10;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
         }
 
-        .hero-content h1 {
-            font-size: clamp(40px, 8vw, 70px);
-            font-weight: 900;
-            line-height: 1.1;
-            margin-bottom: 25px;
-            color: white;
+        @media (min-width: 768px) {
+            .hero-content {
+                grid-template-columns: 1fr 1fr;
+            }
         }
 
-        .hero-content p {
-            font-size: clamp(16px, 4vw, 20px);
-            color: var(--text-light);
-            margin-bottom: 40px;
-            line-height: 1.6;
-            max-width: 700px;
-            margin-inline: auto;
+        .hero-left {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
         }
 
-        .cta-main {
-            padding: 18px 45px;
-            background: var(--primary);
-            color: white;
-            text-decoration: none;
-            border-radius: 50px;
-            font-size: 18px;
-            font-weight: 700;
-            display: inline-block;
-            transition: 0.3s;
-            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4);
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: fit-content;
+            padding: 0.75rem 1rem;
+            border-radius: 9999px;
+            background: var(--badge-bg);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--badge-border);
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--badge-color);
+            transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
         }
 
-        .cta-main:hover {
-            transform: scale(1.05);
-            background: var(--primary-dark);
-        }
-
-        /* --- SECTION FONCTIONNALITÉS --- */
-        .features {
-            padding: 100px 50px;
-            background-color: var(--navy-dark);
-            text-align: center;
-        }
-
-        .features-header {
-            margin-bottom: 60px;
-        }
-
-        .features-header h2 {
-            font-size: 36px;
+        .hero-title {
+            font-family: 'Geist', sans-serif;
+            font-size: clamp(2.5rem, 8vw, 3.75rem);
             font-weight: 800;
-            margin-bottom: 15px;
+            line-height: 1.1;
+            color: var(--foreground);
         }
 
-        .features-header p {
+        .gradient-text {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-description {
+            font-size: 1.125rem;
             color: var(--text-muted);
-            font-size: 18px;
+            line-height: 1.8;
+            max-width: 500px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .hero-buttons {
+                flex-direction: row;
+            }
+        }
+
+        .trust-section {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding-top: 1rem;
+        }
+
+        .trust-title {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .trust-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin: 0;
+        }
+
+        .avatars {
+            display: flex;
+            margin-left: -0.5rem;
+        }
+
+        .avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: var(--gradient-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.875rem;
+            border: 2px solid var(--avatar-border);
+            margin-left: -0.5rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .avatar:first-child { margin-left: 0; }
+        .avatar:nth-child(2) { background: var(--gradient-cyan); }
+        .avatar:nth-child(3) { background: var(--gradient-purple); }
+
+        .hero-right {
+            position: relative;
+            display: none;
+        }
+
+        @media (min-width: 768px) {
+            .hero-right {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+
+        /* Light mode hero illustration */
+        .hero-right::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(6, 182, 212, 0.3));
+            border-radius: 1.5rem;
+            filter: blur(3rem);
+            z-index: -1;
+        }
+
+        body.dark-mode .hero-right::before {
+            display: none;
+        }
+
+        .hero-illustration {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #e0f7ff 100%);
+            border-radius: 1.5rem;
+            box-shadow: var(--shadow-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            transition: background 0.3s ease;
+        }
+
+        /* Dark mode overrides the illustration */
+        body.dark-mode .hero-illustration {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
+            border: 2px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .hero-illustration::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: var(--gradient-blue);
+            border-radius: 50%;
+            opacity: 0.1;
+            top: -100px;
+            right: -100px;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .hero-illustration::after {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: var(--gradient-cyan);
+            border-radius: 50%;
+            opacity: 0.1;
+            bottom: -50px;
+            left: -50px;
+            animation: float 8s ease-in-out infinite reverse;
+        }
+
+        .hero-icon {
+            font-size: 5rem;
+            color: var(--primary);
+            opacity: 0.8;
+            z-index: 1;
+        }
+
+        body.dark-mode .hero-icon {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        /* ============================================
+           STATS SECTION
+           ============================================ */
+
+        .stats {
+            padding: 3rem 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            backdrop-filter: blur(12px);
+            background: var(--stat-card-bg);
+            border: 1px solid var(--stat-card-border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .stat-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+            border-color: var(--feature-card-hover-border);
+        }
+
+        .stat-number {
+            font-family: 'Geist', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        body.dark-mode .stat-number {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        /* ============================================
+           FEATURES SECTION
+           ============================================ */
+
+        .features {
+            padding: 5rem 0;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h3 {
+            font-family: 'Geist', sans-serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            color: var(--foreground);
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            font-size: 1.125rem;
+            color: var(--text-muted);
             max-width: 600px;
             margin: 0 auto;
         }
@@ -207,154 +755,961 @@
         .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            max-width: 1200px;
-            margin: 0 auto;
+            gap: 2rem;
         }
 
         .feature-card {
-            background: var(--navy-light);
-            padding: 40px 30px;
-            border-radius: 24px;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            text-align: left;
+            backdrop-filter: blur(12px);
+            background: var(--feature-card-bg);
+            border: 1px solid var(--feature-card-border);
+            border-radius: 1.25rem;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition);
+            opacity: 0;
+            transform: translateY(20px);
         }
 
         .feature-card:hover {
-            transform: translateY(-10px);
-            border-color: var(--primary);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            box-shadow: var(--shadow-xl);
+            transform: translateY(-8px) scale(1.02);
+            border-color: var(--feature-card-hover-border);
         }
 
-        .feature-icon {
-            width: 60px;
-            height: 60px;
-            background: rgba(37, 99, 235, 0.1);
-            color: var(--primary);
+        /* Feature image / top area */
+        .feature-image {
+            width: 100%;
+            height: 12rem;
+            overflow: hidden;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 16px;
-            font-size: 24px;
-            margin-bottom: 25px;
+            position: relative;
         }
 
-        .feature-card h3 {
-            font-size: 22px;
-            margin-bottom: 15px;
+        /* Light mode per-card colors */
+        .feature-card:nth-child(1) .feature-image { background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 100%); }
+        .feature-card:nth-child(2) .feature-image { background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); }
+        .feature-card:nth-child(3) .feature-image { background: linear-gradient(135deg, #dcfce7 0%, #d1fae5 100%); }
+        .feature-card:nth-child(4) .feature-image { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); }
+
+        /* Dark mode feature image area */
+        body.dark-mode .feature-image {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(236, 72, 153, 0.2) 100%) !important;
+            height: 120px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.dark-mode .feature-image::before {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            opacity: 0.1;
+            top: -30px;
+            right: -30px;
+        }
+
+        .feature-image::before {
+            content: '';
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: inherit;
+            border-radius: 50%;
+            opacity: 0.2;
+            top: -50px;
+            right: -50px;
+        }
+
+        .feature-image::after {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: inherit;
+            border-radius: 50%;
+            opacity: 0.15;
+            bottom: -30px;
+            left: -30px;
+        }
+
+        .feature-icon-large {
+            font-size: 3rem;
+            z-index: 1;
+        }
+
+        /* Light mode icon colors */
+        .feature-card:nth-child(1) .feature-icon-large { color: #3b82f6; }
+        .feature-card:nth-child(2) .feature-icon-large { color: #ec4899; }
+        .feature-card:nth-child(3) .feature-icon-large { color: #10b981; }
+        .feature-card:nth-child(4) .feature-icon-large { color: #f59e0b; }
+
+        /* Dark mode icon colors */
+        body.dark-mode .feature-card:nth-child(1) .feature-icon-large {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        body.dark-mode .feature-card:nth-child(2) .feature-icon-large {
+            background: var(--gradient-secondary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        body.dark-mode .feature-card:nth-child(3) .feature-icon-large {
+            background: var(--gradient-accent);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        body.dark-mode .feature-card:nth-child(4) .feature-icon-large {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .feature-body {
+            padding: 1.5rem;
+        }
+
+        .feature-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.5rem;
+            background: rgba(59, 130, 246, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.25rem;
+        }
+
+        .feature-card:nth-child(2) .feature-icon { background: rgba(236, 72, 153, 0.1); color: #ec4899; }
+        .feature-card:nth-child(3) .feature-icon { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .feature-card:nth-child(4) .feature-icon { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+
+        body.dark-mode .feature-icon { background: rgba(139, 92, 246, 0.2); color: var(--primary); }
+        body.dark-mode .feature-card:nth-child(2) .feature-icon { background: rgba(236, 72, 153, 0.2); color: var(--secondary); }
+        body.dark-mode .feature-card:nth-child(3) .feature-icon { background: rgba(6, 182, 212, 0.2); color: var(--accent); }
+        body.dark-mode .feature-card:nth-child(4) .feature-icon { background: rgba(6, 182, 212, 0.2); color: var(--accent); }
+
+        .feature-header h4 {
+            font-family: 'Geist', sans-serif;
+            font-size: 1.25rem;
             font-weight: 700;
+            color: var(--foreground);
+            margin: 0;
         }
 
-        .feature-card p {
+        .feature-body p {
+            font-size: 0.95rem;
             color: var(--text-muted);
-            line-height: 1.6;
-            font-size: 15px;
+            margin-bottom: 1rem;
         }
 
-        /* --- FOOTER SIMPLE --- */
-        footer {
-            padding: 50px;
+        .feature-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .feature-link:hover {
+            color: var(--primary-dark);
+            gap: 0.75rem;
+        }
+
+        body.dark-mode .feature-link:hover { color: var(--secondary); }
+
+        /* ============================================
+           CTA SECTION
+           ============================================ */
+
+        .cta {
+            padding: 5rem 0;
+        }
+
+        .cta-card {
+            backdrop-filter: blur(12px);
+            background: var(--cta-card-bg);
+            border: 1px solid var(--cta-card-border);
+            border-radius: 1.5rem;
+            padding: 3rem 2rem;
             text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            color: var(--text-muted);
-            font-size: 14px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+            transition: background 0.3s ease, border-color 0.3s ease;
         }
 
-        /* --- RESPONSIVE --- */
-        @media (max-width: 768px) {
-            header { padding: 15px 20px; }
-            .features { padding: 60px 20px; }
-            .hero-content h1 { font-size: 40px; }
+        body.dark-mode .cta-card {
+            border-width: 2px;
+        }
+
+        body.dark-mode .cta-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .cta-card h3 {
+            font-family: 'Geist', sans-serif;
+            font-size: clamp(1.75rem, 5vw, 2.25rem);
+            font-weight: 700;
+            color: var(--foreground);
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-card p {
+            font-size: 1.125rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (min-width: 640px) {
+            .cta-buttons { flex-direction: row; }
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+
+        .footer {
+            border-top: 1px solid var(--footer-border);
+            background: var(--footer-bg);
+            backdrop-filter: blur(12px);
+            margin-top: 5rem;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            padding: 3rem 0;
+        }
+
+        .footer-section h4 {
+            font-family: 'Geist', sans-serif;
+            font-weight: 700;
+            color: var(--foreground);
+            margin-bottom: 1rem;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-logo .logo-icon {
+            width: 2rem;
+            height: 2rem;
+            font-size: 1rem;
+        }
+
+        .footer-logo span {
+            font-family: 'Geist', sans-serif;
+            font-weight: 700;
+            color: var(--foreground);
+        }
+
+        .footer-section p {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .footer-section ul { list-style: none; }
+
+        .footer-section ul li { margin-bottom: 0.5rem; }
+
+        .footer-section ul li a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: var(--transition);
+        }
+
+        .footer-section ul li a:hover { color: var(--primary); }
+
+        .footer-bottom {
+            border-top: 1px solid var(--footer-bottom-border);
+            padding: 2rem 0;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        /* ============================================
+           ANIMATIONS & MISC
+           ============================================ */
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(0);
+            animation: ripple-animation 0.6s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-animation {
+            to { transform: scale(4); opacity: 0; }
+        }
+
+        .scroll-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            transition: var(--transition);
+            z-index: 99;
+            font-size: 1.25rem;
+        }
+
+        body.dark-mode .scroll-to-top {
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .scroll-to-top:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(139, 92, 246, 0.6);
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+
+        @media (max-width: 640px) {
+            .hero { padding: 3rem 0; }
+            .hero-title { font-size: 2rem; }
+            .section-header h3 { font-size: 1.75rem; }
+            .cta-card { padding: 2rem 1.5rem; }
+            .footer-content { grid-template-columns: 1fr; }
+        }
+
+        /* Glassmorphism enhancement (light only) */
+        @supports (backdrop-filter: blur(1px)) {
+            body:not(.dark-mode) .navbar,
+            body:not(.dark-mode) .stat-card,
+            body:not(.dark-mode) .feature-card,
+            body:not(.dark-mode) .cta-card {
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+            }
         }
     </style>
 </head>
-
 <body>
 
-    <header>
-        <a href="#" class="logo">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="currentColor"></path>
-                <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2"></path>
-                <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2"></path>
-            </svg>
-            <h2>Numera</h2>
-        </a>
-        <div class="nav-btns">
-            <a href="./connexion.html" class="btn btn-login">Connexion</a>
-            <a href="./inscription.html" class="btn btn-signup">S'inscrire</a>
+    <!-- Controls Container -->
+    <div class="controls-container">
+        <!-- Language Select -->
+        <select class="language-select" id="languageSelect" aria-label="Choisir la langue">
+            <option value="fr">Français</option>
+            <option value="en">English</option>
+        </select>
+        
+        <!-- Theme Toggle Button -->
+        <button class="theme-toggle" id="themeToggle" aria-label="Changer de thème">
+            <i class="fas fa-moon"></i>
+        </button>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <img src="./img/icon.svg" alt="Numera Logo">
+                    </div>
+                    <div>
+                        <h1>Numera</h1>
+                        <p>Gestion Financière</p>
+                    </div>
+                </div>
+                <nav class="nav-menu">
+                    <a href="#features" data-i18n="nav-features">Fonctionnalités</a>
+                    <a href="#pricing" data-i18n="nav-pricing">Tarifs</a>
+                    <a href="#contact" data-i18n="nav-contact">Contact</a>
+                </nav>
+                <div class="nav-buttons">
+                    <a href="connexion.html" class="btn btn-outline" data-i18n="nav-login">Connexion</a>
+                    <a href="inscription.html" class="btn btn-primary" data-i18n="nav-signup">S'inscrire</a>
+                </div>
+            </div>
         </div>
     </header>
 
+    <!-- Hero Section -->
     <section class="hero">
-        <div class="video-container">
-            <video autoplay muted loop playsinline id="bg-video">
-                <source src="./assets/4853-180863249_medium.mp4" type="video/mp4">
-            </video>
-        </div>
-        <div class="overlay"></div>
-
-        <div class="hero-content">
-            <h1 id="hero-title">Gérez vos finances avec élégance</h1>
-            <p>Numera transforme la complexité budgétaire en une expérience fluide. Suivez, analysez et visualisez votre
-                patrimoine en temps réel.</p>
-            <a href="./inscription.html" class="cta-main">Commencer l'aventure <i class="fas fa-arrow-right"
-                    style="margin-left: 10px;"></i></a>
-        </div>
-    </section>
-
-    <section class="features">
-        <div class="features-header">
-            <h2>Pourquoi choisir Numera ?</h2>
-            <p>Tout ce dont vous avez besoin pour reprendre le contrôle total de votre argent, en un seul endroit.</p>
-        </div>
-
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
-                <h3>Analyses Précises</h3>
-                <p>Visualisez vos habitudes de consommation grâce à des graphiques intelligents et détaillés.</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
-                <h3>Sécurité Maximale</h3>
-                <p>Vos données financières sont chiffrées et protégées avec les standards les plus élevés du marché.</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-bullseye"></i></div>
-                <h3>Objectifs d'Épargne</h3>
-                <p>Définissez des objectifs et suivez votre progression en temps réel pour réaliser vos projets.</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-sync"></i></div>
-                <h3>Synchro Automatique</h3>
-                <p>Connectez vos comptes et voyez vos transactions se catégoriser automatiquement sans effort.</p>
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-left">
+                    <div class="badge">
+                        <span class="badge-icon">✨</span>
+                        <span data-i18n="badge-text">Bienvenue sur Numera</span>
+                    </div>
+                    <h2 class="hero-title"><span data-i18n="hero-title-part1">Maîtrisez Vos</span> <span class="gradient-text" data-i18n="hero-title-part2">Finances</span></h2>
+                    <p class="hero-description" data-i18n="hero-description">
+                        Numera transforme la complexité budgétaire en une expérience fluide. Suivez, analysez et visualisez votre patrimoine en temps réel.
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="inscription.html" class="btn btn-primary btn-lg" data-i18n="hero-btn-start">
+                            Commencer Gratuitement
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                        <a href="#" class="btn btn-outline btn-lg" data-i18n="hero-btn-demo">
+                            <i class="fas fa-play-circle"></i>
+                            Voir la Démo
+                        </a>
+                    </div>
+                    <div class="trust-section">
+                        <div class="trust-text">
+                            <p class="trust-title" data-i18n="trust-title">Approuvé par</p>
+                            <p class="trust-subtitle" data-i18n="trust-subtitle">Milliers d'utilisateurs</p>
+                        </div>
+                        <div class="avatars">
+                            <div class="avatar">A</div>
+                            <div class="avatar">B</div>
+                            <div class="avatar">C</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-right">
+                    <div class="hero-illustration">
+                        <i class="fas fa-chart-pie hero-icon"></i>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <footer>
-        <p>&copy; 2024 Numera - La nouvelle ère de la finance personnelle.</p>
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <p class="stat-number" id="user-count">--</p>
+                    <p class="stat-label" data-i18n="stat-users">Utilisateurs Actifs</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-number">99.9%</p>
+                    <p class="stat-label" data-i18n="stat-uptime">Disponibilité</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-number">24/7</p>
+                    <p class="stat-label" data-i18n="stat-support">Support Client</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h3 data-i18n="section-title">Pourquoi Choisir Numera ?</h3>
+                <p data-i18n="section-subtitle">Tout ce dont vous avez besoin pour reprendre le contrôle total de votre argent, en un seul endroit.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-image">
+                        <i class="fas fa-chart-bar feature-icon-large"></i>
+                    </div>
+                    <div class="feature-body">
+                        <div class="feature-header">
+                            <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
+                            <h4 data-i18n="feature1-title">Analyses Précises</h4>
+                        </div>
+                        <p data-i18n="feature1-desc">Visualisez vos habitudes de consommation grâce à des graphiques intelligents et détaillés.</p>
+                        <a href="#" class="feature-link" data-i18n="feature-link">En savoir plus <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-image">
+                        <i class="fas fa-lock feature-icon-large"></i>
+                    </div>
+                    <div class="feature-body">
+                        <div class="feature-header">
+                            <div class="feature-icon"><i class="fas fa-lock"></i></div>
+                            <h4 data-i18n="feature2-title">Sécurité Maximale</h4>
+                        </div>
+                        <p data-i18n="feature2-desc">Vos données financières sont chiffrées et protégées avec les standards les plus élevés du marché.</p>
+                        <a href="#" class="feature-link" data-i18n="feature-link">En savoir plus <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-image">
+                        <i class="fas fa-bolt feature-icon-large"></i>
+                    </div>
+                    <div class="feature-body">
+                        <div class="feature-header">
+                            <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                            <h4 data-i18n="feature3-title">Synchro Automatique</h4>
+                        </div>
+                        <p data-i18n="feature3-desc">Connectez vos comptes et voyez vos transactions se catégoriser automatiquement sans effort.</p>
+                        <a href="#" class="feature-link" data-i18n="feature-link">En savoir plus <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-image">
+                        <i class="fas fa-chart-line feature-icon-large"></i>
+                    </div>
+                    <div class="feature-body">
+                        <div class="feature-header">
+                            <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                            <h4 data-i18n="feature4-title">Objectifs d'Épargne</h4>
+                        </div>
+                        <p data-i18n="feature4-desc">Définissez des objectifs et suivez votre progression en temps réel pour réaliser vos projets.</p>
+                        <a href="#" class="feature-link" data-i18n="feature-link">En savoir plus <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-card">
+                <h3 data-i18n="cta-title">Prêt à Transformer Vos Finances ?</h3>
+                <p data-i18n="cta-subtitle">Rejoignez des milliers d'utilisateurs qui ont déjà repris le contrôle de leur budget avec Numera.</p>
+                <div class="cta-buttons">
+                    <a href="inscription.html" class="btn btn-primary btn-lg" data-i18n="cta-btn-start">Commencer Maintenant</a>
+                    <a href="#" class="btn btn-outline btn-lg" data-i18n="cta-btn-demo">Planifier une Démo</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <div class="logo-icon">
+                            <img src="./img/icon.svg" alt="Numera Logo">
+                        </div>
+                        <span data-i18n="brand-name">Numera</span>
+                    </div>
+                    <p data-i18n="footer-tagline">Gestion financière simplifiée</p>
+                </div>
+                <div class="footer-section">
+                    <h4 data-i18n="footer-product">Produit</h4>
+                    <ul>
+                        <li><a href="#features" data-i18n="nav-features">Fonctionnalités</a></li>
+                        <li><a href="parametre.html" data-i18n="footer-feature1">Paramètres</a></li>
+                        <li><a href="profil.html" data-i18n="footer-feature2">Profil</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 data-i18n="footer-company">Entreprise</h4>
+                    <ul>
+                        <li><a href="#" data-i18n="footer-about">À propos</a></li>
+                        <li><a href="#" data-i18n="footer-blog">Blog</a></li>
+                        <li><a href="#contact" data-i18n="nav-contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 data-i18n="footer-nav">Navigation</h4>
+                    <ul>
+                        <li><a href="transaction.html" data-i18n="footer-trans">Transactions</a></li>
+                        <li><a href="budget.html" data-i18n="footer-budget">Budget</a></li>
+                        <li><a href="connexion.html" data-i18n="nav-login">Connexion</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Numera. Tous droits réservés.</p>
+            </div>
+        </div>
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const title = document.getElementById('hero-title');
-            title.style.opacity = '0';
-            title.style.transform = 'translateY(20px)';
-            title.style.transition = 'all 1s ease-out';
+        // ============================================
+        // Theme Toggle — light (no_images) ↔ dark
+        // ============================================
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
 
-            setTimeout(() => {
-                title.style.opacity = '1';
-                title.style.transform = 'translateY(0)';
-            }, 300);
+        // Par défaut : light. On lit la préférence sauvegardée.
+        const savedTheme = localStorage.getItem('numera-theme') || 'light';
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        } else {
+            themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDark = body.classList.contains('dark-mode');
+            localStorage.setItem('numera-theme', isDark ? 'dark' : 'light');
+            themeToggle.innerHTML = isDark
+                ? '<i class="fas fa-sun"></i>'
+                : '<i class="fas fa-moon"></i>';
         });
+
+        // ============================================
+        // Page Load Animation
+        // ============================================
+        window.addEventListener('load', () => body.classList.add('loaded'));
+        setTimeout(() => body.classList.add('loaded'), 100);
+
+        // ============================================
+        // Smooth Scroll Navigation
+        // ============================================
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href !== '#') {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // ============================================
+        // Navbar Scroll Effect
+        // ============================================
+        const navbar = document.querySelector('.navbar');
+        window.addEventListener('scroll', () => {
+            const isDark = body.classList.contains('dark-mode');
+            if (window.pageYOffset > 50) {
+                navbar.style.boxShadow = isDark
+                    ? '0 4px 20px rgba(139, 92, 246, 0.3)'
+                    : '0 4px 12px rgba(0, 0, 0, 0.1)';
+            } else {
+                navbar.style.boxShadow = isDark
+                    ? '0 1px 2px rgba(0, 0, 0, 0.3)'
+                    : '0 1px 2px rgba(0, 0, 0, 0.05)';
+            }
+        });
+
+        // ============================================
+        // Button Interactions (ripple)
+        // ============================================
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('mouseenter', function() { this.style.transform = 'translateY(-2px)'; });
+            button.addEventListener('mouseleave', function() { this.style.transform = 'translateY(0)'; });
+            button.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+                ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+                ripple.classList.add('ripple');
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // ============================================
+        // Feature Cards Hover Effect
+        // ============================================
+        const featureCards = document.querySelectorAll('.feature-card');
+        featureCards.forEach((card, index) => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px) scale(1.02)';
+                featureCards.forEach((other, i) => { if (i !== index) other.style.opacity = '0.7'; });
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+                featureCards.forEach(other => other.style.opacity = '1');
+            });
+        });
+
+        // ============================================
+        // Stat Cards Counter Animation
+        // ============================================
+        let hasAnimated = false;
+        const animateStats = () => {
+            if (hasAnimated) return;
+            document.querySelectorAll('.stat-card').forEach(card => {
+                const el = card.querySelector('.stat-number');
+                const text = el.textContent;
+                const match = text.match(/(\d+)/);
+                if (match) {
+                    const number = parseInt(match[1]);
+                    const suffix = text.replace(match[0], '');
+                    let current = 0;
+                    const increment = Math.ceil(number / 30);
+                    const interval = setInterval(() => {
+                        current += increment;
+                        if (current >= number) { current = number; clearInterval(interval); }
+                        el.textContent = current + suffix;
+                    }, 30);
+                }
+            });
+            hasAnimated = true;
+        };
+
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting && entry.target.classList.contains('stats')) animateStats(); });
+        }, { threshold: 0.5 });
+        const statsSection = document.querySelector('.stats');
+        if (statsSection) statsObserver.observe(statsSection);
+
+        // ============================================
+        // Fade-in Animations
+        // ============================================
+        const fadeObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+        document.querySelectorAll('.feature-card, .stat-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            fadeObserver.observe(el);
+        });
+
+        // ============================================
+        // Scroll to Top Button
+        // ============================================
+        const scrollBtn = document.createElement('button');
+        scrollBtn.innerHTML = '<i class="fas fa-arrow-up"></i>';
+        scrollBtn.className = 'scroll-to-top';
+        document.body.appendChild(scrollBtn);
+
+        window.addEventListener('scroll', () => {
+            scrollBtn.style.display = window.pageYOffset > 300 ? 'flex' : 'none';
+        });
+        scrollBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+        scrollBtn.addEventListener('mouseenter', function() { this.style.transform = 'scale(1.1)'; });
+        scrollBtn.addEventListener('mouseleave', function() { this.style.transform = 'scale(1)'; });
+
+        // ============================================
+        // Language Selector - Dynamic Translation
+        // ============================================
+        const languageSelect = document.getElementById('languageSelect');
+        const savedLanguage = localStorage.getItem('numera-language') || 'fr';
+        languageSelect.value = savedLanguage;
+        document.documentElement.lang = savedLanguage;
+
+        // Dictionnaire de traductions avec des clés uniques
+        const translations = {
+            fr: {
+                'nav-features': 'Fonctionnalités',
+                'nav-pricing': 'Tarifs',
+                'nav-contact': 'Contact',
+                'nav-login': 'Connexion',
+                'nav-signup': 'S\'inscrire',
+                'badge-text': 'Bienvenue sur Numera',
+                'hero-title-part1': 'Maîtrisez Vos',
+                'hero-title-part2': 'Finances',
+                'hero-description': 'Numera transforme la complexité budgétaire en une expérience fluide. Suivez, analysez et visualisez votre patrimoine en temps réel.',
+                'hero-btn-start': 'Commencer Gratuitement',
+                'hero-btn-demo': 'Voir la Démo',
+                'trust-title': 'Approuvé par',
+                'trust-subtitle': 'Milliers d\'utilisateurs',
+                'stat-users': 'Utilisateurs Actifs',
+                'stat-uptime': 'Disponibilité',
+                'stat-support': 'Support Client',
+                'section-title': 'Pourquoi Choisir Numera ?',
+                'section-subtitle': 'Tout ce dont vous avez besoin pour reprendre le contrôle total de votre argent, en un seul endroit.',
+                'feature1-title': 'Analyses Précises',
+                'feature1-desc': 'Visualisez vos habitudes de consommation grâce à des graphiques intelligents et détaillés.',
+                'feature2-title': 'Sécurité Maximale',
+                'feature2-desc': 'Vos données financières sont chiffrées et protégées avec les standards les plus élevés du marché.',
+                'feature3-title': 'Synchro Automatique',
+                'feature3-desc': 'Connectez vos comptes et voyez vos transactions se catégoriser automatiquement sans effort.',
+                'feature4-title': 'Objectifs d\'Épargne',
+                'feature4-desc': 'Définissez des objectifs et suivez votre progression en temps réel pour réaliser vos projets.',
+                'feature-link': 'En savoir plus',
+                'cta-title': 'Prêt à Transformer Vos Finances ?',
+                'cta-subtitle': 'Rejoignez des milliers d\'utilisateurs qui ont déjà repris le contrôle de leur budget avec Numera.',
+                'cta-btn-start': 'Commencer Maintenant',
+                'cta-btn-demo': 'Planifier une Démo',
+                'footer-product': 'Produit',
+                'footer-company': 'Entreprise',
+                'footer-nav': 'Navigation',
+                'footer-about': 'À propos',
+                'footer-blog': 'Blog',
+                'footer-tagline': 'Gestion financière simplifiée',
+                'logo-text': 'Gestion Financière',
+                'brand-name': 'Numera',
+                'footer-feature1': 'Paramètres',
+                'footer-feature2': 'Profil',
+                'footer-trans': 'Transactions',
+                'footer-budget': 'Budget'
+            },
+            en: {
+                'nav-features': 'Features',
+                'nav-pricing': 'Pricing',
+                'nav-contact': 'Contact',
+                'nav-login': 'Login',
+                'nav-signup': 'Sign Up',
+                'badge-text': 'Welcome to Numera',
+                'hero-title-part1': 'Master Your',
+                'hero-title-part2': 'Finances',
+                'hero-description': 'Numera transforms budgetary complexity into a seamless experience. Track, analyze, and visualize your wealth in real-time.',
+                'hero-btn-start': 'Get Started Free',
+                'hero-btn-demo': 'View Demo',
+                'trust-title': 'Trusted by',
+                'trust-subtitle': 'Thousands of Users',
+                'stat-users': 'Active Users',
+                'stat-uptime': 'Availability',
+                'stat-support': 'Customer Support',
+                'section-title': 'Why Choose Numera?',
+                'section-subtitle': 'Everything you need to take full control of your money in one place.',
+                'feature1-title': 'Accurate Analytics',
+                'feature1-desc': 'Visualize your spending habits with intelligent and detailed charts.',
+                'feature2-title': 'Maximum Security',
+                'feature2-desc': 'Your financial data is encrypted and protected with the highest market standards.',
+                'feature3-title': 'Automatic Sync',
+                'feature3-desc': 'Connect your accounts and see transactions auto-categorize effortlessly.',
+                'feature4-title': 'Savings Goals',
+                'feature4-desc': 'Set goals and track your progress in real-time to achieve your projects.',
+                'feature-link': 'Learn More',
+                'cta-title': 'Ready to Transform Your Finances?',
+                'cta-subtitle': 'Join thousands of users who have already regained control of their budget with Numera.',
+                'cta-btn-start': 'Start Now',
+                'cta-btn-demo': 'Schedule a Demo',
+                'footer-product': 'Product',
+                'footer-company': 'Company',
+                'footer-nav': 'Navigation',
+                'footer-about': 'About',
+                'footer-blog': 'Blog',
+                'footer-tagline': 'Simplified Financial Management',
+                'logo-text': 'Financial Management',
+                'brand-name': 'Numera',
+                'footer-feature1': 'Settings',
+                'footer-feature2': 'Profile',
+                'footer-trans': 'Transactions',
+                'footer-budget': 'Budget'
+            }
+        };
+
+        // Stockage des textes originaux avec leurs clés
+        const textElements = {};
+        
+        function initializeTextElements() {
+            // Initialiser tous les éléments avec data-i18n
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                textElements[key] = element;
+            });
+        }
+
+        // Fonction pour appliquer les traductions dynamiquement
+        function applyLanguage(lang) {
+            const dict = translations[lang] || translations['fr'];
+            
+            // Mettre à jour tous les éléments avec data-i18n
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (dict[key]) {
+                    element.textContent = dict[key];
+                }
+            });
+            
+            // Mettre à jour la langue du document
+            document.documentElement.lang = lang;
+            localStorage.setItem('numera-language', lang);
+        }
+
+        // Événement changement de langue
+        languageSelect.addEventListener('change', (e) => {
+            applyLanguage(e.target.value);
+        });
+
+        // Appliquer la langue sauvegardée au chargement
+        applyLanguage(savedLanguage);
+
+        // ============================================
+        // Charger le nombre d'utilisateurs
+        // ============================================
+        function loadUserCount() {
+            fetch('./php/stats/get_user_count.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const userCount = data.total_users;
+                        const displayText = userCount >= 1000 
+                            ? (userCount / 1000).toFixed(0) + 'K+' 
+                            : userCount.toLocaleString();
+                        document.getElementById('user-count').textContent = displayText;
+                    }
+                })
+                .catch(error => console.log('Erreur lors du chargement du nombre d\'utilisateurs:', error));
+        }
+
+        // Charger le nombre d'utilisateurs au démarrage
+        loadUserCount();
+
+        // ============================================
+        // Console Message
+        // ============================================
+        console.log('%cNumera - Gestion Financière Simplifiée', 'font-size: 24px; font-weight: bold; color: #3b82f6;');
+        console.log('%cBienvenue sur Numera! 🎉', 'font-size: 16px; color: #60a5fa;');
     </script>
-
 </body>
-
 </html>

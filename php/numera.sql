@@ -162,7 +162,7 @@ ALTER TABLE `users`
 --
 ALTER TABLE `user_settings`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD UNIQUE KEY `unique_user_id` (`user_id`);
 
 --
 -- AUTO_INCREMENT pour les tables déchargées

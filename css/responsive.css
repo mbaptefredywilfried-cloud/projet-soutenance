@@ -1,0 +1,603 @@
+/* ============================================
+   RESPONSIVE STYLES FOR NUMERA APP
+   Mobile-First Design
+   ============================================ */
+
+/* ============================================
+   A) MOBILE TOP BAR STYLES
+   ============================================ */
+
+.mobile-top-bar {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background-color: var(--primary-color, #36A2EB);
+  color: white;
+  z-index: 9999;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 0 16px;
+}
+
+.mobile-top-bar-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+}
+
+.mobile-top-bar-logo svg {
+  width: 24px;
+  height: 24px;
+  color: white;
+}
+
+.mobile-top-bar-logo span {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.mobile-top-bar-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ============================================
+   B) TAB NAVIGATION MOBILE (BOTTOM NAV)
+   ============================================ */
+
+.tab-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background-color: var(--card-background, #ffffff);
+  border-top: 1px solid var(--border-color, #e2e8f0);
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+  z-index: 9998;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0;
+}
+
+.tab-nav.dark-mode {
+  background-color: #1e293b;
+  border-top-color: #334155;
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  flex: 1;
+  text-decoration: none;
+  color: var(--text-secondary, #64748b);
+  transition: var(--transition, all 0.3s cubic-bezier(0.4, 0, 0.2, 1));
+  gap: 4px;
+  padding: 8px 0;
+  position: relative;
+}
+
+.tab-item:hover {
+  background-color: rgba(37, 99, 235, 0.05);
+}
+
+.tab-item.active {
+  color: var(--primary-color, #36A2EB);
+}
+
+.tab-item i {
+  font-size: 20px;
+}
+
+.tab-item span {
+  font-size: 10px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Accessibilité */
+.tab-item[aria-label] {
+  /* Support aria-label pour accessibilité */
+}
+
+/* ============================================
+   C) DESKTOP ONLY CLASSES
+   ============================================ */
+
+.desktop-only {
+  display: none;
+}
+
+/* ============================================
+   D) BREAKPOINT: MOBILE (max-width: 768px)
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* Show mobile navigation */
+  .mobile-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .tab-nav {
+    display: flex;
+  }
+
+  /* Hide sidebar completely */
+  aside {
+    display: none !important;
+  }
+
+  /* Adjust content layout */
+  .content {
+    display: block !important;
+    padding: 0 !important;
+    margin-left: 0 !important;
+  }
+
+  main {
+    margin-left: 0 !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    width: 100% !important;
+    padding-top: 56px !important;
+    padding-bottom: 80px !important;
+  }
+
+  /* Hide existing mobile-header if present (transaction.html) */
+  header.mobile-header {
+    display: none !important;
+  }
+
+  /* ====== DASHBOARD RESPONSIVE ====== */
+
+  /* Cards stats grid */
+  .current {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* Graphics layout */
+  .graphic {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .graph,
+  .category,
+  .linechart-card {
+    width: 100%;
+  }
+
+  /* Top bar responsive */
+  .top-bar {
+    display: none !important;
+  }
+
+  /* Table scrolling */
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-container table {
+    min-width: 500px;
+  }
+
+  .recent {
+    margin: 8px;
+    padding: 16px;
+  }
+
+  /* Period buttons */
+  .period-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .period-buttons button {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  /* ====== TRANSACTION RESPONSIVE ====== */
+
+  .card {
+    padding: 16px !important;
+    width: 100%;
+  }
+
+  .form-group {
+    width: 100%;
+    margin-bottom: 12px;
+  }
+
+  .history-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .filters input,
+  .filters select {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .sidebar-overlay {
+    z-index: 9998;
+  }
+
+  /* ====== BUDGET RESPONSIVE ====== */
+
+  .summary-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .budget-form .form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .budget-form .form-row input,
+  .budget-form .form-row select,
+  .budget-form .form-row textarea {
+    width: 100%;
+  }
+
+  .form-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
+
+  .section-header {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .header-actions {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .header-actions button {
+    width: 100%;
+  }
+
+  .budget-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .page-header {
+    padding: 16px;
+  }
+
+  /* ====== PROFILE RESPONSIVE ====== */
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .card,
+  .card2,
+  .card3,
+  .card4,
+  .card5 {
+    width: 100%;
+  }
+
+  .side-header {
+    padding: 20px;
+  }
+
+  .stat-budget {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  header[data-i18n="profile"] {
+    display: none !important;
+  }
+
+  /* ====== SETTINGS RESPONSIVE ====== */
+
+  h1 {
+    display: none !important;
+  }
+
+  .settings-card .card {
+    flex-direction: column;
+  }
+
+  .settings-card .card-item {
+    width: 100%;
+  }
+
+  .color {
+    gap: 8px;
+  }
+
+  .color-option {
+    width: 40px;
+    height: 40px;
+  }
+
+  .vue-element {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+/* ============================================
+   E) BREAKPOINT: TABLET (769px - 1024px)
+   ============================================ */
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  /* Show sidebar but reduced to icons */
+  aside {
+    width: 70px;
+    transition: var(--transition, all 0.3s cubic-bezier(0.4, 0, 0.2, 1));
+  }
+
+  aside .nav a span {
+    display: none;
+  }
+
+  aside .img p {
+    display: none;
+  }
+
+  aside .img {
+    justify-content: center;
+  }
+
+  main {
+    margin-left: 70px;
+  }
+
+  .content {
+    display: flex;
+  }
+
+  /* Grid adjustments */
+  .current {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  /* Tab nav hidden on tablet */
+  .tab-nav {
+    display: none !important;
+  }
+
+  .mobile-top-bar {
+    display: none !important;
+  }
+
+  /* ====== TABLET SPECIFIC ADJUSTMENTS ====== */
+
+  .graphic {
+    flex-direction: column;
+  }
+
+  .summary-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .stat-budget {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+/* ============================================
+   F) BREAKPOINT: DESKTOP (min-width: 1025px)
+   ============================================ */
+
+@media (min-width: 1025px) {
+  /* Tab nav hidden on desktop */
+  .tab-nav {
+    display: none !important;
+  }
+
+  .mobile-top-bar {
+    display: none !important;
+  }
+
+  /* Sidebar full width on desktop */
+  aside {
+    width: 280px;
+  }
+
+  aside .nav a span {
+    display: inline;
+  }
+
+  aside .img p {
+    display: block;
+  }
+
+  main {
+    margin-left: 280px;
+    padding-bottom: 0 !important;
+  }
+
+  .content {
+    display: flex;
+  }
+
+  /* Grid adjustments */
+  .current {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .stat-budget {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+}
+
+/* ============================================
+   G) DARK MODE SUPPORT
+   ============================================ */
+
+body.dark-mode .mobile-top-bar {
+  background-color: var(--primary-color, #36A2EB);
+}
+
+body.dark-mode .tab-nav {
+  background-color: #1e293b;
+  border-top-color: #334155;
+}
+
+body.dark-mode .tab-item {
+  color: #94a3b8;
+}
+
+body.dark-mode .tab-item.active {
+  color: var(--primary-color, #36A2EB);
+}
+
+body.dark-mode .tab-item:hover {
+  background-color: rgba(37, 99, 235, 0.1);
+}
+
+/* ============================================
+   H) PRINT STYLES
+   ============================================ */
+
+@media print {
+  .mobile-top-bar,
+  .tab-nav {
+    display: none !important;
+  }
+
+  aside {
+    display: none !important;
+  }
+
+  main {
+    margin-left: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+}
+
+/* ============================================
+   I) SMOOTH TRANSITIONS & ACCESSIBILITY
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-top-bar,
+  .tab-nav,
+  .tab-item,
+  aside {
+    transition: none !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: more) {
+  .tab-nav {
+    border-top: 2px solid var(--border-color, #e2e8f0);
+  }
+
+  .tab-item.active {
+    border-bottom: 3px solid var(--primary-color, #36A2EB);
+  }
+}
+
+/* ============================================
+   J) UTILITIES FOR RESPONSIVE BEHAVIOR
+   ============================================ */
+
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-only {
+    display: block;
+  }
+
+  .desktop-only {
+    display: none !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-only {
+    display: none;
+  }
+
+  .desktop-only {
+    display: block;
+  }
+}
+
+/* Scrollbar styling for better UX on mobile */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-color, #e2e8f0);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary, #64748b);
+  }
+}

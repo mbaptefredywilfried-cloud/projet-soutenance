@@ -1,47 +1,7 @@
     // Contrôle de l'animation : true = animation, false = pas d'animation
     let animateTransactions = true;
 document.addEventListener('DOMContentLoaded', function () {
-            // --- MENU BURGER ---
-            const menuBurger = document.getElementById('menuBurger');
-            const sidebar = document.querySelector('aside');
-            const overlay = document.querySelector('.sidebar-overlay');
-            if (menuBurger && sidebar && overlay) {
-                menuBurger.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.classList.toggle('active');
-                    sidebar.classList.toggle('active');
-                    overlay.classList.toggle('active');
-                    if (sidebar.classList.contains('active')) {
-                        document.body.style.overflow = 'hidden';
-                        menuBurger.setAttribute('aria-expanded', 'true');
-                        menuBurger.setAttribute('aria-label', 'Fermer le menu');
-                        menuBurger.focus();
-                    } else {
-                        document.body.style.overflow = '';
-                        menuBurger.setAttribute('aria-expanded', 'false');
-                        menuBurger.setAttribute('aria-label', 'Ouvrir le menu');
-                    }
-                });
-                overlay.addEventListener('click', function() {
-                    menuBurger.classList.remove('active');
-                    sidebar.classList.remove('active');
-                    this.classList.remove('active');
-                    document.body.style.overflow = '';
-                    menuBurger.setAttribute('aria-expanded', 'false');
-                    menuBurger.setAttribute('aria-label', 'Ouvrir le menu');
-                });
-                document.addEventListener('keydown', function(e) {
-                    if (e.key === 'Escape' && sidebar.classList.contains('active')) {
-                        menuBurger.classList.remove('active');
-                        sidebar.classList.remove('active');
-                        overlay.classList.remove('active');
-                        document.body.style.overflow = '';
-                        menuBurger.setAttribute('aria-expanded', 'false');
-                        menuBurger.setAttribute('aria-label', 'Ouvrir le menu');
-                    }
-                });
-            }
+    // ...existing code...
         // Gestion du filtre
         let currentFilter = 'all';
         const filterButtons = document.querySelectorAll('.filter-btn');
@@ -61,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 defaultBtn.classList.add('active-time');
             }
         }
-    // ...menu burger et responsive inchangé...
+        // ...existing code...
 
     // --- VARIABLES POUR LA SUPPRESSION ---
     let transactionToDelete = null;
@@ -195,13 +155,14 @@ document.addEventListener('DOMContentLoaded', function () {
     function renderTransactions() {
         if (!transactionsContainer) return;
         transactionsContainer.innerHTML = '';
-        // Filtrage selon le bouton actif
+        // Filtrage selon le bouton actif (type de transaction)
         let filtered = transactions;
         if (currentFilter === 'income') {
             filtered = transactions.filter(t => t.category_type === 'income');
         } else if (currentFilter === 'expense') {
             filtered = transactions.filter(t => t.category_type === 'expense');
         }
+
         if (filtered.length === 0) {
                 const lang = document.documentElement.lang || 'fr';
                 const currentLang = lang.startsWith('en') ? 'en' : (lang.startsWith('fr') ? 'fr' : 'en');
@@ -301,7 +262,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Bouton Voir plus/moins si au moins 10 transactions (et max 15)
         if (limitedTransactions.length > showMoreThreshold) {
-            const accentColor = localStorage.getItem('accentColor') || '#2563eb';
+            // Utilise la couleur d'accent dynamique depuis la variable CSS
+            const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color')?.trim() || '#36A2EB';
             const toggleBtn = document.createElement('button');
             let currentLang = document.documentElement.lang || 'fr';
             let txtMore = (typeof translations !== 'undefined' && translations[currentLang] && translations[currentLang].viewMore) ? translations[currentLang].viewMore : 'Voir plus';
@@ -651,21 +613,16 @@ document.addEventListener('DOMContentLoaded', function () {
     
     initializeDateValidation();
 
-    // Apply accent color to sidebar
-    const accentColor = localStorage.getItem('accentColor') || '#2563eb';
-    const asideElement = document.querySelector('aside');
-    if (asideElement) {
-        const darkerColor = darkenColor(accentColor, 30);
-        asideElement.style.background = `linear-gradient(180deg, ${accentColor} 0%, ${darkerColor} 100%)`;
-    }
+
 
     // --- Logique des filtres + COULEUR D'ACCENT AU SURVOL ---
     const filterBtns = document.querySelectorAll('.filter-btn');
     
     function updateFilterStyles() {
+        // Utilise la couleur d'accent dynamique depuis la variable CSS
+        const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color')?.trim() || '#36A2EB';
         filterBtns.forEach(btn => {
             const isActive = btn.getAttribute('data-filter') === currentFilter;
-            
             if (isActive) {
                 btn.style.backgroundColor = accentColor;
                 btn.style.color = 'white';
@@ -675,13 +632,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 btn.style.color = 'inherit';
                 btn.style.borderColor = '#ddd';
             }
-
             btn.onmouseenter = () => {
                 btn.style.backgroundColor = accentColor;
                 btn.style.color = 'white';
                 btn.style.borderColor = accentColor;
             };
-
             btn.onmouseleave = () => {
                 if (!isActive) {
                     btn.style.backgroundColor = 'transparent';
@@ -757,7 +712,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 transaction.category_id = categoryId;
                 try {
-                    const response = await fetch('php/transactions/add_transaction.php', {
+                    const response = await fetch('php/transactions/add.php', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         credentials: 'same-origin',

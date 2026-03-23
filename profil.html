@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./css/profil.css">
+    <link rel="stylesheet" href="./css/responsive.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <title>Profil - Numera</title>
     <link rel="icon" type="image/svg+xml" href="./img/icon.svg">
@@ -73,7 +74,12 @@
                 </div>
 
                 <div class="card2">
-                    <div class="card-header" data-i18n="personalInfo">Informations Personnelles</div>
+                    <div class="account-info-header">
+                        <div>
+                            <h3 data-i18n="personalInfo">Informations Personnelles</h3>
+                            <p data-i18n="personalInfoDesc">Gérez vos coordonnées personnelles</p>
+                        </div>
+                    </div>
                     <div class="info">
                         <div class="profil-detail-group">
                             <label data-i18n="fullName">Nom complet</label>
@@ -94,23 +100,34 @@
                 </div>
 
                 <div class="card3">
-                    <div class="card-header" data-i18n="budgetOverview">Aperçu Budgétaire</div>
+                    <div class="account-info-header">
+                        <div>
+                            <h3 data-i18n="budgetOverview">Aperçu Budgétaire</h3>
+                            <p data-i18n="budgetOverviewDesc">Vue d'ensemble de vos budgets et dépenses</p>
+                        </div>
+                    </div>
                     <div class="stat-budget">
                         <div class="stat-card color-warning">
-                            <i class="fas fa-percent"></i>
-                            <span class="stat-label" data-i18n="used">Utilisé</span>
+                            <div class="stat-header">
+                                <i class="fas fa-percent"></i>
+                                <span class="stat-label" data-i18n="used">Utilisé</span>
+                            </div>
                             <div class="stat-value">--</div>
                         </div>
 
                         <div class="stat-card color-info">
-                            <i class="fas fa-piggy-bank"></i>
-                            <span class="stat-label" data-i18n="totalBudgeted">Total Budgétisé</span>
+                            <div class="stat-header">
+                                <i class="fas fa-piggy-bank"></i>
+                                <span class="stat-label" data-i18n="totalBudgeted">Total Budgétisé</span>
+                            </div>
                             <div class="stat-value">--</div>
                         </div>
 
                         <div class="stat-card color-danger">
-                            <i class="fas fa-shopping-basket"></i>
-                            <span class="stat-label" data-i18n="spending">Dépensé</span>
+                            <div class="stat-header">
+                                <i class="fas fa-shopping-basket"></i>
+                                <span class="stat-label" data-i18n="spending">Dépensé</span>
+                            </div>
                             <div class="stat-value">--</div>
                         </div>
                     </div>
@@ -120,12 +137,22 @@
                 </div>
 
                 <div class="card4">
-                    <div class="card-header" data-i18n="accountInfo">Informations de compte</div>
-                    <div class="group">
-                        <div class="profil-detail-group">
-                            <label data-i18n="userId">Identifiant Utilisateur</label>
+                    <div class="account-info-header">
+                        <div>
+                            <h3 data-i18n="accountInfo">Informations de compte</h3>
+                            <p data-i18n="technicalDetails">Détails techniques et registres d'accès</p>
+                        </div>
+                    </div>
+                    <div class="account-info-id">
+                        <div>
+                            <div class="user-id-label">
+                                <i class="fas fa-fingerprint"></i>
+                                <label data-i18n="userId">Identifiant Utilisateur</label>
+                            </div>
                             <span></span>
                         </div>
+                    </div>
+                    <div class="account-info-group">
                         <div class="profil-detail-group">
                             <label data-i18n="creationDate">Date de création</label>
                             <span></span>
@@ -138,8 +165,44 @@
                 </div>
 
                 <div class="card5">
-                    <div class="card-header" data-i18n="securityData">Sécurité et Données</div>
-                    <p data-i18n="manageAccountData">Gérez vos données de compte, exportez vos transactions ou supprimez votre profil.</p>
+                    <div class="account-info-header">
+                        <div>
+                            <h3 data-i18n="securityData">Sécurité et Données</h3>
+                            <p data-i18n="securityDataDesc">Gérez vos données de compte et votre sécurité</p>
+                        </div>
+                    </div>
+
+                    <div class="security-items">
+                        <div class="security-item">
+                            <div class="security-item-left">
+                                <div class="security-icon">
+                                    <i class="fas fa-key"></i>
+                                </div>
+                                <div class="security-item-info">
+                                    <h4 data-i18n="twoFactorAuth">Two-Factor Auth</h4>
+                                    <p data-i18n="twoFactorAuthDesc">Currently Enabled via Authenticator</p>
+                                </div>
+                            </div>
+                            <div class="security-item-arrow">
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+
+                        <div class="security-item">
+                            <div class="security-item-left">
+                                <div class="security-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="security-item-info">
+                                    <h4 data-i18n="activeSessions">Active Sessions</h4>
+                                    <p data-i18n="activeSessionsDesc">3 devices connected</p>
+                                </div>
+                            </div>
+                            <div class="security-item-arrow">
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="button">
                         <button class="btn-primary" id="exportDataBtn">
@@ -215,6 +278,7 @@
     <script src="./js/langue.js"></script>
     
     <script src="./js/profil.js"></script>
+    <script src="./js/responsive.js"></script>
 </body>
 
 </html>

@@ -16,7 +16,7 @@ main {
 }
 /* CSS Variables for Professional Theming */
 :root {
-    --primary-color: #2563eb;
+    --primary-color: #36A2EB;
     --primary-dark: #1d4ed8;
     --secondary-color: #64748b;
     --success-color: #10b981;
@@ -663,4 +663,174 @@ body.dark-mode .info {
 
 .btn-cancel:hover {
     background-color: #e2e8f0;
+}
+
+/* ============================================
+   MOBILE RESPONSIVE (max-width: 767px)
+   ============================================ */
+
+@media (max-width: 767px) {
+  /* CRITICAL FIX: Prevent overflow */
+  html, body, main, .content, .settings-container,
+  section, div, article, form, aside {
+    overflow-x: hidden !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Neutralize negative transforms and positions */
+  * {
+    left: auto !important;
+    margin-left: 0 !important;
+    transform: none !important;
+  }
+
+  main {
+    margin-top: 60px !important;
+    padding-bottom: 75px !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    margin-left: 0 !important;
+  }
+
+  /* Hide aside on mobile */
+  aside {
+    display: none !important;
+  }
+
+  /* Input/select prevent iOS zoom */
+  input, select, textarea {
+    font-size: 16px !important;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* ===== SETTINGS CONTAINER ===== */
+  .settings-container {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    padding: 0 !important;
+    gap: 16px !important;
+  }
+
+  /* ===== SETTINGS SECTION ===== */
+  .settings-section {
+    width: 100% !important;
+    padding: 16px !important;
+    border-radius: 12px !important;
+    box-sizing: border-box !important;
+  }
+
+  .settings-section h2,
+  .settings-section h3 {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    margin-bottom: 14px !important;
+  }
+
+  /* ===== SETTINGS ITEM ===== */
+  .settings-item {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 12px 0 !important;
+    border-bottom: 1px solid #f0f0f0 !important;
+  }
+
+  .settings-item label {
+    flex: 1;
+    word-wrap: break-word;
+    font-size: 14px !important;
+    padding-right: 12px !important;
+  }
+
+  .settings-item select,
+  .settings-item input {
+    flex-shrink: 0;
+    font-size: 16px;
+    width: auto;
+    min-width: 100px;
+  }
+
+  /* ===== COLOR SWATCHES ===== */
+  .color-swatches {
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 10px !important;
+  }
+
+  .color-swatch {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 50% !important;
+  }
+
+  /* ===== SELECTS ===== */
+  select {
+    width: 100%;
+    font-size: 16px;
+    padding: 10px 12px;
+    box-sizing: border-box;
+  }
+
+  /* ===== ABOUT SECTION ===== */
+  .about-item {
+    padding: 14px 0 !important;
+    border-bottom: 1px solid #f0f0f0 !important;
+    font-size: 14px !important;
+  }
+
+  .suggestions-textarea {
+    width: 100% !important;
+    min-height: 80px !important;
+    font-size: 14px !important;
+    padding: 12px !important;
+    box-sizing: border-box;
+  }
+
+  .send-suggestions-btn {
+    width: 100% !important;
+    height: 48px !important;
+    border-radius: 10px !important;
+    font-size: 14px !important;
+    margin-top: 12px !important;
+  }
+
+  /* ===== DANGER ZONE ===== */
+  .danger-zone {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .danger-zone button {
+    width: 100% !important;
+    height: 48px !important;
+    border-radius: 10px !important;
+    font-size: 14px !important;
+  }
+
+  /* ===== CARD ITEMS ===== */
+  .card {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
+  .card-item {
+    width: 100% !important;
+  }
+
+  /* Hide h1 title on mobile */
+  h1 {
+    display: none !important;
+  }
+
+  /* ===== VUE ELEMENTS ===== */
+  .vue-element {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
 }

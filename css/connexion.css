@@ -29,13 +29,14 @@
 }
 /* --- VARIABLES --- */
 :root {
-    --primary: #2563eb;
+    --primary: #36A2EB;
     --primary-dark: #1e40af;
     --text-main: #0f172a;
     --text-muted: #64748b;
     --border: #e2e8f0;
     --bg-light: #f8fafc;
     --navy-dark: #0f172a;
+    --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
 }
 
 /* --- STRUCTURE GÉNÉRALE --- */
@@ -57,7 +58,7 @@ body {
 body::before {
     content: "";
     flex: 1.1;
-    background: var(--navy-dark);
+    background: var(--gradient-primary);
     display: block;
     position: relative;
 }
