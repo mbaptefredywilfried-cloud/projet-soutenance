@@ -139,9 +139,9 @@
             if (latestISO === today) return;
             let message = null;
             if (latestISO === null || daysSince >= 7) {
-                message = "Aucune transaction enregistrée depuis plus de 7 jours. Pensez à suivre vos dépenses.";
+                message = "Aucune transaction enregistrï¿½e depuis plus de 7 jours. Pensez ï¿½ suivre vos dï¿½penses.";
             } else if (daysSince >= 1) {
-                message = "Aucune transaction enregistrée aujourd'hui. N'oubliez pas d'ajouter vos dépenses.";
+                message = "Aucune transaction enregistrï¿½e aujourd'hui. N'oubliez pas d'ajouter vos dï¿½penses.";
             }
             if (message) {
                 createToast(message, 'Saisir', 'transaction.html');
@@ -204,12 +204,12 @@
                 }
 
                 const excess = (spent - budget.amount).toFixed(2);
-                const currencySymbol = localStorage.getItem('appCurrency') || '€';
+                const currencySymbol = localStorage.getItem('appCurrency') || 'ï¿½';
                 
                 // Show toast notification
                 showBudgetOverrunToast(
-                    `?? Dépassement de budget: ${budget.name}`,
-                    `Vous avez dépassé de ${excess} ${currencySymbol}`,
+                    `?? Dï¿½passement de budget: ${budget.name}`,
+                    `Vous avez dï¿½passï¿½ de ${excess} ${currencySymbol}`,
                     'budget.html'
                 );
 

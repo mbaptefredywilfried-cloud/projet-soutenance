@@ -132,7 +132,8 @@ aside {
 .side .nav a.active {
     background-color: rgba(255, 255, 255, 0.2);
     color: #ffffff;
-    box-shadow: inset 4px 0 0 rgba(255, 255, 255, 0.8);
+    border-right: 4px solid rgba(255, 255, 255, 0.8);
+    border-radius: 0;
 }
 
 .side .nav i {
@@ -467,7 +468,7 @@ main h1 {
 }
 
 .card-item .btn-primary {
-    background: linear-gradient(135deg, var(--primary-color), #1d4ed8);
+    background: var(--primary-color);
     color: white;
     padding: 12px 24px;
     border: none;
@@ -492,32 +493,34 @@ main h1 {
     transform: translateY(0);
 }
 
-.card-item .btn-danger {
-    background: linear-gradient(135deg, var(--danger-color), #dc2626);
-    color: white;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 500;
+
+ .card-item .btn-danger {
+    padding: 8px 18px;
+    border-radius: 10px;
+    color: #991b1b;
+    font-weight: 600;
+    border: 1px solid #fca5a5;
+    background: #fee2e2;
     cursor: pointer;
-    transition: all 0.2s;
+    box-shadow: none;
+    transition: background 0.2s, color 0.2s;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     margin-top: 15px;
-    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+    height: 48px;
+    font-size: 16px;
 }
-
+.card-item .btn-danger i {
+    color: #991b1b !important;
+}
 .card-item .btn-danger:hover {
-    background: linear-gradient(135deg, #dc2626, #b91c1c);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    background: #fecaca;
+    color: #7f1d1d;
 }
-
-.card-item .btn-danger:active {
-    transform: translateY(0);
+.card-item .btn-danger:hover i {
+    color: #7f1d1d !important;
 }
 
 .info {

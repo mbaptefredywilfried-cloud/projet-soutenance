@@ -394,8 +394,16 @@ function showResetConfirmModal(titre, message) {
 // --- 9. APPLICATION DE L'ACCENT & UTILITAIRES ---
 function applyAccentColor(color) {
     const isDark = document.body.classList.contains('dark-mode');
-    const darkerColor = darkenColor(color, 30); 
-    const gradient = `linear-gradient(180deg, ${color} 0%, ${darkerColor} 100%)`;
+    let accentColor = color;
+    
+    // Extraire la couleur du gradient si c'est un gradient
+    if (color.startsWith('linear-gradient')) {
+        const match = color.match(/#([0-9a-fA-F]{6})/);
+        if (match) accentColor = match[0];
+    }
+    
+    const darkerColor = darkenColor(accentColor, 30); 
+    const gradient = `linear-gradient(180deg, ${accentColor} 0%, ${darkerColor} 100%)`;
 
     const aside = document.querySelector('aside');
     if (aside) {
@@ -403,17 +411,17 @@ function applyAccentColor(color) {
     }
 
     document.querySelectorAll('.btn-primary').forEach(btn => {
-        btn.style.background = gradient;
-        btn.style.borderColor = color;
+        btn.style.background = accentColor;
+        btn.style.borderColor = accentColor;
     });
 
     document.querySelectorAll('.icon-box').forEach(box => {
-        box.style.background = gradient;
+        box.style.background = accentColor;
     });
 
     const accentPreview = document.querySelector('.preview-box.accent-box');
     if (accentPreview) {
-        accentPreview.style.backgroundColor = color;
+        accentPreview.style.backgroundColor = accentColor;
     }
 
     let dynamicStyle = document.getElementById('dynamic-accent-style');
@@ -428,7 +436,7 @@ function applyAccentColor(color) {
         @keyframes slideOutRight { from { transform: translateX(0); } to { transform: translateX(120%); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(20px); opacity:0; } to { transform: translateY(0); opacity:1; } }
-        .card .card-item .setting-item .switch input:checked + .slider { background-color: ${color} !important; }
+        .card .card-item .setting-item .switch input:checked + .slider { background-color: ${accentColor} !important; }
         .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
         .side .nav a:hover:not(.active) { background-color: rgba(255, 255, 255, 0.1); }
     `;

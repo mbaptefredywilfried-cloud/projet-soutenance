@@ -292,7 +292,8 @@ aside {
 .side .nav a.active {
     background-color: rgba(255, 255, 255, 0.2);
     color: #ffffff;
-    box-shadow: inset 4px 0 0 rgba(255, 255, 255, 0.8);
+    border-right: 4px solid rgba(255, 255, 255, 0.8);
+    border-radius: 0;
 }
 
 .side .nav i {
@@ -606,7 +607,7 @@ aside {
 
 .budget-header {
     padding: 20px;
-    background: linear-gradient(135deg, var(--accent-color, var(--primary-color)), var(--accent-color-dark, var(--primary-dark)));
+    background: var(--accent-color, var(--primary-color));
     color: white;
     display: flex;
     align-items: center;

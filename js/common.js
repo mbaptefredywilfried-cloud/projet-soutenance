@@ -97,16 +97,16 @@ function applyAccentColor(colorOrGradient) {
         document.documentElement.style.setProperty('--accent-gradient', gradient);
     } catch (e) {}
 
-    // Aside
+    // Aside - ONLY with gradient
     const aside = document.querySelector('aside');
     if (aside) {
         aside.style.background = gradient;
     }
 
-    // Boutons primaires
+    // Boutons primaires - solid color only
     const btnPrimaries = document.querySelectorAll('.btn-primary');
     btnPrimaries.forEach(btn => {
-        btn.style.background = gradient;
+        btn.style.background = color;
         btn.style.borderColor = color;
     });
 
@@ -138,13 +138,13 @@ function applyAccentColor(colorOrGradient) {
         });
     });
 
-    // Profil Header & Navigation rapide
+    // Profil Header & Navigation rapide - solid color only
     document.querySelectorAll('.side-header').forEach(header => {
-        header.style.setProperty('background', gradient, 'important');
+        header.style.setProperty('background', color, 'important');
     });
 
     document.querySelectorAll('.navigation ul li').forEach(li => {
-        li.style.setProperty('background', gradient, 'important');
+        li.style.setProperty('background', color, 'important');
     });
 
     addHoverStyles(color);
@@ -153,7 +153,6 @@ function applyAccentColor(colorOrGradient) {
 function addHoverStyles(color) {
     const darkerColor = darkenColor(color, 30);
     const evenDarker = darkenColor(color, 50);
-    const hoverGradient = `linear-gradient(180deg, ${darkerColor} 0%, ${evenDarker} 100%)`;
     
     // Pour éviter de dupliquer la balise style à chaque appel
     let styleTag = document.getElementById('dynamic-accent-styles');
@@ -164,8 +163,8 @@ function addHoverStyles(color) {
     }
 
     styleTag.textContent = `
-        .btn-primary:hover { background: ${hoverGradient} !important; border-color: ${darkerColor} !important; }
-        .navigation ul li:hover { background: ${hoverGradient} !important; }
+        .btn-primary:hover { background: ${darkerColor} !important; border-color: ${darkerColor} !important; }
+        .navigation ul li:hover { background: ${darkerColor} !important; }
         aside .nav a.active { background: rgba(255,255,255,0.2); font-weight: bold; }
     `;
 }

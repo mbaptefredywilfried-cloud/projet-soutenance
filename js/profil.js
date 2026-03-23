@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.log('[APERÇU BUDGÉTAIRE] Réponse backend:', data);
                 const budgets = Array.isArray(data.data) ? data.data : [];
                 let totalBudget = 0;
-                let currencySymbol = '€';
+                let currencySymbol = window.appCurrency || localStorage.getItem('appCurrency') || '€';
                 // Récupérer les category_id des budgets actifs
                 const activeCategoryIds = budgets.map(b => b.category_id);
                 budgets.forEach(b => {

@@ -62,7 +62,7 @@ const translations = {
     phNoteDetail: "Notez un détail...",
 
     // Navigation ASIDE
-    navDashboard: "Dashboard",
+    navDashboard: "Tableau de bord",
     navTransaction: "Transaction",
     navBudget: "Budget",
     navProfil: "Profil",
@@ -212,8 +212,6 @@ const translations = {
     security: "Sécurité",
     changePassword: "Modifier le mot de passe",
     savePassword: "Enregistrer le mot de passe",
-    twoFactorAuth: "Double authentification",
-    enhancedSecurity: "Sécurité renforcée",
     resetLocalData: "Réinitialiser les données locales",
 
     synchronization: "Synchronisation",
@@ -327,9 +325,9 @@ const translations = {
     securityDataDesc: "Gérez vos données de compte et votre sécurité",
     manageAccountData: "Gérez vos données de compte, exportez vos transactions ou supprimez votre profil.",
     twoFactorAuth: "Two-Factor Auth",
-    twoFactorAuthDesc: "Currently Enabled via Authenticator",
+    twoFactorAuthDesc: "Activé via Authentificateur",
     activeSessions: "Active Sessions",
-    activeSessionsDesc: "3 devices connected",
+    activeSessionsDesc: "3 appareils connectés",
     exportData: "Exporter les données",
     deleteAccount: "Supprimer le compte",
     editInfoTitle: "Modifier les informations",
@@ -600,8 +598,6 @@ const translations = {
     security: "Security",
     changePassword: "Change password",
     savePassword: "Save password",
-    twoFactorAuth: "Two-factor authentication",
-    enhancedSecurity: "Enhanced security",
     resetLocalData: "Reset local data",
 
     synchronization: "Synchronization",
