@@ -204,7 +204,7 @@
                 }
 
                 const excess = (spent - budget.amount).toFixed(2);
-                const currencySymbol = localStorage.getItem('appCurrency') || '�';
+                const currencySymbol = window.appCurrency || 'EUR';
                 
                 // Show toast notification
                 showBudgetOverrunToast(

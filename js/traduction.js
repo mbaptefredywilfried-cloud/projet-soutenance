@@ -92,6 +92,7 @@ const translations = {
     monthsShort: ["Jan", "Fév", "Mar", "Avr", "Mai", "Jun", "Jul", "Aoû", "Sep", "Oct", "Nov", "Déc"],
     financialAnalysis: "Analyse des flux",
     expenseDistribution: "Répartition des dépenses",
+    incomeVsExpense: "Dépense vs Revenu",
     flowAnalysis: "Analyse des Flux",
     sevenDays: "7J",
     oneMonth: "1M",
@@ -158,8 +159,7 @@ const translations = {
     createNewBudget: "Créer un Nouveau Budget",
     budgetName: "Nom du Budget",
     budgetNameHint: "Choisir un nom descriptif pour votre budget",
-    budgetNameHelp: "Choisissez un nom descriptif pour votre budget.",
-    maxAmountHint: "Entrer le montant maximum alloué",
+    budgetNameHelp: "Choisissez un nom descriptif pour votre budget.",    budgetDescription: "Définissez vos limites pour une meilleure santé financière.",    maxAmountHint: "Entrer le montant maximum alloué",
     selectCategory: "Sélectionnez une catégorie",
 
     food: "Alimentation",
@@ -195,6 +195,8 @@ const translations = {
     monthly: "Mensuel",
     weekly: "Hebdomadaire",
     yearly: "Annuel",
+    active: "Actif",
+    exceeded: "Dépassé",
     renewalFrequency: "Définir la fréquence de renouvellement",
     createBudget: "Créer le budget",
     reset: "Réinitialiser",
@@ -203,6 +205,7 @@ const translations = {
     filter: "Filtrer",
     noBudgetMessage:
       "Aucun budget créé pour le moment. Commencez par en ajouter un !",
+    noBudgetFilters: "Aucun budget trouvé pour ces filtres.",
 
     // Paramètres
     mainCurrency: "Devise principale",
@@ -288,6 +291,10 @@ const translations = {
     editButtonLabel: "Modifier",
     deleteButtonLabel: "Supprimer",
     createBudgetBtn: "Créer le Budget",
+    errorBudgetName: "Veuillez entrer un nom de budget.",
+    errorSelectCategory: "Veuillez sélectionner une catégorie.",
+    errorBudgetAmount: "Veuillez entrer un montant valide.",
+    errorSelectPeriod: "Veuillez choisir une période.",
     resetBtn: "Réinitialiser",
     budgetCreated: "Budget créé avec succès!",
     
@@ -352,6 +359,12 @@ const translations = {
     language: "Langue",
     frenchLang: "Français",
     englishLang: "Anglais",
+    
+    // Budget page
+    budgetsStats: "Statistiques des Budgets",
+    architectMessage: "Organisez vos finances avec la précision d'un architecte.",
+    confirmDeleteAllBudgets: "Voulez-vous vraiment supprimer tous les budgets ?",
+    deleteAll: "Supprimer tout",
   },
 
 
@@ -471,6 +484,7 @@ const translations = {
     monthsShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
     financialAnalysis: "Financial flow analysis",
     expenseDistribution: "Expense distribution",
+    incomeVsExpense: "Expense vs Income",
     flowAnalysis: "Flow Analysis",
     sevenDays: "7D",
     oneMonth: "1M",
@@ -536,6 +550,7 @@ const translations = {
     budgetName: "Budget Name",
     budgetNameHint: "Choose a descriptive name for your budget",
     budgetNameHelp: "Choose a descriptive name for your budget.",
+    budgetDescription: "Set your limits for better financial health.",
     maxAmountHint: "Enter the maximum allocated amount",
     selectCategory: "Select a category",
 
@@ -572,6 +587,8 @@ const translations = {
     monthly: "Monthly",
     weekly: "Weekly",
     yearly: "Yearly",
+    active: "Active",
+    exceeded: "Exceeded",
     renewalFrequency: "Set renewal frequency",
     createBudget: "Create budget",
         profileExportError: "Export failed: user not authenticated",
@@ -585,10 +602,7 @@ const translations = {
     yourActiveBudgets: "Your active budgets",
     filter: "Filter",
     noBudgetMessage: "No budget created yet. Start by adding one!",
-
-    yourActiveBudgets: "Your active budgets",
-    filter: "Filter",
-    noBudgetMessage: "No budget created yet. Start by adding one!",
+    noBudgetFilters: "No budget found for these filters.",
 
     // Settings
     mainCurrency: "Main currency",
@@ -639,6 +653,10 @@ const translations = {
     editButtonLabel: "Edit",
     deleteButtonLabel: "Delete",
     createBudgetBtn: "Create Budget",
+    errorBudgetName: "Please enter a budget name.",
+    errorSelectCategory: "Please select a category.",
+    errorBudgetAmount: "Please enter a valid amount.",
+    errorSelectPeriod: "Please choose a period.",
     resetBtn: "Reset",
     budgetCreated: "Budget created successfully!",
     budgetUpdated: "Budget updated!",
@@ -691,6 +709,12 @@ const translations = {
     language: "Language",
     frenchLang: "French",
     englishLang: "English",
+    
+    // Budget page
+    budgetsStats: "Budget Statistics",
+    architectMessage: "Organize your finances with the precision of an architect.",
+    confirmDeleteAllBudgets: "Are you sure you want to delete all budgets?",
+    deleteAll: "Delete all",
 
   },
 };

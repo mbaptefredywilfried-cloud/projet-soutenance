@@ -49,8 +49,12 @@
 
         <main>
 
+            <!-- Header Sticky -->
+            <header class="page-header">
+                <h1 data-i18n="navTransaction">Transaction</h1>
+            </header>
+
             <!-- ajouter une transaction -->
-            <h1 data-i18n="navTransaction">Transaction</h1>
             <div class="card">
                 <h3><i class="fas fa-plus-circle"></i> <span data-i18n="addTransactionForm">Ajouter une transaction</span></h3>
                 <form id="transactionForm">
@@ -108,7 +112,7 @@
                     <button class="filter-btn" data-filter="expense" data-i18n="expenses">Dépenses</button>
                 </div>
                 <button id="deleteAllBtn" class="btn-danger-outline" data-i18n="deleteAllBtn">
-                    <i class="fas fa-trash-can"></i> Tout supprimer
+                    <i class="fas fa-trash"></i> Tout supprimer
                 </button>
             </div>
 

@@ -220,10 +220,14 @@ main .containt .current .card{
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     font-weight: 600;
     transition: all 0.3s ease-in;
+    position: relative;
+    overflow: hidden;
 }
 main .containt .current .card .item{
     display: flex;
     justify-content: space-between;
+    position: relative;
+    z-index: 2;
 }
 
 main .containt .current .card p {
@@ -241,11 +245,76 @@ main .containt .current .card .stats-value{
     cursor: default;
 }
 
+/* Wrapper pour la valeur et l'indicateur */
+main .containt .current .card .stats-value-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 12px;
+    position: relative;
+    z-index: 2;
+}
+
+/* Indicateur de variation */
+main .containt .current .card .stats-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    color: white;
+}
+
+main .containt .current .card .stats-indicator i {
+    font-size: 12px;
+    color: white;
+}
+
+main .containt .current .card .stats-indicator span {
+    color: white;
+}
+
+/* Variante positive (en haut) */
+main .containt .current .card .stats-indicator.indicator-positive {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+/* Variante négative (en bas) */
+main .containt .current .card .stats-indicator.indicator-negative {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+/* Variante neutre */
+main .containt .current .card .stats-indicator.indicator-neutral {
+    background: rgba(100, 116, 139, 0.1);
+    color: #64748b;
+}
+
 
 main .containt .current .card:nth-child(1) {
     background: #36A2EB;
     color: #fff;
     border: none;
+}
+
+main .containt .current .card:nth-child(1)::before {
+    content: '';
+    position: absolute;
+    right: -30px;
+    bottom: -80px;
+    width: 200px;
+    height: 200px;
+    opacity: 0.08;
+    pointer-events: none;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M11.8 10.9c-2.27-.59-3-1.38-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.37-3.29-3.26-3.72V3h-3v2.16c-1.94.42-3.5 1.96-3.5 3.84 0 2.33 1.48 3.5 4.4 4.13 2.87.59 3 1.5 3 2.1 0 .78-.64 1.45-2.04 1.45-1.42 0-2.07-.61-2.13-1.66H7.4c.1 1.95 1.53 3.29 3.69 3.72V21h3v-2.15c1.95-.37 3.5-1.83 3.5-3.72 0-2.6-1.55-3.75-4.3-4.21z"/></svg>');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 main .containt .current .card:nth-child(2) {
@@ -254,11 +323,40 @@ main .containt .current .card:nth-child(2) {
     border: none;
 }
 
+main .containt .current .card:nth-child(2)::before {
+    content: '';
+    position: absolute;
+    right: -30px;
+    bottom: -80px;
+    width: 200px;
+    height: 200px;
+    opacity: 0.08;
+    pointer-events: none;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18 10 11.41l4 4 6.3-6.29L22 12v-6z"/></svg>');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
 main .containt .current .card:nth-child(3) {
-    
     background: #ef4444;
     color: #fff;
     border: none;
+}
+
+main .containt .current .card:nth-child(3)::before {
+    content: '';
+    position: absolute;
+    right: -30px;
+    bottom: -80px;
+    width: 200px;
+    height: 200px;
+    opacity: 0.08;
+    pointer-events: none;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M22 12l-2.29-2.29-4.88 4.88-4-4L2 7.41 3.41 6 10 12.59l4-4 6.3 6.29L22 12z"/></svg>');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 /* Ensure text inside cards is readable */
@@ -360,18 +458,26 @@ main .category {
     border-radius: var(--border-radius, 13px);
     box-shadow: var(--shadow, 0 4px 6px rgba(0,0,0,0.2));
     padding: 20px;
-        min-height: 420px;
+    min-height: auto;
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 .linechart-card .budget-card {
     margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    background-color: #fff;
+    border-radius: inherit;
+    cursor: pointer;
+    color: #64748b;
+    font-size: 18px;
+    font-weight: 600;
 }
 .linechart-card canvas {
     width: 100% !important;
-    height: 220px !important;
-    max-height: 260px;
+    height: 280px !important;
+    max-height: 320px;
 }
 @media (max-width: 1023px) {
     main .graphic {
@@ -439,19 +545,59 @@ main .category .budget-card{
 }
 
 .filters select {
-    padding: 8px 12px;
-    border-radius: var(--border-radius);
-    border: 1px solid var(--border-color);
-    background-color: var(--background-color);
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1.5px solid #e2e8f0;
+    background-color: var(--card-background, #fff);
     color: var(--text-primary);
-    font-family: inherit;
+    font-size: 14px;
+    font-family: 'Inter', inherit;
     cursor: pointer;
-    transition: var(--transition);
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.filters select:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .filters select:focus {
     outline: none;
     border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(54, 162, 235, 0.1), 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Style du select budgetPeriod */
+#budgetPeriod {
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1.5px solid #e2e8f0;
+    background-color: var(--card-background, #fff);
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: 'Inter', inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+#budgetPeriod:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+#budgetPeriod:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(54, 162, 235, 0.1), 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Styles des options */
+#budgetPeriod option {
+    padding: 8px;
+    background: var(--card-background, #fff);
+    color: var(--text-primary);
 }
 
 /* Styles du Tableau */

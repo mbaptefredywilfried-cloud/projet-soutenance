@@ -29,6 +29,12 @@ function loadUserSettings() {
 
 function saveUserSettings(changes) {
     userSettings = { ...userSettings, ...changes };
+    // Mettre à jour la devise globalement si elle change
+    if (changes.currency) {
+        window.appCurrency = changes.currency;
+        // Émettre un événement pour notifier les autres composants du changement de devise
+        window.dispatchEvent(new Event('appCurrencyChanged'));
+    }
     fetch('/PROJET/php/data/save_user_settings.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

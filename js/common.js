@@ -3,7 +3,7 @@
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Charger les paramètres utilisateur (notamment la couleur d'accent) depuis le serveur
+    // Charger les paramètres utilisateur (accent et devise) depuis le serveur
     fetch('/PROJET/php/data/user_profile.php?action=get', {
         method: 'GET',
         credentials: 'same-origin'
@@ -11,10 +11,22 @@ document.addEventListener('DOMContentLoaded', function() {
     .then(resp => resp.json())
     .then(data => {
         let accent = '#36A2EB'; // couleur par défaut
-        if (data && data.settings && data.settings.accent_gradient) {
-            accent = data.settings.accent_gradient;
+        let currency = 'EUR'; // devise par défaut
+        
+        if (data && data.settings) {
+            if (data.settings.accent_gradient) {
+                accent = data.settings.accent_gradient;
+            }
+            if (data.settings.currency) {
+                currency = data.settings.currency;
+            }
         }
+        
+        // Stocker la devise dans une variable globale
+        window.appCurrency = currency;
         console.log('[DEBUG accent_gradient]', accent, data);
+        console.log('[DEBUG currency]', currency);
+        
         // Si c'est un gradient, on extrait la couleur de départ pour la compatibilité
         let color = accent;
         const match = accent.match(/#([0-9a-fA-F]{6})/);
@@ -26,6 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
     .catch((e) => {
         console.log('[DEBUG accent_gradient] fallback', e);
         // fallback couleur par défaut
+        window.appCurrency = 'EUR';
         applyAccentColor('#36A2EB');
         updateActiveMenu();
         enforceAuth();

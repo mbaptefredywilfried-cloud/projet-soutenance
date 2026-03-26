@@ -122,7 +122,7 @@ function handleAccountStats() {
             if (data.status === 'success') {
                 transactions = data.data;
             }
-            const currencySymbol = localStorage.getItem('appCurrency') || '€';
+            const currencySymbol = window.appCurrency || 'EUR';
             const typeVal = filterType ? filterType.value : 'all';
             const catVal = filterCategory ? filterCategory.value : 'all';
             let filtered = transactions.filter(t => {
@@ -223,7 +223,7 @@ function handleAccountStats() {
                 if(t.category_type === 'expense') expTotal += parseFloat(t.amount);
             });
             const cards = document.querySelectorAll('.stats-value');
-            const currencySymbol = localStorage.getItem('appCurrency') || '€';
+            const currencySymbol = window.appCurrency || 'EUR';
             if (cards.length >= 3) {
                 let soldeAffiche = incMois - expTotal;
                 if (soldeAffiche < 0) soldeAffiche = 0;
@@ -233,10 +233,89 @@ function handleAccountStats() {
                 cards[1].textContent = `${formatAmountDash(incMois)} ${currencySymbol}`;
                 // Affichage strict du montant (pas de Math.max)
                 cards[2].textContent = `${formatAmountDash(Number(expTotal))} ${currencySymbol}`;
+                
+                // Mettre à jour les indicateurs dynamiquement
+                // Calculer les données du mois précédent
+                const lastMonthDate = new Date();
+                lastMonthDate.setMonth(lastMonthDate.getMonth() - 1);
+                
+                let incMoisPrecedent = 0;
+                let expMoisPrecedent = 0;
+                
+                transactions.forEach(t => {
+                    let d;
+                    if (t.date) {
+                        d = new Date(t.date);
+                    } else if (t.transaction_date) {
+                        d = new Date(t.transaction_date);
+                    } else {
+                        d = new Date();
+                    }
+                    
+                    // Vérifier si c'est le mois précédent
+                    if (d.getMonth() === lastMonthDate.getMonth() && d.getFullYear() === lastMonthDate.getFullYear()) {
+                        if(t.category_type === 'income') incMoisPrecedent += parseFloat(t.amount);
+                        if(t.category_type === 'expense') expMoisPrecedent += parseFloat(t.amount);
+                    }
+                });
+                
+                // Appeler la fonction pour mettre à jour les indicateurs
+                updateStatsIndicators(incMois, expTotal, incMoisPrecedent, expMoisPrecedent);
             }
         } catch (e) {
             console.error('[DEBUG] Erreur lors de la mise à jour des cartes dashboard:', e);
         }
+    }
+    
+    // Fonction pour mettre à jour les indicateurs de variation
+    function updateStatsIndicators(incMois, expTotal, incMoisPrecedent, expMoisPrecedent) {
+        const indicators = document.querySelectorAll('.stats-indicator');
+        
+        if (indicators.length >= 3) {
+            // Indicateur 1 : Solde Total
+            const soldeActuel = incMois - expTotal;
+            const soldePrecedent = incMoisPrecedent - expMoisPrecedent;
+            const variationSolde = soldePrecedent !== 0 ? ((soldeActuel - soldePrecedent) / Math.abs(soldePrecedent) * 100) : (soldeActuel > 0 ? 100 : 0);
+            
+            updateIndicator(indicators[0], variationSolde);
+            
+            // Indicateur 2 : Revenus du mois (toujours positif = bon)
+            const variationIncome = incMoisPrecedent > 0 ? ((incMois - incMoisPrecedent) / incMoisPrecedent * 100) : (incMois > 0 ? 100 : 0);
+            updateIndicator(indicators[1], variationIncome);
+            
+            // Indicateur 3 : Dépenses du mois (négatif = bon, positif = mauvais)
+            const variationExpense = expMoisPrecedent > 0 ? ((expTotal - expMoisPrecedent) / expMoisPrecedent * 100) : (expTotal > 0 ? -100 : 0);
+            updateIndicator(indicators[2], variationExpense);
+        }
+    }
+    
+    // Fonction utilitaire pour mettre à jour un indicateur
+    function updateIndicator(indicator, percentage) {
+        const span = indicator.querySelector('span');
+        const icon = indicator.querySelector('i');
+        
+        if (!span || !icon) return;
+        
+        // Déterminer le type et l'icône basés sur le pourcentage
+        let type = 'neutral';
+        
+        if (percentage > 0.5) { // Plus de 0.5% d'augmentation = positif
+            type = 'positive';
+            icon.className = 'fas fa-arrow-trend-up';
+            span.textContent = `+${Math.abs(percentage).toFixed(1)}%`;
+        } else if (percentage < -0.5) { // Plus de 0.5% de diminution = négatif
+            type = 'negative';
+            icon.className = 'fas fa-arrow-trend-down';
+            span.textContent = `${percentage.toFixed(1)}%`;
+        } else { // Entre -0.5% et +0.5% = neutre
+            type = 'neutral';
+            icon.className = 'fas fa-circle-notch';
+            span.textContent = `~0%`;
+        }
+        
+        // Mettre à jour les classes CSS
+        indicator.classList.remove('indicator-positive', 'indicator-negative', 'indicator-neutral');
+        indicator.classList.add(`indicator-${type}`);
     }
 
     // 4. LOGIQUE DES GRAPHIQUES
@@ -419,10 +498,11 @@ function handleAccountStats() {
                         }
                     ]
                 };
-                // Formatage axe Y
+                // Formatage axe Y avec la devise
+                const currencySymbol = window.appCurrency || 'EUR';
                 if (lineChart.options && lineChart.options.scales && lineChart.options.scales.y) {
                     lineChart.options.scales.y.ticks.callback = function(value) {
-                        return formatAmountForChart(value);
+                        return formatAmountForChart(value) + ' ' + currencySymbol;
                     };
                 }
                 lineChart.update();
@@ -470,6 +550,7 @@ function handleAccountStats() {
                 // 4. Si on a des dépenses, on s'assure que le canvas existe
                 ensurePieCanvasExists();
                 const dataMap = {};
+                const countMap = {}; // Map pour compter les transactions
                 // Détecte la langue courante
                 const currentLang = document.documentElement.lang || 'fr';
                 expenseDataOnly.forEach(t => {
@@ -481,8 +562,11 @@ function handleAccountStats() {
                         catLabel = t.category_name.charAt(0).toUpperCase() + t.category_name.slice(1);
                     }
                     dataMap[catLabel] = (dataMap[catLabel] || 0) + parseFloat(t.amount);
+                    countMap[catLabel] = (countMap[catLabel] || 0) + 1; // Incrémenter le compteur
                 });
-                const labels = Object.keys(dataMap);
+                const labels = Object.keys(dataMap).map(label => 
+                    `${label} (${countMap[label]})`
+                );
                 const values = Object.values(dataMap);
                 // Même couleurs, nouvel ordre
                 const colors = [
@@ -504,7 +588,7 @@ function handleAccountStats() {
                 };
                 // Ajout du texte centré via plugin
                 const totalDepense = values.reduce((sum, v) => sum + v, 0);
-                const currencySymbol = localStorage.getItem('appCurrency') || 'FCFA';
+                const currencySymbol = window.appCurrency || 'EUR';
                 let centerTextLabel = (translations[currentLang] && translations[currentLang].totalExpenses) ? translations[currentLang].totalExpenses : 'Total dépenses';
                 pieChart.config._centerText = {
                     text: `${centerTextLabel}\n${formatAmountDash(totalDepense)} ${currencySymbol}`,
@@ -581,10 +665,11 @@ function handleAccountStats() {
                         }
                     ]
                 };
-                // Appliquer le formatage des montants sur l'axe Y
+                // Appliquer le formatage des montants sur l'axe Y avec la devise
+                const currencySymbol = window.appCurrency || 'EUR';
                 if (barChart.options && barChart.options.scales && barChart.options.scales.y) {
                     barChart.options.scales.y.ticks.callback = function(value) {
-                        return formatAmountForChart(value);
+                        return formatAmountForChart(value) + ' ' + currencySymbol;
                     };
                 }
                 barChart.update();

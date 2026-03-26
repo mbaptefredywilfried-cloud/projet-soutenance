@@ -67,19 +67,37 @@
                         <div class="item">
                             <p data-i18n="totalBalance">Solde Total</p><i class="fas fa-wallet"></i>
                         </div>
-                        <div class="stats-value">0.00 FCFA</div>
+                        <div class="stats-value-wrapper">
+                            <div class="stats-value">0.00 FCFA</div>
+                            <div class="stats-indicator indicator-neutral">
+                                <i class="fas fa-circle-notch"></i>
+                                <span>0%</span>
+                            </div>
+                        </div>
                     </div>
                     <div class="card">
                         <div class="item">
                             <p data-i18n="monthlyIncome">Revenus du mois</p><i class="fas fa-arrow-trend-up"></i>
                         </div>
-                        <div class="stats-value">0.00 FCFA</div>
+                        <div class="stats-value-wrapper">
+                            <div class="stats-value">0.00 FCFA</div>
+                            <div class="stats-indicator indicator-positive">
+                                <i class="fas fa-arrow-trend-up"></i>
+                                <span>+12.5%</span>
+                            </div>
+                        </div>
                     </div>
                     <div class="card">
                         <div class="item">
                             <p data-i18n="monthlyExpense">Dépenses du mois</p><i class="fas fa-arrow-trend-down"></i>
                         </div>
-                        <div class="stats-value">0.00 FCFA</div>
+                        <div class="stats-value-wrapper">
+                            <div class="stats-value">0.00 FCFA</div>
+                            <div class="stats-indicator indicator-negative">
+                                <i class="fas fa-arrow-trend-down"></i>
+                                <span>-2.4%</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -91,7 +109,6 @@
                                 <button class="active-time">7J</button>
                                 <button>1M</button>
                                 <button>3M</button>
-                                <button>1A</button>
                             </div>
                         </div>
                         <div class="dashed">
@@ -186,6 +203,7 @@
     <script src="./js/traduction.js"></script>
     <script src="./js/langue.js"></script>
     <script src="./js/notification.js"></script>
+        <script src="./js/reminder-toast.js"></script>
     <script src="./js/dasboard.js"></script>
     <script src="./js/responsive.js"></script>
 </body>

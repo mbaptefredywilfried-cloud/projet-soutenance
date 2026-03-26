@@ -10,7 +10,8 @@ class BudgetManager {
                     const id = form.querySelector('#editBudgetId').value;
                     if (!name || isNaN(amount) || !category_id || !month || !id) {
                         // Affiche une erreur simple
-                        showToast('Veuillez remplir tous les champs.', true);
+                        const t = (typeof translations !== 'undefined' && translations[document.documentElement.lang]) ? translations[document.documentElement.lang] : {};
+                        showToast(t.fillAllFields || 'Veuillez remplir tous les champs.', true);
                         return;
                     }
                     try {
@@ -22,14 +23,16 @@ class BudgetManager {
                         });
                         const data = await response.json();
                         if (data.status === 'success') {
-                            showToast('Budget modifié avec succès !');
+                            const t = (typeof translations !== 'undefined' && translations[document.documentElement.lang]) ? translations[document.documentElement.lang] : {};
+                            showToast(t.budgetCreatedSuccess || 'Budget modifié avec succès !');
                             document.getElementById('editModal').classList.remove('show');
                             await this.fetchAndRenderBudgets();
                         } else {
                             showToast(data.message || 'Erreur lors de la modification.', true);
                         }
                     } catch (err) {
-                        showToast('Erreur réseau ou serveur.', true);
+                        const t = (typeof translations !== 'undefined' && translations[document.documentElement.lang]) ? translations[document.documentElement.lang] : {};
+                        showToast(t.networkError || 'Erreur réseau ou serveur.', true);
                     }
                 }
             updateSummary() {
@@ -52,19 +55,14 @@ class BudgetManager {
                     this.budgets.forEach(budget => {
                         totalBudgeted += Number(budget.amount);
                         // Dépenses pour ce budget
-                        let spent = 0;
-                        if (this.transactions) {
-                            spent = this.transactions
-                                .filter(t => t.category_id == budget.category_id && t.category_type === 'expense' && (t.month === budget.month || !t.month))
-                                .reduce((sum, t) => sum + Number(t.amount), 0);
-                        }
+                        const spent = this.calculateSpentForBudget(budget, this.transactions);
                         totalSpent += spent;
                         if (spent > Number(budget.amount)) overspentCount++;
                         if (spent < Number(budget.amount)) activeCount++;
                     });
                 }
                 const balance = totalBudgeted - totalSpent;
-                const currency = localStorage.getItem('appCurrency') || '€';
+                const currency = window.appCurrency || 'EUR';
                 if (totalBudgetedEl) totalBudgetedEl.textContent = totalBudgeted.toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ' + currency;
                 if (totalSpentEl) totalSpentEl.textContent = totalSpent.toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ' + currency;
                 if (balanceEl) balanceEl.textContent = balance.toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ' + currency;
@@ -96,25 +94,27 @@ class BudgetManager {
             const category = form.querySelector('[name="budgetCategory"]');
             const amount = form.querySelector('[name="budgetAmount"]');
             const period = form.querySelector('[name="budgetPeriod"]');
+            const t = (typeof translations !== 'undefined' && translations[document.documentElement.lang]) ? translations[document.documentElement.lang] : {};
+            
             if (!name.value || name.value.trim().length < 2) {
                 valid = false;
                 name.classList.add('input-error');
-                BudgetManager.showFieldError(name, 'Veuillez entrer un nom de budget.');
+                BudgetManager.showFieldError(name, t.errorBudgetName || 'Veuillez entrer un nom de budget.');
             }
             if (!category.value) {
                 valid = false;
                 category.classList.add('input-error');
-                BudgetManager.showFieldError(category, 'Veuillez sélectionner une catégorie.');
+                BudgetManager.showFieldError(category, t.errorSelectCategory || 'Veuillez sélectionner une catégorie.');
             }
             if (isNaN(parseFloat(amount.value)) || parseFloat(amount.value) <= 0) {
                 valid = false;
                 amount.classList.add('input-error');
-                BudgetManager.showFieldError(amount, 'Veuillez entrer un montant valide.');
+                BudgetManager.showFieldError(amount, t.errorBudgetAmount || 'Veuillez entrer un montant valide.');
             }
             if (!period.value) {
                 valid = false;
                 period.classList.add('input-error');
-                BudgetManager.showFieldError(period, 'Veuillez choisir une période.');
+                BudgetManager.showFieldError(period, t.errorSelectPeriod || 'Veuillez choisir une période.');
             }
             return valid;
         }
@@ -141,13 +141,62 @@ class BudgetManager {
         this.init();
     }
 
+    // Calcule les dépenses pour un budget selon sa période
+    calculateSpentForBudget(budget, transactions) {
+        if (!transactions || transactions.length === 0) return 0;
+        
+        const currentDate = new Date();
+        const currentMonth = currentDate.toISOString().slice(0, 7); // "2026-03"
+        const currentYear = currentDate.getFullYear().toString();
+        
+        // Déterminer le type de période du budget
+        const budgetMonth = String(budget.month).toLowerCase();
+        
+        let relevantTransactions = transactions.filter(t => 
+            t.category_id == budget.category_id && t.category_type === 'expense'
+        );
+        
+        // Filtrer selon la période
+        if (budgetMonth.includes('mensuel') || budgetMonth === 'mois') {
+            // Dépenses du mois courant
+            relevantTransactions = relevantTransactions.filter(t => 
+                t.date && t.date.slice(0, 7) === currentMonth
+            );
+        } else if (budgetMonth.includes('annuel') || budgetMonth === 'an' || budgetMonth === 'année') {
+            // Dépenses de l'année courante
+            relevantTransactions = relevantTransactions.filter(t => 
+                t.date && t.date.slice(0, 4) === currentYear
+            );
+        } else if (budgetMonth.includes('hebdo') || budgetMonth === 'semaine') {
+            // Dépenses de la semaine courante
+            const weekStart = new Date(currentDate);
+            weekStart.setDate(currentDate.getDate() - currentDate.getDay());
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6);
+            
+            relevantTransactions = relevantTransactions.filter(t => {
+                if (!t.date) return false;
+                const tDate = new Date(t.date);
+                return tDate >= weekStart && tDate <= weekEnd;
+            });
+        }
+        
+        return relevantTransactions.reduce((sum, t) => sum + Number(t.amount), 0);
+    }
+
     async init() {
         await this.fetchCategories();
         this.setupEventListeners();
+        this.setupDeleteModalListeners();
         this.populateCategorySelect();
         this.populateFilterCategory();
         this.setupFilterListeners();
         await this.fetchAndRenderBudgets();
+        // Écouter les changements de devise
+        window.addEventListener('appCurrencyChanged', () => {
+            this.renderBudgets();
+            this.updateSummary();
+        });
     }
 
     async fetchCategories() {
@@ -264,57 +313,81 @@ class BudgetManager {
                     });
                     const data = await response.json();
                     if (data.status === 'success') {
-                        showToast('Tous les budgets ont été supprimés.');
+                        const t = (typeof translations !== 'undefined' && translations[document.documentElement.lang]) ? translations[document.documentElement.lang] : {};
+                        showToast(t.allBudgetsDeleted || 'Tous les budgets ont été supprimés.');
                         await this.fetchAndRenderBudgets();
                     } else {
                         showToast(data.message || 'Erreur lors de la suppression.', true);
                     }
                 } catch (err) {
-                    showToast('Erreur réseau ou serveur.', true);
+                    const t = (typeof translations !== 'undefined' && translations[document.documentElement.lang]) ? translations[document.documentElement.lang] : {};
+                    showToast(t.networkError || 'Erreur réseau ou serveur.', true);
                 }
             });
         }
 
         // Toast glissant en bas
         function showToast(message, error=false) {
-            let toast = document.createElement('div');
-            toast.className = 'custom-toast-budget';
-            // Création de l'icône Font Awesome
-            let icon = document.createElement('i');
-            icon.className = error ? 'fas fa-times-circle' : 'fas fa-check-circle';
-            icon.style.marginRight = '12px';
-            icon.style.fontSize = '1.2em';
-            icon.style.verticalAlign = 'middle';
-            icon.style.color = '#fff';
-            toast.appendChild(icon);
-            // Ajout du texte
-            let span = document.createElement('span');
-            span.textContent = message;
-            toast.appendChild(span);
-            toast.style.position = 'fixed';
-            toast.style.right = '32px';
-            toast.style.bottom = '32px';
-            toast.style.background = error ? '#ef4444' : '#10b981';
-            toast.style.color = '#fff';
-            toast.style.padding = '12px 28px';
-            toast.style.borderRadius = '18px';
-            toast.style.fontSize = '0.98rem';
-            toast.style.fontFamily = 'Inter, Arial, sans-serif';
-            toast.style.boxShadow = '0 6px 20px rgba(2,6,23,0.18)';
-            toast.style.zIndex = '99999';
-            toast.style.opacity = '0';
-            toast.style.transform = 'translateX(120px)';
-            toast.style.transition = 'opacity 0.35s cubic-bezier(.4,0,.2,1), transform 0.35s cubic-bezier(.4,0,.2,1)';
-            document.body.appendChild(toast);
+            let container = document.getElementById('toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toast-container';
+                document.body.appendChild(container);
+            }
+            const toast = document.createElement('div');
+            toast.className = 'toast-custom';
+            toast.innerHTML = `
+                <div class="toast-icon" style="background:white; color:${error ? '#ef4444' : '#10b981'}; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center;">
+                    <i class="fas ${error ? 'fa-times' : 'fa-check'}" style="font-size:12px;"></i>
+                </div>
+                <div class="toast-message">${message}</div>
+            `;
+            container.appendChild(toast);
             setTimeout(() => {
-                toast.style.opacity = '1';
-                toast.style.transform = 'translateX(0)';
-            }, 50);
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateX(120px)';
-            }, 3500);
-            setTimeout(() => { try { toast.remove(); } catch(e){} }, 4000);
+                toast.classList.add('fade-out');
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+    }
+
+    setupDeleteModalListeners() {
+        // Initialiser les écouteurs du modal de suppression une seule fois
+        const confirmModal = document.getElementById('confirmModal');
+        const cancelDeleteBtn = document.getElementById('cancelDelete');
+        const confirmDeleteBtn = document.getElementById('confirmDelete');
+
+        if (cancelDeleteBtn) {
+            cancelDeleteBtn.addEventListener('click', () => {
+                if (confirmModal) confirmModal.style.display = 'none';
+                this.budgetIdToDelete = null;
+            });
+        }
+
+        if (confirmDeleteBtn) {
+            confirmDeleteBtn.addEventListener('click', async () => {
+                if (!this.budgetIdToDelete) return;
+                if (confirmModal) confirmModal.style.display = 'none';
+                try {
+                    const response = await fetch('php/budgets/delete.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'same-origin',
+                        body: JSON.stringify({ id: this.budgetIdToDelete })
+                    });
+                    const data = await response.json();
+                    if (data.status === 'success') {
+                        const t = (typeof translations !== 'undefined' && translations[document.documentElement.lang]) ? translations[document.documentElement.lang] : {};
+                        showToast(t.budgetDeleted || 'Budget supprimé avec succès !');
+                        await this.fetchAndRenderBudgets();
+                    } else {
+                        showToast(data.message || 'Erreur lors de la suppression.', true);
+                    }
+                } catch (err) {
+                    const t = (typeof translations !== 'undefined' && translations[document.documentElement.lang]) ? translations[document.documentElement.lang] : {};
+                    showToast(t.networkError || 'Erreur réseau ou serveur.', true);
+                }
+                this.budgetIdToDelete = null;
+            });
         }
     }
 
@@ -336,14 +409,16 @@ class BudgetManager {
             });
             const data = await response.json();
             if (data.status === 'success') {
-                showToast('Budget créé avec succès !');
+                const t = (typeof translations !== 'undefined' && translations[document.documentElement.lang]) ? translations[document.documentElement.lang] : {};
+                showToast(t.budgetCreatedSuccess || 'Budget créé avec succès !');
                 form.reset();
                 await this.fetchAndRenderBudgets();
             } else {
                 showToast(data.message || 'Erreur lors de la création.', true);
             }
         } catch (err) {
-            this.showNotification('Erreur réseau ou serveur.', 'error');
+            const t = (typeof translations !== 'undefined' && translations[document.documentElement.lang]) ? translations[document.documentElement.lang] : {};
+            this.showNotification(t.networkError || 'Erreur réseau ou serveur.', 'error');
         }
     }
 
@@ -383,7 +458,7 @@ class BudgetManager {
         if (container) {
             container.style.fontFamily = 'Inter, Arial, sans-serif';
         }
-        const currency = localStorage.getItem('appCurrency') || '€';
+        const currency = window.appCurrency || 'XAF';
         if (!container) return;
         container.innerHTML = '';
 
@@ -393,18 +468,14 @@ class BudgetManager {
         const hasFilter = period || category || status;
         if (hasFilter) {
             if (period) {
-                console.log('Filtre période:', period);
-                console.log('Valeurs des budgets:', this.budgets.map(b => b.month));
                 const filterPeriod = String(period).trim().toLowerCase();
+                
                 filteredBudgets = filteredBudgets.filter(b => {
                     const budgetPeriod = String(b.month).trim().toLowerCase();
-                    if (filterPeriod === 'hebdomadaire') {
-                        // Accepte toutes variantes commençant par 'hebdo' (hebdo, hebdomadaire, hebdoma, hebdo­ma, etc.)
-                        return budgetPeriod.startsWith('hebdo');
-                    }
                     const periodMap = {
                         'mensuel': ['mensuel', 'mois'],
-                        'annuel': ['annuel', 'an']
+                        'hebdomadaire': ['hebdomadaire', 'hebdo', 'hebdoma', 'semaine'],
+                        'annuel': ['annuel', 'an', 'année']
                     };
                     if (periodMap[filterPeriod]) {
                         return periodMap[filterPeriod].includes(budgetPeriod);
@@ -419,9 +490,7 @@ class BudgetManager {
                 // Calcul du statut
                 filteredBudgets = filteredBudgets.filter(b => {
                     // Calcul du montant dépensé
-                    const spent = this.transactions
-                        .filter(t => t.category_id == b.category_id && t.category_type === 'expense' && (t.month === b.month || !t.month))
-                        .reduce((sum, t) => sum + Number(t.amount), 0);
+                    const spent = this.calculateSpentForBudget(b, this.transactions);
                     if (status === 'actif') {
                         return spent < Number(b.amount);
                     } else if (status === 'dépassé') {
@@ -434,7 +503,8 @@ class BudgetManager {
 
         if (!filteredBudgets || filteredBudgets.length === 0) {
             document.getElementById('noBudgetsMessage').style.display = 'block';
-            document.getElementById('noBudgetsMessage').innerHTML = '<i class="fas fa-inbox"></i><p>Aucun budget trouvé pour ces filtres.</p>';
+            const t = (typeof translations !== 'undefined' && translations[document.documentElement.lang]) ? translations[document.documentElement.lang] : {};
+            document.getElementById('noBudgetsMessage').innerHTML = '<i class="fas fa-inbox"></i><p>' + (t.noBudgetFilters || 'Aucun budget trouvé pour ces filtres.') + '</p>';
             return;
         } else {
             document.getElementById('noBudgetsMessage').style.display = 'none';
@@ -483,9 +553,7 @@ class BudgetManager {
         const t = (typeof translations !== 'undefined' && translations[document.documentElement.lang]) ? translations[document.documentElement.lang] : {};
         filteredBudgets.forEach(budget => {
             // Calcul du montant dépensé pour ce budget (transactions de même catégorie et même période)
-            const spent = transactions
-                .filter(t => t.category_id == budget.category_id && t.category_type === 'expense' && (t.month === budget.month || !t.month))
-                .reduce((sum, t) => sum + Number(t.amount), 0);
+            const spent = this.calculateSpentForBudget(budget, transactions);
             const percent = Math.min(100, budget.amount > 0 ? (spent / budget.amount) * 100 : 0);
             // Traduction catégorie
             let cat = budget.category_name || (t.other || 'Autre');
@@ -532,7 +600,8 @@ class BudgetManager {
                         const periodMap = {
                             'mensuel': t.monthly,
                             'annuel': t.yearly,
-                            'hebdomadaire': t.weekly
+                            'hebdomadaire': t.weekly,
+                            'hebdoma': t.weekly
                         };
                         if (periodMap[key]) return periodMap[key];
                         return t[key] || t[budget.month] || budget.month;
@@ -615,40 +684,6 @@ class BudgetManager {
                         }
                     });
                 }
-                        // Gestion du popup de suppression
-                        const confirmModal = document.getElementById('confirmModal');
-                        const cancelDeleteBtn = document.getElementById('cancelDelete');
-                        const confirmDeleteBtn = document.getElementById('confirmDelete');
-                        if (cancelDeleteBtn) {
-                            cancelDeleteBtn.addEventListener('click', () => {
-                                if (confirmModal) confirmModal.style.display = 'none';
-                                this.budgetIdToDelete = null;
-                            });
-                        }
-                        if (confirmDeleteBtn) {
-                            confirmDeleteBtn.addEventListener('click', async () => {
-                                if (!this.budgetIdToDelete) return;
-                                if (confirmModal) confirmModal.style.display = 'none';
-                                try {
-                                    const response = await fetch('php/budgets/delete.php', {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        credentials: 'same-origin',
-                                        body: JSON.stringify({ id: this.budgetIdToDelete })
-                                    });
-                                    const data = await response.json();
-                                    if (data.status === 'success') {
-                                        showToast('Budget supprimé avec succès !');
-                                        await this.fetchAndRenderBudgets();
-                                    } else {
-                                        showToast(data.message || 'Erreur lors de la suppression.', true);
-                                    }
-                                } catch (err) {
-                                    showToast('Erreur réseau ou serveur.', true);
-                                }
-                                this.budgetIdToDelete = null;
-                            });
-                        }
                 // Fermeture du modal d'édition
                 const closeEditModal = document.getElementById('closeModal');
                 if (closeEditModal) {

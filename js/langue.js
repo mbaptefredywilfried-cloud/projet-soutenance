@@ -35,7 +35,18 @@ function applyLanguage(lang) {
     document.querySelectorAll('[data-i18n]').forEach(element => {
         const key = element.getAttribute('data-i18n');
         if (translation[key]) {
-            element.textContent = translation[key];
+            // Si l'élément a des enfants (comme des icônes), on préserve la structure
+            if (element.children.length > 0) {
+                // Trouver où placer le texte (après les icônes)
+                const lastChild = element.lastChild;
+                if (lastChild.nodeType === Node.TEXT_NODE) {
+                    lastChild.textContent = ' ' + translation[key];
+                } else {
+                    element.appendChild(document.createTextNode(' ' + translation[key]));
+                }
+            } else {
+                element.textContent = translation[key];
+            }
         }
     });
     
