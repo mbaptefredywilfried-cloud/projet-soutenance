@@ -16,6 +16,7 @@
 /* CSS Variables for Professional Theming */
 html {
     overflow-x: hidden !important;
+    overflow-y: hidden !important; /* Masquer scrollbar Y */
     --primary-color: #36A2EB;
     --primary-dark: #1d4ed8;
     --secondary-color: #64748b;
@@ -24,18 +25,28 @@ html {
     --danger-color: #ef4444;
     --background-color: #f8fafc;
     --card-background: #ffffff;
-    overflow-x: hidden !important;
     --text-primary: #1e293b;
     --text-secondary: #64748b;
     --border-color: #e2e8f0;
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     --border-radius: 8px;
-    overflow-x: hidden !important;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-main {
-    overflow-x: hidden !important;
 }
+
+/* Masquer scrollbars (webkit) */
+html::-webkit-scrollbar {
+    display: none;
+}
+
+/* Masquer scrollbars (Firefox) */
+html {
+    scrollbar-width: none;
+}
+
+/* Masquer scrollbars (IE/Edge) */
+html {
+    -ms-overflow-style: none;
 }
 
 * {
@@ -193,11 +204,11 @@ main .top-bar {
 
 
 main .containt h3{
-    font-size: 28px;
+    font-size: 23px;
     margin: 0;
     padding: 0;
-    color: var(--text-primary);
-    font-weight: 600;
+    color: black;
+    font-weight: 700;
 }
 
 main .containt .current{

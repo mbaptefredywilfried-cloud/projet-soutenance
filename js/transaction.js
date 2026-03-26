@@ -359,10 +359,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // Confirmation suppression
     window.confirmDeleteTransaction = function(id) {
         transactionToDelete = id;
-        if (deleteModal) deleteModal.style.display = 'flex';
+        if (deleteModal) deleteModal.classList.add('show');
         document.getElementById('confirmDeleteBtn').onclick = async function() {
             await deleteTransaction(transactionToDelete);
-            if (deleteModal) deleteModal.style.display = 'none';
+            if (deleteModal) deleteModal.classList.remove('show');
             transactionToDelete = null;
         };
     };
@@ -542,7 +542,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- GESTION DU MODAL DE SUPPRESSION ---
     document.getElementById('cancelDeleteBtn')?.addEventListener('click', () => {
-        if(deleteModal) deleteModal.style.display = 'none';
+        if(deleteModal) deleteModal.classList.remove('show');
         transactionToDelete = null;
     });
 
@@ -696,7 +696,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const deleteAllBtn = document.getElementById('deleteAllBtn');
     if (deleteAllBtn) {
         deleteAllBtn.addEventListener('click', function() {
-            if (deleteModal) deleteModal.style.display = 'flex';
+            if (deleteModal) deleteModal.classList.add('show');
             document.getElementById('confirmDeleteBtn').onclick = async function() {
                 try {
                     const response = await fetch('php/transactions/delete_all.php', {
@@ -708,7 +708,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         transactions = [];
                         localStorage.setItem('transactions', JSON.stringify([]));
                         renderTransactions();
-                        // Correction : on affiche toujours le texte traduit, jamais la clé brute
                         let rawLang = document.documentElement.lang || 'fr';
                         let currentLang = rawLang.startsWith('en') ? 'en' : (rawLang.startsWith('fr') ? 'fr' : 'en');
                         let message = (typeof translations !== 'undefined' && translations[currentLang] && translations[currentLang].historyCleared)
@@ -721,7 +720,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 } catch (e) {
                     showErrorToast("Erreur lors de la suppression");
                 }
-                if (deleteModal) deleteModal.style.display = 'none';
+                if (deleteModal) deleteModal.classList.remove('show');
             };
         });
     }
@@ -957,14 +956,14 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- Suppression simple avec Modal ---
     window.deleteTransaction = function(id) {
         transactionToDelete = id;
-        if(deleteModal) deleteModal.style.display = 'flex';
+        if(deleteModal) deleteModal.classList.add('show');
 
         document.getElementById('confirmDeleteBtn').onclick = function() {
             if (transactionToDelete !== null) {
                 transactions = transactions.filter(t => t.id !== transactionToDelete);
                 localStorage.setItem('transactions', JSON.stringify(transactions));
                 renderTransactions();
-                if (deleteModal) deleteModal.style.display = 'none';
+                if (deleteModal) deleteModal.classList.remove('show');
                 showSuccessToast('transactionDeleted');
                 transactionToDelete = null;
             }

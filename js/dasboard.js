@@ -1,4 +1,26 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // --- CACHE GLOBAL ---
+    let __transactionsCache = null;
+    let __cacheTimestamp = 0;
+    const CACHE_DURATION = 5000; // 5 secondes
+
+    async function getTransactionsData() {
+        const now = Date.now();
+        if (__transactionsCache && (now - __cacheTimestamp) < CACHE_DURATION) {
+            return __transactionsCache;
+        }
+        try {
+            const response = await fetch('php/transactions/list.php', { credentials: 'same-origin' });
+            const data = await response.json();
+            __transactionsCache = data.status === 'success' ? data.data : [];
+            __cacheTimestamp = now;
+            return __transactionsCache;
+        } catch (e) {
+            console.error('Erreur fetch transactions:', e);
+            return [];
+        }
+    }
+
     // --- 0. SYNCHRONISATION DE LA COULEUR D'ACCENT ---
     function setAccentColorVar(color) {
         document.documentElement.style.setProperty('--accent-color', color);
@@ -116,12 +138,7 @@ function handleAccountStats() {
     }
     async function renderDashboardTransactions() {
         try {
-            const response = await fetch('php/transactions/list.php', { credentials: 'same-origin' });
-            const data = await response.json();
-            let transactions = [];
-            if (data.status === 'success') {
-                transactions = data.data;
-            }
+            const transactions = await getTransactionsData();
             const currencySymbol = window.appCurrency || 'EUR';
             const typeVal = filterType ? filterType.value : 'all';
             const catVal = filterCategory ? filterCategory.value : 'all';
@@ -183,16 +200,7 @@ function handleAccountStats() {
 
     async function updateSummaryCards() {
         try {
-            const response = await fetch('php/transactions/list.php', { credentials: 'same-origin' });
-            const data = await response.json();
-            console.log('[DEBUG] Transactions récupérées pour dashboard:', data);
-            let transactions = [];
-            if (data.status === 'success') {
-                transactions = data.data;
-            }
-            if (!Array.isArray(transactions) || transactions.length === 0) {
-                console.warn('[DEBUG] Aucune transaction trouvée pour cet utilisateur.');
-            }
+            const transactions = await getTransactionsData();
             let incMois = 0;
             let expTotal = 0;
             const now = new Date();
@@ -402,22 +410,10 @@ function handleAccountStats() {
         updateLineChart();
     }
     // Line Chart Dépense vs Revenu
-    function updateLineChart() {
+    async function updateLineChart() {
         if (!lineChart) return;
-        fetch('php/transactions/list.php', { credentials: 'same-origin' })
-            .then(response => response.json())
-            .then(data => {
-                let transactions = [];
-                if (data.status === 'success') {
-                    transactions = data.data;
-                }
-                // DEBUG LOGS
-                console.log('[DEBUG] Transactions reçues pour line chart:', transactions);
-                // Afficher les dates extraites
-                transactions.forEach(t => {
-                    const dateStr = t.transaction_date || t.date;
-                    console.log('[DEBUG] Transaction:', t, 'Date utilisée:', dateStr, 'Type:', t.category_type, 'Montant:', t.amount);
-                });
+        try {
+            const transactions = await getTransactionsData();
                 // Grouper par semaine (5 dernières semaines)
                 const now = new Date();
                 const weeks = [];
@@ -455,10 +451,6 @@ function handleAccountStats() {
                             const dateStr = t.transaction_date || t.date;
                             if (!dateStr) return false;
                             const d = new Date(dateStr);
-                            // DEBUG
-                            if (t.category_type === 'income') {
-                                console.log('[DEBUG] Vérif revenu:', d, 'entre', w.start, 'et', w.end, d >= w.start && d <= w.end);
-                            }
                             return d >= w.start && d <= w.end && t.category_type === 'income';
                         })
                         .reduce((sum, t) => sum + parseFloat(t.amount), 0);
@@ -469,10 +461,6 @@ function handleAccountStats() {
                             const dateStr = t.transaction_date || t.date;
                             if (!dateStr) return false;
                             const d = new Date(dateStr);
-                            // DEBUG
-                            if (t.category_type === 'expense') {
-                                console.log('[DEBUG] Vérif dépense:', d, 'entre', w.start, 'et', w.end, d >= w.start && d <= w.end);
-                            }
                             return d >= w.start && d <= w.end && t.category_type === 'expense';
                         })
                         .reduce((sum, t) => sum + parseFloat(t.amount), 0);
@@ -506,24 +494,15 @@ function handleAccountStats() {
                     };
                 }
                 lineChart.update();
-            });
+        } catch (e) {
+            console.error('Erreur updateLineChart:', e);
+        }
     }
 
-   function updatePieChart(period) {
+   async function updatePieChart(period) {
         if (!pieChart) return;
-        fetch('php/transactions/list.php', { credentials: 'same-origin' })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Réponse backend pour piechart:', data);
-                if (Array.isArray(data.data)) {
-                    data.data.forEach((t, i) => {
-                        console.log(`Transaction[${i}]`, t);
-                    });
-                }
-                let transactions = [];
-                if (data.status === 'success') {
-                    transactions = data.data;
-                }
+        try {
+            const transactions = await getTransactionsData();
                 const now = new Date();
                 // 1. Filtrage par période
                 const periodFiltered = transactions.filter(t => {
@@ -596,10 +575,9 @@ function handleAccountStats() {
                     color: '#1e293b'
                 };
                 pieChart.update();
-            })
-            .catch(() => {
-                showEmptyPieState();
-            });
+        } catch (e) {
+            showEmptyPieState();
+        }
     }
 
     function formatAmountForChart(amount) {
@@ -609,15 +587,10 @@ function handleAccountStats() {
         return amount.toString();
     }
 
-    function updateBarChart(scope) {
+    async function updateBarChart(scope) {
         if (!barChart) return;
-        fetch('php/transactions/list.php', { credentials: 'same-origin' })
-            .then(response => response.json())
-            .then(data => {
-                let transactions = [];
-                if (data.status === 'success') {
-                    transactions = data.data;
-                }
+        try {
+            const transactions = await getTransactionsData();
                 const now = new Date();
                 // Noms des mois dynamiques selon la langue
                 const currentLang = document.documentElement.lang || 'fr';
@@ -673,21 +646,15 @@ function handleAccountStats() {
                     };
                 }
                 barChart.update();
-            })
-            .catch(() => {
-                // Optionnel : afficher un état vide ou une erreur
-            });
+        } catch (e) {
+            console.error('Erreur updateBarChart:', e);
+        }
     }
 
-    function updateCategoryFilter() {
+    async function updateCategoryFilter() {
         if (!filterCategory) return;
-        fetch('php/transactions/list.php', { credentials: 'same-origin' })
-            .then(response => response.json())
-            .then(data => {
-                let transactions = [];
-                if (data.status === 'success') {
-                    transactions = data.data;
-                }
+        try {
+            const transactions = await getTransactionsData();
                 const uniqueCategories = [...new Set(transactions.map(t => (t.category_name ? t.category_name.trim() : '')))].filter(cat => cat);
                 filterCategory.innerHTML = `<option value="all">${translationsObj[document.documentElement.lang]?.allCategories || 'Toutes les catégories'}</option>`;
                 uniqueCategories.forEach(cat => {
@@ -704,7 +671,9 @@ function handleAccountStats() {
                     }
                     filterCategory.appendChild(option);
                 });
-            });
+        } catch (e) {
+            console.error('Erreur updateCategoryFilter:', e);
+        }
     }
 
     // 5. ÉCOUTEURS D'ÉVÉNEMENTS
@@ -739,6 +708,7 @@ function handleAccountStats() {
 
     // Rafraîchir le dashboard après une transaction
     window.addEventListener('transactionsUpdated', function() {
+        __transactionsCache = null; // Invalide le cache
         updateSummaryCards();
         renderDashboardTransactions();
         updateCategoryFilter();

@@ -173,16 +173,14 @@
     </div>
     <div id="toast-container"></div>
     
-    <div id="deleteModal" class="custom-modal2">
-        <div class="modal-content2">
-            <div class="modal-icon-warning">
-                <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <h3 data-i18n="deleteTransactionTitle">Supprimer la transaction ?</h3>
+    <div id="deleteModal" class="modal">
+        <div class="modal-content confirm-box">
+            <i class="fas fa-exclamation-triangle warning-icon"></i>
+            <h2 data-i18n="deleteTransactionTitle">Supprimer la transaction ?</h2>
             <p data-i18n="irreversibleAction">Cette action est irréversible.</p>
-            <div class="modal-buttons">
-                <button id="confirmDeleteBtn" class="btn-confirm" data-i18n="confirmDelete">Supprimer</button>
-                <button id="cancelDeleteBtn" class="btn-cancel" data-i18n="cancel">Annuler</button>
+            <div class="confirm-btns">
+                <button id="cancelDeleteBtn" class="btn-secondary" data-i18n="cancel">Annuler</button>
+                <button id="confirmDeleteBtn" class="btn-danger" data-i18n="confirmDelete">Supprimer</button>
             </div>
         </div>
     </div>
