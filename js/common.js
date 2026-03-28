@@ -3,8 +3,8 @@
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Charger les paramètres utilisateur (accent et devise) depuis le serveur
-    fetch('/PROJET/php/data/user_profile.php?action=get', {
+    // Charger les paramètres utilisateur (accent, devise, et dark mode) depuis le serveur
+    fetch('php/data/user_profile.php?action=get', {
         method: 'GET',
         credentials: 'same-origin'
     })
@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     .then(data => {
         let accent = '#36A2EB'; // couleur par défaut
         let currency = 'EUR'; // devise par défaut
+        let darkMode = false; // mode sombre par défaut
         
         if (data && data.settings) {
             if (data.settings.accent_gradient) {
@@ -20,12 +21,21 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.settings.currency) {
                 currency = data.settings.currency;
             }
+            if (data.settings.dark_mode !== undefined) {
+                darkMode = data.settings.dark_mode === 1 || data.settings.dark_mode === true;
+            }
         }
         
+        // Forcer le symbole € si la valeur est EUR
+        if (currency === 'EUR') currency = '€';
         // Stocker la devise dans une variable globale
         window.appCurrency = currency;
-        console.log('[DEBUG accent_gradient]', accent, data);
-        console.log('[DEBUG currency]', currency);
+        window.appDarkMode = darkMode ? 1 : 0;
+        
+        // Appliquer le mode sombre
+        if (darkMode) {
+            document.body.classList.add('dark-mode');
+        }
         
         // Si c'est un gradient, on extrait la couleur de départ pour la compatibilité
         let color = accent;
@@ -36,12 +46,36 @@ document.addEventListener('DOMContentLoaded', function() {
         enforceAuth();
     })
     .catch((e) => {
-        console.log('[DEBUG accent_gradient] fallback', e);
         // fallback couleur par défaut
         window.appCurrency = 'EUR';
+        window.appDarkMode = 0;
         applyAccentColor('#36A2EB');
         updateActiveMenu();
         enforceAuth();
+    });
+});
+
+// Écouter les changements de dark mode depuis d'autres pages (ex: parametre.js)
+window.addEventListener('darkModeChanged', function() {
+    // Recharger les paramètres utilisateur
+    fetch('php/data/user_profile.php?action=get', {
+        method: 'GET',
+        credentials: 'same-origin'
+    })
+    .then(resp => resp.json())
+    .then(data => {
+        if (data && data.settings && data.settings.dark_mode !== undefined) {
+            const isDarkMode = data.settings.dark_mode === 1 || data.settings.dark_mode === true;
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+            window.appDarkMode = isDarkMode ? 1 : 0;
+        }
+    })
+    .catch((e) => {
+        console.log('Erreur lors de la synchronisation du dark mode');
     });
 });
 

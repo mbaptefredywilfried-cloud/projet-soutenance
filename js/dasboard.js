@@ -1,4 +1,32 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // --- MISE À JOUR DE LA DATE ACTUELLE ---
+    function updateCurrentDate() {
+        const now = new Date();
+        const currentLanguage = localStorage.getItem('appLanguage') || 'fr';
+        
+        const monthsFr = ['JANVIER', 'FÉVRIER', 'MARS', 'AVRIL', 'MAI', 'JUIN', 
+                         'JUILLET', 'AOÛT', 'SEPTEMBRE', 'OCTOBRE', 'NOVEMBRE', 'DÉCEMBRE'];
+        const monthsEn = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 
+                         'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
+        
+        const months = currentLanguage === 'en' ? monthsEn : monthsFr;
+        
+        const monthElement = document.getElementById('currentMonth');
+        const yearElement = document.getElementById('currentYear');
+        
+        if (monthElement) monthElement.textContent = months[now.getMonth()];
+        if (yearElement) yearElement.textContent = now.getFullYear();
+    }
+    
+    updateCurrentDate();
+    
+    // Mettre à jour la date quand la langue change
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'appLanguage') {
+            updateCurrentDate();
+        }
+    });
+
     // --- CACHE GLOBAL ---
     let __transactionsCache = null;
     let __cacheTimestamp = 0;
@@ -240,7 +268,7 @@ function handleAccountStats() {
                 cards[0].textContent = `${formatAmountDash(soldeAffiche)} ${currencySymbol}`;
                 cards[1].textContent = `${formatAmountDash(incMois)} ${currencySymbol}`;
                 // Affichage strict du montant (pas de Math.max)
-                cards[2].textContent = `${formatAmountDash(Number(expTotal))} ${currencySymbol}`;
+                cards[2].textContent = `- ${formatAmountDash(Number(expTotal))} ${currencySymbol}`;
                 
                 // Mettre à jour les indicateurs dynamiquement
                 // Calculer les données du mois précédent

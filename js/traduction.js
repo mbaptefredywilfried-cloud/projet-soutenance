@@ -84,6 +84,8 @@ const translations = {
     totalBalance: "Solde total",
     monthlyIncome: "Revenu du mois",
     monthlyExpense: "Dépense du mois",
+    quickSummary: "Voici votre résumé financier du mois",
+    summaryDescription: "Suivez votre progression financière et maîtrisez votre budget pour atteindre vos objectifs",
     noRecentTransaction: "Aucune transaction récente effectuée",
     loadingError: "Erreur de chargement",
     totalExpenses: "Total dépenses :",
@@ -250,6 +252,7 @@ const translations = {
     transactionModified: "Transaction modifié !",
     noTransactionsFound: "Aucune transaction trouvée",
     budgetCreatedSuccess: "Budget créé avec succès!",
+    budgetUpdatedSuccess: "Budget modifié avec succès!",
     budgetDeleted: "Budget supprimé",
     allBudgetsDeleted: "Tous les budgets supprimés!",
     photoUpdated: "Photo de profil mise à jour avec succès !",
@@ -259,6 +262,48 @@ const translations = {
     dataExported: "Données exportées avec succès !",
     languageChanged: "Langue changée avec succès !",
     profileExportError: "Impossible d'exporter : utilisateur non authentifié",
+    editProfilePhoto: "Modifier la photo de profil",
+    chooseFile: "Choisir une image",
+    upload: "Uploader",
+    // Messages paramétrages
+    dataReset: "Données réinitialisées !",
+    currencyUpdated: "Devise principale mise à jour !",
+    darkModeEnabled: "Mode sombre activé ✨",
+    darkModeDisabled: "Mode clair activé ☀️",
+    remindersEnabled: "Rappels activés !",
+    remindersDisabled: "Rappels désactivés",
+    budgetOverrunEnabled: "Notifications de dépassement activées !",
+    budgetOverrunDisabled: "Notifications de dépassement désactivées",
+    languageUpdateError: "Erreur lors de la mise à jour de la langue",
+    // Preview et devises
+    bgPreview: "Fond",
+    accentPreview: "Accent",
+    borderPreview: "Bordure",
+    fcfaCurrency: "FCFA (XAF)",
+    euroCurrency: "Euro (€)",
+    dollarCurrency: "Dollar US ($)",
+    // Erreurs formulaires mot de passe
+    errorPasswordFieldsRequired: "Tous les champs de mot de passe sont obligatoires.",
+    errorPasswordMinLength: "Le nouveau mot de passe doit contenir au moins 8 caractères.",
+    errorPasswordMismatch: "Les nouveaux mots de passe ne correspondent pas.",
+    errorPasswordSame: "Le nouveau mot de passe doit être différent de l'ancien.",
+    passwordChangeSuccess: "Mot de passe mis à jour avec succès !",
+    passwordChangeError: "Erreur lors du changement de mot de passe.",
+    networkError2: "Erreur réseau. Veuillez réessayer.",
+    exportError: "Impossible d'exporter les données. Veuillez réessayer.",
+    exportErrorNetwork: "Erreur réseau. Veuillez vérifier votre connexion.",
+    resetConfirmTitle: "Réinitialisation",
+    resetConfirmMessage: "Êtes-vous sûr ? Toutes vos transactions et vos budgets seront définitivement supprimés.",
+    resetSuccess: "Données réinitialisées avec succès.",
+    resetError: "Erreur lors de la réinitialisation.",
+    // Button Labels
+    buttonUnderstood: "Compris",
+    buttonCancel: "Annuler",
+    buttonConfirmDelete: "Supprimer",
+    buttonConfirmReset: "Réinitialiser",
+    // Popup Titles
+    popupErrorTitle: "Erreur",
+    popupSuccessTitle: "Succès",
     
     // Error Messages
     futuresDatesNotAllowed: "Les dates futures sont interdites",
@@ -297,7 +342,6 @@ const translations = {
     errorSelectPeriod: "Veuillez choisir une période.",
     resetBtn: "Réinitialiser",
     budgetCreated: "Budget créé avec succès!",
-    
     budgetUpdated: "Budget mis à jour!",
     
     yourActiveBudgets: "Vos Budgets Actifs",
@@ -334,7 +378,7 @@ const translations = {
     twoFactorAuth: "Two-Factor Auth",
     twoFactorAuthDesc: "Activé via Authentificateur",
     activeSessions: "Active Sessions",
-    activeSessionsDesc: "3 appareils connectés",
+    activeSessionsDesc: "0 appareils connectés",
     exportData: "Exporter les données",
     deleteAccount: "Supprimer le compte",
     editInfoTitle: "Modifier les informations",
@@ -365,6 +409,24 @@ const translations = {
     architectMessage: "Organisez vos finances avec la précision d'un architecte.",
     confirmDeleteAllBudgets: "Voulez-vous vraiment supprimer tous les budgets ?",
     deleteAll: "Supprimer tout",
+
+    // Notifications
+    notif_income_title: "Revenu reçu",
+    notif_expense_title: "Dépense enregistrée",
+    notif_budget_exceeded_title: "Budget dépassé!",
+    notif_budget_warning_title: "Budget presque atteint",
+    notif_budget_info_title: "Gestion budgétaire",
+    
+    // Time ago translations
+    justNow: "À l'instant",
+    minutesAgo: "Il y a {count}m",
+    hoursAgo: "Il y a {count}h",
+    daysAgo: "Il y a {count}j",
+    
+    // Avatar upload translations
+    selectImage: "Veuillez sélectionner une image",
+    unsupportedFile: "Fichier non pris en charge. Veuillez uploader une image (JPG ou PNG)",
+    fileTooLarge: "Le fichier est trop volumineux (max 2MB)",
   },
 
 
@@ -417,7 +479,7 @@ const translations = {
         twoFactorAuth: "Two-Factor Auth",
         twoFactorAuthDesc: "Currently Enabled via Authenticator",
         activeSessions: "Active Sessions",
-        activeSessionsDesc: "3 devices connected",
+        activeSessionsDesc: "0 devices connected",
         exportData: "Export data",
         deleteAccount: "Delete account",
         editInfoTitle: "Edit information",
@@ -477,6 +539,8 @@ const translations = {
     totalBalance: "Total balance",
     monthlyIncome: "Monthly income",
     monthlyExpense: "Monthly expense",
+    quickSummary: "Here is your monthly financial summary",
+    summaryDescription: "Monitor your financial progress and take control of your budget to achieve your goals",
     noRecentTransaction: "No recent transaction performed",
     totalExpenses: "Total expenses:",
     noExpense: "No expense",
@@ -597,6 +661,9 @@ const translations = {
     profileUpdated: "Profile updated successfully!",
     profileUpdateError: "Error updating profile.",
     networkError: "Network error. Please try again later.",
+    editProfilePhoto: "Edit profile photo",
+    chooseFile: "Choose an image",
+    upload: "Upload",
     reset: "Reset",
 
     yourActiveBudgets: "Your active budgets",
@@ -614,7 +681,7 @@ const translations = {
     savePassword: "Save password",
     resetLocalData: "Reset local data",
 
-    synchronization: "Synchronization",
+    synchronization: "Synchronisation",
     lastBackup: "Last backup",
     noBackup: "No backup",
     importFile: "Import file",
@@ -646,9 +713,59 @@ const translations = {
     transactionModified: "Transaction modified!",
     noTransactionsFound: "No transactions found",
     
+    budgetCreatedSuccess: "Budget created successfully!",
+    budgetUpdatedSuccess: "Budget updated successfully!",
     budgetDeleted: "Budget deleted",
-    deleteAllBudgets: "Delete all budgets ?",
-    confirmDeleteBudget: "Are you sure you want to delete this budget ?",
+    allBudgetsDeleted: "All budgets deleted!",
+    photoUpdated: "Profile photo updated successfully!",
+    profileUpdated: "Profile updated successfully!",
+    profileUpdateError: "Error updating profile.",
+    networkError: "Network error. Please try again later.",
+    dataExported: "Data exported successfully!",
+    languageChanged: "Language changed successfully!",
+    profileExportError: "Unable to export: user not authenticated",
+    // Settings messages
+    dataReset: "Data reset!",
+    currencyUpdated: "Main currency updated!",
+    darkModeEnabled: "Dark mode enabled ✨",
+    darkModeDisabled: "Light mode enabled ☀️",
+    remindersEnabled: "Reminders enabled!",
+    remindersDisabled: "Reminders disabled",
+    budgetOverrunEnabled: "Budget overrun notifications enabled!",
+    budgetOverrunDisabled: "Budget overrun notifications disabled",
+    languageUpdateError: "Error updating language",
+    // Preview et devises
+    bgPreview: "Background",
+    accentPreview: "Accent",
+    borderPreview: "Border",
+    fcfaCurrency: "FCFA (XAF)",
+    euroCurrency: "Euro (€)",
+    dollarCurrency: "US Dollar ($)",
+    // Password form errors
+    errorPasswordFieldsRequired: "All password fields are required.",
+    errorPasswordMinLength: "New password must contain at least 8 characters.",
+    errorPasswordMismatch: "New passwords do not match.",
+    errorPasswordSame: "New password must be different from the old one.",
+    passwordChangeSuccess: "Password updated successfully!",
+    passwordChangeError: "Error changing password.",
+    networkError2: "Network error. Please try again.",
+    exportError: "Unable to export data. Please try again.",
+    exportErrorNetwork: "Network error. Please check your connection.",
+    resetConfirmTitle: "Reset Data",
+    resetConfirmMessage: "Are you sure? All your transactions and budgets will be permanently deleted.",
+    resetSuccess: "Data reset successfully.",
+    resetError: "Error resetting data.",
+    // Button Labels
+    buttonUnderstood: "Got It",
+    buttonCancel: "Cancel",
+    buttonConfirmDelete: "Delete",
+    buttonConfirmReset: "Reset",
+    // Popup Titles
+    popupErrorTitle: "Error",
+    popupSuccessTitle: "Success",
+    
+    deleteAllBudgets: "Delete all budgets?",
+    confirmDeleteBudget: "Are you sure you want to delete this budget?",
     editBudget: "Edit Budget",
     editButtonLabel: "Edit",
     deleteButtonLabel: "Delete",
@@ -658,8 +775,6 @@ const translations = {
     errorBudgetAmount: "Please enter a valid amount.",
     errorSelectPeriod: "Please choose a period.",
     resetBtn: "Reset",
-    budgetCreated: "Budget created successfully!",
-    budgetUpdated: "Budget updated!",
     
     yourActiveBudgets: "Your Active Budgets",
     filterBudgets: "Filter",
@@ -715,6 +830,24 @@ const translations = {
     architectMessage: "Organize your finances with the precision of an architect.",
     confirmDeleteAllBudgets: "Are you sure you want to delete all budgets?",
     deleteAll: "Delete all",
+
+    // Notifications
+    notif_income_title: "Income received",
+    notif_expense_title: "Expense recorded",
+    notif_budget_exceeded_title: "Budget exceeded!",
+    notif_budget_warning_title: "Budget almost reached",
+    notif_budget_info_title: "Budget management",
+    
+    // Time ago translations
+    justNow: "Just now",
+    minutesAgo: "{count}m ago",
+    hoursAgo: "{count}h ago",
+    daysAgo: "{count}d ago",
+    
+    // Avatar upload translations
+    selectImage: "Please select an image",
+    unsupportedFile: "Unsupported file. Please upload an image (JPG or PNG)",
+    fileTooLarge: "File is too large (max 2MB)",
 
   },
 };

@@ -146,9 +146,10 @@ main {
     display: flex;
     flex-direction: column;
     margin-left: 280px; 
-    overflow: auto;
-    padding: 10px 0px 0px 16px; 
+    padding: 0;
     animation: fadeInUp 0.6s ease-out;
+    height: 100vh;
+    overflow: hidden;
 }
 
 @keyframes fadeInUp {
@@ -162,10 +163,31 @@ main {
     }
 }
 
-main h1 {
-    margin-bottom: 20px;
-    padding-top: 20px;
-    font-size: 30px;
+.page-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: var(--card-background, #ffffff);
+    box-shadow: var(--shadow, 0 4px 6px rgba(0, 0, 0, 0.1));
+    padding: 12px 20px;
+    margin: 0;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.page-header h1 {
+    font-size: 23px;
+    font-weight: 700;
+    color: black;
+    margin-bottom: 8px;
+    text-align: left;
+}
+
+.page-header p {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 .card {
@@ -173,12 +195,14 @@ main h1 {
     grid-template-columns: repeat(3, 392px);
     grid-template-rows: auto auto;
     gap: 12px;
-    margin: 0px 8px 25px 0px;
-    overflow-x: auto;
+    margin: 40px 8px 25px 0px;
+    padding: 0px 0px 0px 16px;
+    overflow: auto;
     width: 100%;
     max-width: 100vw;
     box-sizing: border-box;
     justify-content: start;
+    flex: 1;
 }
 
 /* Placement des cartes :

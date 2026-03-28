@@ -4,26 +4,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Appliquer la langue au chargement
     applyLanguage(savedLanguage);
-    
-    // Mettre à jour le sélecteur de langue
-    const languageSelect = document.getElementById('languageSelect');
-    if (languageSelect) {
-        languageSelect.value = savedLanguage;
-        
-        // Événement de changement de langue
-        languageSelect.addEventListener('change', function() {
-            const selectedLanguage = this.value;
-            if (selectedLanguage) {
-                localStorage.setItem('appLanguage', selectedLanguage);
-                applyLanguage(selectedLanguage);
-                showToast('Langue changée avec succès !');
-                // Recharger la page après un court délai pour appliquer les traductions
-                setTimeout(() => {
-                    location.reload();
-                }, 500);
-            }
-        });
-    }
+});
+
+// Écouter les changements de langue depuis d'autres pages/modules
+window.addEventListener('languageChanged', function() {
+    const savedLanguage = localStorage.getItem('appLanguage') || 'fr';
+    applyLanguage(savedLanguage);
 });
 
 function applyLanguage(lang) {
@@ -70,10 +56,29 @@ function applyLanguage(lang) {
     document.documentElement.lang = lang;
 }
 
+function getTranslation(key, defaultText = null) {
+    try {
+        if (typeof translations === 'undefined') {
+            return defaultText || key;
+        }
+        const lang = localStorage.getItem('appLanguage') || 'fr';
+        if (translations[lang] && translations[lang][key]) {
+            return translations[lang][key];
+        }
+        return defaultText || key;
+    } catch (e) {
+        return defaultText || key;
+    }
+}
+
 function showToast(message) {
     const toast = document.createElement('div');
     toast.className = 'toast';
-    toast.textContent = message;
+    
+    // Essayer de traduire le message
+    let displayMessage = getTranslation(message, message);
+    
+    toast.textContent = displayMessage;
     toast.style.cssText = `
         position: fixed;
         bottom: 20px;

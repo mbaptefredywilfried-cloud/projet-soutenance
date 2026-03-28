@@ -278,7 +278,7 @@
 
     // Log initialization (for debugging)
     if (window.location.search.includes('debug')) {
-      console.log('[Responsive.js] Initialized for page: ' + getCurrentPage());
+      // Debug mode enabled
     }
   }
 

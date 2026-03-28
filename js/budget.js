@@ -24,7 +24,7 @@ class BudgetManager {
                         const data = await response.json();
                         if (data.status === 'success') {
                             const t = (typeof translations !== 'undefined' && translations[document.documentElement.lang]) ? translations[document.documentElement.lang] : {};
-                            showToast(t.budgetCreatedSuccess || 'Budget modifié avec succès !');
+                            showToast(t.budgetUpdatedSuccess || 'Budget modifié avec succès !');
                             document.getElementById('editModal').classList.remove('show');
                             await this.fetchAndRenderBudgets();
                         } else {
@@ -64,7 +64,7 @@ class BudgetManager {
                 const balance = totalBudgeted - totalSpent;
                 const currency = window.appCurrency || 'EUR';
                 if (totalBudgetedEl) totalBudgetedEl.textContent = totalBudgeted.toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ' + currency;
-                if (totalSpentEl) totalSpentEl.textContent = totalSpent.toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ' + currency;
+                if (totalSpentEl) totalSpentEl.textContent = '- ' + totalSpent.toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ' + currency;
                 if (balanceEl) balanceEl.textContent = balance.toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ' + currency;
                 if (activeBudgetsCountEl) activeBudgetsCountEl.textContent = activeCount;
                 if (overspentBudgetsCountEl) overspentBudgetsCountEl.textContent = overspentCount;
@@ -131,6 +131,7 @@ class BudgetManager {
         }
     constructor() {
         this.budgets = [];
+        this.transactions = [];
         this.categories = [];
         this.budgetIdToDelete = null;
         this.activeFilters = {
@@ -210,6 +211,20 @@ class BudgetManager {
             }
         } catch (e) {
             this.categories = [];
+        }
+    }
+
+    async fetchTransactions() {
+        try {
+            const response = await fetch('php/transactions/list.php', { credentials: 'same-origin' });
+            const data = await response.json();
+            if (data.status === 'success' && Array.isArray(data.data)) {
+                this.transactions = data.data;
+            } else {
+                this.transactions = [];
+            }
+        } catch (e) {
+            this.transactions = [];
         }
     }
 
@@ -336,16 +351,30 @@ class BudgetManager {
             }
             const toast = document.createElement('div');
             toast.className = 'toast-custom';
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: ${error ? '#ef4444' : '#10b981'};
+                color: white;
+                padding: 12px 18px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 10000;
+                font-weight: 600;
+                animation: slideInRight 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            `;
             toast.innerHTML = `
-                <div class="toast-icon" style="background:white; color:${error ? '#ef4444' : '#10b981'}; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center;">
-                    <i class="fas ${error ? 'fa-times' : 'fa-check'}" style="font-size:12px;"></i>
-                </div>
-                <div class="toast-message">${message}</div>
+                <i class="fas ${error ? 'fa-circle-xmark' : 'fa-circle-check'}" style="font-size: 18px; flex-shrink: 0;"></i>
+                <span>${message}</span>
             `;
             container.appendChild(toast);
             setTimeout(() => {
-                toast.classList.add('fade-out');
-                setTimeout(() => toast.remove(), 400);
+                toast.style.animation = 'slideOutBottomRight 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
     }
@@ -426,30 +455,18 @@ class BudgetManager {
         try {
             const response = await fetch('php/budgets/list.php', { credentials: 'same-origin' });
             const data = await response.json();
-            console.log('Réponse budgets/list.php:', data); // LOG DEBUG
             if (data.status === 'success') {
                 this.budgets = data.data;
             } else {
                 this.budgets = [];
             }
-            // Récupérer toutes les transactions pour calculer le montant dépensé par budget
-            let transactions = [];
-            try {
-                const response = await fetch('php/transactions/list.php', { credentials: 'same-origin' });
-                const data = await response.json();
-                if (data.status === 'success' && Array.isArray(data.data)) {
-                    transactions = data.data;
-                }
-            } catch (e) {}
-            this.transactions = transactions;
-            this.renderBudgets();
-            this.updateSummary();
         } catch (e) {
             this.budgets = [];
-            this.transactions = [];
-            this.renderBudgets();
-            this.updateSummary();
         }
+        // Charger les transactions en cache
+        await this.fetchTransactions();
+        this.renderBudgets();
+        this.updateSummary();
     }
 
     // Affiche les budgets dans le DOM avec la devise utilisateur et une carte riche
@@ -494,7 +511,7 @@ class BudgetManager {
                     if (status === 'actif') {
                         return spent < Number(b.amount);
                     } else if (status === 'dépassé') {
-                        return spent >= Number(b.amount);
+                        return spent > Number(b.amount);
                     }
                     return true;
                 });
@@ -509,16 +526,6 @@ class BudgetManager {
         } else {
             document.getElementById('noBudgetsMessage').style.display = 'none';
         }
-
-        // Récupérer toutes les transactions pour calculer le montant dépensé par budget
-        let transactions = [];
-        try {
-            const response = await fetch('php/transactions/list.php', { credentials: 'same-origin' });
-            const data = await response.json();
-            if (data.status === 'success' && Array.isArray(data.data)) {
-                transactions = data.data;
-            }
-        } catch (e) {}
 
         // Map d'icônes par catégorie (reprend la logique de transaction.js)
         const iconMap = {
@@ -553,7 +560,7 @@ class BudgetManager {
         const t = (typeof translations !== 'undefined' && translations[document.documentElement.lang]) ? translations[document.documentElement.lang] : {};
         filteredBudgets.forEach(budget => {
             // Calcul du montant dépensé pour ce budget (transactions de même catégorie et même période)
-            const spent = this.calculateSpentForBudget(budget, transactions);
+            const spent = this.calculateSpentForBudget(budget, this.transactions);
             const percent = Math.min(100, budget.amount > 0 ? (spent / budget.amount) * 100 : 0);
             // Traduction catégorie
             let cat = budget.category_name || (t.other || 'Autre');

@@ -34,19 +34,35 @@ html {
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Notification Button with Accent Color */
+.notification-btn {
+    background: rgba(54, 162, 235, 0.1);
+    border: 1px solid rgba(54, 162, 235, 0.2);
+    cursor: pointer;
+    padding: 10px 12px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(54, 162, 235, 0.08);
+    position: relative;
+    will-change: background-color, box-shadow;
+}
+
+.notification-btn i {
+    font-size: 18px;
+    color: var(--accent-color, #36A2EB);
+}
+
+.notification-btn:hover {
+    background: rgba(54, 162, 235, 0.15);
+    box-shadow: 0 4px 12px rgba(54, 162, 235, 0.15);
+}
+
 /* Masquer scrollbars (webkit) */
 html::-webkit-scrollbar {
     display: none;
-}
-
-/* Masquer scrollbars (Firefox) */
-html {
-    scrollbar-width: none;
-}
-
-/* Masquer scrollbars (IE/Edge) */
-html {
-    -ms-overflow-style: none;
 }
 
 * {
@@ -166,6 +182,7 @@ main{
     overflow-y: auto;
     animation: fadeInUp 0.6s ease-out;
     height: 100vh;
+    will-change: transform;
 }
 
 @keyframes fadeInUp {
@@ -202,6 +219,65 @@ main .top-bar {
     height: auto;
 }
 
+/* Quick Summary Section */
+.quick-summary {
+    background: linear-gradient(135deg, rgba(54, 162, 235, 0.08) 0%, rgba(16, 185, 129, 0.04) 100%);
+    padding: 12px 15px;
+    margin: 10px 20px 0 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(54, 162, 235, 0.15);
+    backdrop-filter: blur(8px);
+}
+
+.summary-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.summary-text h2 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 4px 0;
+    padding: 0;
+}
+
+.summary-text p {
+    font-size: 12px;
+    color: #64748b;
+    margin: 0;
+    padding: 0;
+    line-height: 1.4;
+}
+
+.summary-icon {
+    font-size: 24px;
+    color: #36A2EB;
+    opacity: 0.3;
+    flex-shrink: 0;
+}
+
+.summary-date {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.summary-date span:first-child {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.summary-date span:last-child {
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+}
 
 main .containt h3{
     font-size: 23px;
@@ -214,7 +290,7 @@ main .containt h3{
 main .containt .current{
     display: flex;
     width: 100%;
-    padding: 18px 20px;
+    padding: 18px 20px 18px 35px;
     justify-content: space-between;
     margin: 0;
     gap: 20px;
@@ -230,9 +306,10 @@ main .containt .current .card{
     gap: 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     font-weight: 600;
-    transition: all 0.3s ease-in;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
     overflow: hidden;
+    will-change: transform, box-shadow;
 }
 main .containt .current .card .item{
     display: flex;
@@ -320,7 +397,7 @@ main .containt .current .card:nth-child(1)::before {
     bottom: -80px;
     width: 200px;
     height: 200px;
-    opacity: 0.08;
+    opacity: 0.2;
     pointer-events: none;
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M11.8 10.9c-2.27-.59-3-1.38-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.37-3.29-3.26-3.72V3h-3v2.16c-1.94.42-3.5 1.96-3.5 3.84 0 2.33 1.48 3.5 4.4 4.13 2.87.59 3 1.5 3 2.1 0 .78-.64 1.45-2.04 1.45-1.42 0-2.07-.61-2.13-1.66H7.4c.1 1.95 1.53 3.29 3.69 3.72V21h3v-2.15c1.95-.37 3.5-1.83 3.5-3.72 0-2.6-1.55-3.75-4.3-4.21z"/></svg>');
     background-size: contain;
@@ -341,7 +418,7 @@ main .containt .current .card:nth-child(2)::before {
     bottom: -80px;
     width: 200px;
     height: 200px;
-    opacity: 0.08;
+    opacity: 0.2;
     pointer-events: none;
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18 10 11.41l4 4 6.3-6.29L22 12v-6z"/></svg>');
     background-size: contain;
@@ -362,7 +439,7 @@ main .containt .current .card:nth-child(3)::before {
     bottom: -80px;
     width: 200px;
     height: 200px;
-    opacity: 0.08;
+    opacity: 0.2;
     pointer-events: none;
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M22 12l-2.29-2.29-4.88 4.88-4-4L2 7.41 3.41 6 10 12.59l4-4 6.3 6.29L22 12z"/></svg>');
     background-size: contain;
@@ -380,7 +457,7 @@ main .graphic{
     display: flex;
     flex-wrap: wrap;
     gap: 0 2%;
-    padding: 0 20px 20px 20px;
+    padding: 0 20px 20px 35px;
     margin-bottom: 0;
     align-items: stretch;
     align-items: flex-start;
@@ -390,9 +467,9 @@ main .graphic .graph{
     width: 49%;
     border: none;
     border-radius: 13px;
-    height: 400px;
+    height: 380px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-        height: 420px;
+        height: 380px;
     background-color: #fff;
     margin-bottom: 0;
 }
@@ -443,7 +520,7 @@ main .graphic .graph .text .button button:active {
 main .graphic .graph .dashed{
     margin-left: 25px;
     margin-right: 25px;
-    height: 300px;
+    height: 260px;
     justify-content: center;
     display: flex;
     flex-direction: column;
@@ -457,7 +534,7 @@ main .category {
     border-radius: 13px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         background-color: #fff;
-        height: 420px;
+        height: 380px;
     padding: 20px;
     margin-bottom: 0;
 }
@@ -529,7 +606,7 @@ main .category .budget-card{
 /* --- Styles pour la section Transactions Récentes --- */
 
 .recent {
-    margin: 0 20px 20px 20px;
+    margin: 0 20px 20px 35px;
     padding: 24px;
     background-color: var(--card-background);
     border-radius: 13px;
@@ -1130,3 +1207,122 @@ main .category .budget-card{
     display: none !important;
   }
 }
+
+/* ========== DARK MODE STYLES ========== */
+body.dark-mode {
+    --background-color: #1a1a1a;
+    --card-background: #2d2d2d;
+    --text-primary: #e8e8e8;
+    --text-secondary: #b0b0b0;
+    --border-color: #404040;
+}
+
+body.dark-mode aside {
+    background-color: #2d2d2d !important;
+    border-right: 1px solid var(--border-color);
+}
+
+body.dark-mode aside .side {
+    border-bottom-color: var(--border-color);
+}
+
+body.dark-mode aside .nav a {
+    color: var(--text-primary);
+}
+
+body.dark-mode aside .nav a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode main {
+    background-color: var(--background-color);
+    color: var(--text-primary);
+}
+
+body.dark-mode .card {
+    background-color: var(--card-background);
+    border-color: var(--border-color);
+}
+
+body.dark-mode .card h2,
+body.dark-mode .card h3,
+body.dark-mode .card h4,
+body.dark-mode .card strong {
+    color: var(--text-primary);
+}
+
+body.dark-mode .card p {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .page-header h1 {
+    color: var(--text-primary);
+}
+
+body.dark-mode .stat-box {
+    background-color: var(--card-background);
+    border-color: var(--border-color);
+}
+
+body.dark-mode .stat-box h3 {
+    color: var(--text-primary);
+}
+
+body.dark-mode .stat-box p {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .chart-container {
+    background-color: var(--card-background);
+    border-color: var(--border-color);
+}
+
+body.dark-mode .table {
+    background-color: var(--card-background);
+    color: var(--text-primary);
+}
+
+body.dark-mode .table th {
+    background-color: #1e1e1e;
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+body.dark-mode .table td {
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+body.dark-mode .table tr:hover {
+    background-color: #353535;
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+    background-color: var(--card-background);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+    color: var(--text-secondary);
+}
+
+body.dark-mode #donutCenterText {
+    color: var(--text-primary);
+}
+
+body.dark-mode .modal-content,
+body.dark-mode .custom-modal,
+body.dark-mode .custom-modal2 {
+    background-color: var(--card-background);
+    color: var(--text-primary);
+}
+
+body.dark-mode .notification-btn {
+    background: rgba(54, 162, 235, 0.15);
+    border-color: rgba(54, 162, 235, 0.3);
+}
+

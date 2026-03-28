@@ -3,7 +3,6 @@ header('Content-Type: application/json');
 require_once '../config/database.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
-file_put_contents(__DIR__.'/debug_register.txt', print_r($data, true));
 
 if (!isset($data['name'], $data['email'], $data['password'])) {
     echo json_encode(["status" => "error", "message" => "Champs manquants"]);
@@ -13,6 +12,16 @@ if (!isset($data['name'], $data['email'], $data['password'])) {
 $name = trim($data['name']);
 $email = trim($data['email']);
 $password = $data['password'];
+
+if (strlen($password) < 8) {
+    echo json_encode(["status" => "error", "message" => "Le mot de passe doit contenir au moins 8 caractères"]);
+    exit;
+}
+
+if (strlen($name) < 2 || strlen($name) > 100) {
+    echo json_encode(["status" => "error", "message" => "Nom invalide"]);
+    exit;
+}
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     echo json_encode(["status" => "error", "message" => "Email invalide"]);
@@ -33,7 +42,7 @@ try {
     // Thème vert par défaut à la création du compte
     $accent_gradient = 'linear-gradient(180deg, #10b981 0%, #059669 100%)';
     $lang = 'fr';
-    $currency = 'EUR';
+    $currency = 'FCFA'; // Devise par défaut modifiée
     $stmt2 = $pdo->prepare("INSERT INTO user_settings (user_id, accent_gradient, language, currency) VALUES (?, ?, ?, ?)");
     $stmt2->execute([$userId, $accent_gradient, $lang, $currency]);
 

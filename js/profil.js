@@ -9,7 +9,22 @@ document.addEventListener('DOMContentLoaded', function () {
             avatarBtn.style.color = accentColor;
             avatarBtn.style.borderColor = accentColor;
         }
+        // Appliquer la couleur au header du modal avatar
+        const avatarModalHeader = document.querySelector('.avatar-modal-header');
+        if (avatarModalHeader) {
+            avatarModalHeader.style.background = `linear-gradient(135deg, ${accentColor} 0%, ${adjustBrightness(accentColor, -20)} 100%)`;
+        }
     }
+    
+    // Fonction pour ajuster la luminosité d'une couleur hex
+    function adjustBrightness(hex, percent) {
+        hex = hex.replace('#', '');
+        const r = Math.max(0, Math.min(255, parseInt(hex.slice(0, 2), 16) * (1 + percent / 100)));
+        const g = Math.max(0, Math.min(255, parseInt(hex.slice(2, 4), 16) * (1 + percent / 100)));
+        const b = Math.max(0, Math.min(255, parseInt(hex.slice(4, 6), 16) * (1 + percent / 100)));
+        return '#' + [r, g, b].map(x => Math.round(x).toString(16).padStart(2, '0')).join('');
+    }
+    
     // Appliquer l'accent initial au chargement
     applyProfileAccentColor();
     // Réappliquer si la couleur d'accent change (par exemple, après un changement de paramètres)
@@ -104,7 +119,6 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(resp => resp.json())
             .then(data => {
                 const user = data.user || data.data || {};
-                console.log('[DEBUG] user.image =', user.image);
                 if (userNameDisplay) userNameDisplay.textContent = user.username || user.name || '';
                 if (fullNameDisplay) fullNameDisplay.textContent = user.username || user.name || '';
                 if (emailDisplay) emailDisplay.textContent = user.email || '';
@@ -160,7 +174,6 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch('./php/budgets/list.php')
             .then(response => response.json())
             .then(data => {
-                console.log('[APERÇU BUDGÉTAIRE] Réponse backend:', data);
                 const budgets = Array.isArray(data.data) ? data.data : [];
                 let totalBudget = 0;
                 let currencySymbol = window.appCurrency || 'EUR';
@@ -186,7 +199,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 fetch('./php/transactions/list.php')
                     .then(resp => resp.json())
                     .then(transData => {
-                        console.log('[APERÇU BUDGÉTAIRE] Transactions:', transData);
                         const transactions = Array.isArray(transData.data) ? transData.data : [];
                         let totalSpent = 0;
                         let totalSpentActive = 0;
@@ -205,9 +217,9 @@ document.addEventListener('DOMContentLoaded', function () {
                             // Carte orange : Utilisé
                             statsValues[0].textContent = `${displayPercentage}%`;
                             // Carte bleue : Total Budgétisé
-                            statsValues[1].textContent = `${totalBudget.toFixed(2)} ${currencySymbol}`;
+                            statsValues[1].textContent = `${totalBudget.toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ${currencySymbol}`;
                             // Carte rouge : Dépensé (toutes transactions)
-                            statsValues[2].textContent = `${totalSpentAll.toFixed(2)} ${currencySymbol}`;
+                            statsValues[2].textContent = `${totalSpentAll.toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ${currencySymbol}`;
                         }
                         if (budgetAdvice) {
                             const lang = document.documentElement.lang || 'fr';
@@ -219,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             } else if (rawPercentage >= 50) {
                                 budgetAdvice.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:#f59e0b;"></i> <span style="color:#f59e0b;font-weight:bold;">${t.budgetAdviceWarning || 'Attention à vos dépenses'}</span>`;
                             } else {
-                                budgetAdvice.innerHTML = `<i class="fas fa-check-square" style="color:#10b981;"></i> <span style="color:#10b981;font-weight:bold;">${t.budgetAdviceExcellent || 'Gestion excellente'}</span>`;
+                                budgetAdvice.innerHTML = `<i class="fas fa-check-circle" style="color:#10b981;"></i> <span style="color:#10b981;font-weight:bold;">${t.budgetAdviceExcellent || 'Gestion excellente'}</span>`;
                             }
                         }
                     })
@@ -245,10 +257,169 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // --- 5. GESTION DE LA PHOTO ---
+    // --- MODAL ÉDITION AVATAR ---
+    const avatarEditModal = document.getElementById('avatarEditModal');
+    const avatarUploadBtn = document.querySelector('.avatar-upload-btn');
+    const avatarChooseBtn = document.getElementById('avatarChooseBtn');
+    const avatarFileInput = document.getElementById('avatarFileInput');
+    const avatarPreviewImage = document.getElementById('avatarPreviewImage');
+    const avatarFileName = document.getElementById('avatarFileName');
+    const cancelAvatarBtn = document.getElementById('cancelAvatarBtn');
+    const confirmAvatarBtn = document.getElementById('confirmAvatarBtn');
+    const closeAvatarBtn = document.getElementById('closeAvatarModal');
+    let selectedAvatarFile = null;
+
+    // Ouvrir le modal quand on clique sur le bouton caméra
+    if (avatarUploadBtn) {
+        avatarUploadBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            avatarEditModal.classList.add('active');
+        });
+    }
+
+    // Fermer le modal
+    const closeAvatarModal = () => {
+        avatarEditModal.classList.remove('active');
+        selectedAvatarFile = null;
+        avatarFileName.textContent = '';
+        avatarFileInput.value = '';
+    };
+
+    if (closeAvatarBtn) closeAvatarBtn.addEventListener('click', closeAvatarModal);
+    if (cancelAvatarBtn) cancelAvatarBtn.addEventListener('click', closeAvatarModal);
+    
+    // Fermer en cliquant sur l'overlay
+    avatarEditModal.addEventListener('click', (e) => {
+        if (e.target === avatarEditModal) closeAvatarModal();
+    });
+
+    // Ouvrir le file input
+    if (avatarChooseBtn) {
+        avatarChooseBtn.addEventListener('click', () => {
+            avatarFileInput.click();
+        });
+    }
+
+    // Gestion du file input
+    avatarFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        selectedAvatarFile = file;
+        
+        // Afficher le nom du fichier
+        avatarFileName.textContent = `📁 ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+
+        // Preview de l'image
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            avatarPreviewImage.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // Upload de l'avatar
+    if (confirmAvatarBtn) {
+        confirmAvatarBtn.addEventListener('click', () => {
+            const lang = document.documentElement.lang || 'fr';
+            const t = translations[lang] || {};
+            
+            if (!selectedAvatarFile) {
+                showErrorToast(t.selectImage || "Veuillez sélectionner une image");
+                return;
+            }
+
+            // Validation type MIME
+            const allowedMimes = ['image/jpeg', 'image/png'];
+            if (!allowedMimes.includes(selectedAvatarFile.type)) {
+                showErrorToast(t.unsupportedFile || "Fichier non pris en charge. Veuillez uploader une image (JPG ou PNG)");
+                return;
+            }
+
+            // Validation taille fichier (max 2MB)
+            const maxSize = 2 * 1024 * 1024; // 2MB
+            if (selectedAvatarFile.size > maxSize) {
+                showErrorToast(t.fileTooLarge || "Le fichier est trop volumineux (max 2MB)");
+                return;
+            }
+
+            confirmAvatarBtn.disabled = true;
+            confirmAvatarBtn.textContent = 'Upload en cours...';
+
+            const formData = new FormData();
+            formData.append('avatar', selectedAvatarFile);
+            
+            fetch('php/data/upload_avatar.php', {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('📤 Réponse upload:', data);
+                if (data.success && data.image) {
+                    console.log('✅ Upload réussi!');
+                    const lang = document.documentElement.lang || 'fr';
+                    const message = (typeof translations !== 'undefined' && translations[lang]?.photoUpdated) 
+                        ? translations[lang].photoUpdated 
+                        : "Photo mise à jour !";
+                    showSuccessToast(message);
+                    
+                    const newImagePath = data.image + '?t=' + Date.now();
+                    avatarImage.src = newImagePath;
+                    const avatarPlaceholder = document.querySelector('.avatar-placeholder');
+                    if (avatarPlaceholder) avatarPlaceholder.classList.add('hidden');
+                    
+                    closeAvatarModal();
+                } else {
+                    console.log('❌ Upload échoué:', data.error);
+                    showErrorToast(data.error || "Erreur lors de l'upload");
+                }
+                confirmAvatarBtn.disabled = false;
+                confirmAvatarBtn.textContent = 'Uploader';
+            })
+            .catch((err) => {
+                console.error('❌ Erreur fetch:', err);
+                showErrorToast("Erreur réseau");
+                confirmAvatarBtn.disabled = false;
+                confirmAvatarBtn.textContent = 'Uploader';
+            });
+        });
+    }
+
     if (avatarInput && avatarImage) {
         avatarInput.addEventListener('change', (e) => {
+            console.log('📸 Changement d\'avatar détecté');
             const file = e.target.files[0];
             if (!file) return;
+            
+            const lang = document.documentElement.lang || 'fr';
+            const t = translations[lang] || {};
+            
+            // Validation type MIME
+            const allowedMimes = ['image/jpeg', 'image/png'];
+            if (!allowedMimes.includes(file.type)) {
+                showErrorToast(t.unsupportedFile || "Fichier non pris en charge. Veuillez uploader une image (JPG ou PNG)");
+                return;
+            }
+            
+            // Validation taille fichier (max 2MB)
+            const maxSize = 2 * 1024 * 1024; // 2MB
+            if (file.size > maxSize) {
+                showErrorToast(t.fileTooLarge || "Le fichier est trop volumineux (max 2MB)");
+                return;
+            }
+            
+            // Affichage immédiat de la photo
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                avatarImage.src = event.target.result;
+                const avatarPlaceholder = document.querySelector('.avatar-placeholder');
+                if (avatarPlaceholder) avatarPlaceholder.classList.add('hidden');
+            };
+            reader.readAsDataURL(file);
+            
+            // Upload en arrière-plan
             const formData = new FormData();
             formData.append('avatar', file);
             fetch('php/data/upload_avatar.php', {
@@ -258,16 +429,25 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .then(response => response.json())
             .then(data => {
+                console.log('📤 Réponse upload:', data);
                 if (data.success && data.image) {
-                    avatarImage.src = data.image;
+                    console.log('✅ Upload réussi!');
                     const lang = document.documentElement.lang || 'fr';
-                    showSuccessToast(translations[lang]?.photoUpdated || "Photo mise à jour !");
+                    const message = (typeof translations !== 'undefined' && translations[lang]?.photoUpdated) 
+                        ? translations[lang].photoUpdated 
+                        : "Photo mise à jour !";
+                    showSuccessToast(message);
+
+                    const newImagePath = data.image + '?t=' + Date.now();
+                    avatarImage.src = newImagePath;
                 } else {
-                    showErrorToast(data.error || "Erreur lors de l'upload de la photo.");
+                    console.log('❌ Upload échoué:', data.error);
+                    showErrorToast(data.error || "Erreur lors de l'upload");
                 }
             })
-            .catch(() => {
-                showErrorToast("Erreur réseau lors de l'upload de la photo.");
+            .catch((err) => {
+                console.error('❌ Erreur fetch:', err);
+                showErrorToast("Erreur réseau");
             });
         });
     }
@@ -312,7 +492,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     showSuccessToast(translations[lang]?.profileUpdated || "Profil mis à jour !");
                 } else {
                     const lang = document.documentElement.lang || 'fr';
-                    showSuccessToast(result.error || result.message || translations[lang]?.profileUpdateError || 'Erreur lors de la mise à jour');
+                    showErrorToast(result.error || result.message || translations[lang]?.profileUpdateError || 'Erreur lors de la mise à jour');
                 }
             })
             .catch(err => {
@@ -394,12 +574,34 @@ document.addEventListener('DOMContentLoaded', function () {
         if (e.target === logoutModal) closeLogoutModal();
     });
 
-    // --- 8. TOAST ET NAVIGATION ---
     function showSuccessToast(message) {
+        console.log('🟢 Affichage toast success:', message);
         const toast = document.createElement('div');
         toast.className = 'success-toast';
         toast.innerHTML = `<i class="fas fa-check-circle"></i> <span>${message}</span>`;
+        toast.style.position = 'fixed';
+        toast.style.top = '20px';
+        toast.style.right = '20px';
+        toast.style.zIndex = '99999';
         document.body.appendChild(toast);
+        console.log('Toast ajouté au DOM:', toast);
+        setTimeout(() => {
+            toast.classList.add('fade-out');
+            setTimeout(() => toast.remove(), 500);
+        }, 3000);
+    }
+    
+    function showErrorToast(message) {
+        console.log('🔴 Affichage toast error:', message);
+        const toast = document.createElement('div');
+        toast.className = 'error-toast';
+        toast.innerHTML = `<i class="fas fa-exclamation-circle"></i> <span>${message}</span>`;
+        toast.style.position = 'fixed';
+        toast.style.top = '20px';
+        toast.style.right = '20px';
+        toast.style.zIndex = '99999';
+        document.body.appendChild(toast);
+        console.log('Toast ajouté au DOM:', toast);
         setTimeout(() => {
             toast.classList.add('fade-out');
             setTimeout(() => toast.remove(), 500);

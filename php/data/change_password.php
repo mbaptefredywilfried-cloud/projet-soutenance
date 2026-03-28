@@ -24,8 +24,8 @@ if (!$old_password || !$new_password) {
     exit;
 }
 
-if (strlen($new_password) < 6) {
-    echo json_encode(['success' => false, 'error' => 'Le nouveau mot de passe doit contenir au moins 6 caractères']);
+if (strlen($new_password) < 8) {
+    echo json_encode(['success' => false, 'error' => 'Le nouveau mot de passe doit contenir au moins 8 caractères']);
     exit;
 }
 

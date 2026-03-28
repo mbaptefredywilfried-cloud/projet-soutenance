@@ -30,13 +30,18 @@
     color: var(--text-primary);
     font-family: 'Inter', Arial, sans-serif;
     box-shadow: 0 2px 8px rgba(36, 41, 46, 0.04);
-    transition: border 0.2s, box-shadow 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     outline: none;
     height: 40px;
 }
+.budget-filters .filter-select:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(54, 162, 235, 0.15);
+}
 .budget-filters .filter-select:focus {
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px #dbeafe;
+    box-shadow: 0 0 0 3px #dbeafe;
+    transform: translateY(-1px);
 }
 .header-actions {
     display: flex;
@@ -115,7 +120,7 @@
     font-weight: 500;
     border: none;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .budget-actions .btn-edit {
     background: var(--success-color);
@@ -123,6 +128,8 @@
 }
 .budget-actions .btn-edit:hover {
     background: #059669;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 .budget-actions .btn-delete {
     background: var(--danger-color);
@@ -130,6 +137,8 @@
 }
 .budget-actions .btn-delete:hover {
     background: #b91c1c;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 body, .budget-form, .budget-card, #budgetsContainer {
     font-family: 'Inter', Arial, sans-serif !important;
@@ -165,8 +174,8 @@ select.input-error[name] {
     border: 2px solid #ef4444 !important;
     outline: none !important;
     background: #fff0f0 !important;
-    box-shadow: 0 0 0 2px #ffe4e6;
-    transition: border 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .error-message {
     color: #ef4444;
@@ -365,6 +374,12 @@ aside {
     flex-direction: column;
     gap: 16px;
     grid-column: 1;
+    border: 1px solid #cfcfcf;
+    padding: 16px;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 5px 10px -3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .stats-sidebar .summary-cards {
@@ -377,6 +392,8 @@ aside {
     grid-column: 2;
     grid-row: 1;
     margin-bottom: 0;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 5px 10px -3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Budget Summary */
@@ -453,17 +470,18 @@ aside {
     background: var(--card-background);
     padding: 20px;
     border-radius: var(--border-radius);
-    box-shadow: var(--shadow);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 5px 10px -3px rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
     gap: 16px;
-    transition: var(--transition);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: 1px solid var(--border-color);
+    cursor: pointer;
 }
 
-.budget-summary .summary-card:hover {
-    box-shadow: none;
-    transform: none;
+.summary-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.2), 0 8px 15px -3px rgba(0, 0, 0, 0.12);
 }
 
 .summary-card i {
@@ -498,13 +516,22 @@ aside {
 }
 
 .stat-card {
-    background: #f8fafc;
-    border: 1px solid #cfcfcf;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     padding: 16px;
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+.stat-card:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+    transform: translateY(-1px);
 }
 
 .stat-card h3 {
@@ -545,8 +572,15 @@ aside {
     text-align: left;
     padding: 14px 16px;
     gap: 12px;
-    box-shadow: none;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 5px 10px -3px rgba(0, 0, 0, 0.1);
     border: 1px solid #cfcfcf;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+.budget-summary .summary-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.2), 0 8px 15px -3px rgba(0, 0, 0, 0.12);
 }
 
 .budget-summary .summary-card h3 {
@@ -591,12 +625,12 @@ aside {
 
 .section-header {
     display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 24px;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 16px;
 }
 
 .section-header h2 {
@@ -808,16 +842,16 @@ aside {
 .budget-card {
     background: var(--card-background);
     border-radius: var(--border-radius);
-    box-shadow: var(--shadow);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     border: 1px solid var(--border-color);
     overflow: hidden;
-    transition: var(--transition);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
 }
 
 .budget-card:hover {
     transform: translateY(-4px);
-    box-shadow: var(--shadow-hover);
+    box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.2), 0 8px 15px -3px rgba(0, 0, 0, 0.12);
 }
 
 .budget-header {
@@ -1268,6 +1302,17 @@ aside {
     }
 }
 
+@keyframes slideOutBottomRight {
+    from {
+        opacity: 1;
+        transform: translateX(0) translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100px) translateY(100px);
+    }
+}
+
 /* Le cercle blanc autour de l'icône */
 .toast-icon-wrapper {
     background-color: white;
@@ -1538,3 +1583,130 @@ aside {
     margin-bottom: 16px;
   }
 }
+
+/* ========== DARK MODE STYLES ========== */
+body.dark-mode {
+    --background-color: #1a1a1a;
+    --card-background: #2d2d2d;
+    --text-primary: #e8e8e8;
+    --text-secondary: #b0b0b0;
+    --border-color: #404040;
+}
+
+body.dark-mode aside {
+    background-color: #2d2d2d !important;
+    border-right: 1px solid var(--border-color);
+}
+
+body.dark-mode aside .side {
+    border-bottom-color: var(--border-color);
+}
+
+body.dark-mode aside .nav a {
+    color: var(--text-primary);
+}
+
+body.dark-mode aside .nav a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode main {
+    background-color: var(--background-color);
+    color: var(--text-primary);
+}
+
+body.dark-mode .card {
+    background-color: var(--card-background);
+    border-color: var(--border-color);
+}
+
+body.dark-mode .card h2,
+body.dark-mode .card h3,
+body.dark-mode .card h4,
+body.dark-mode .card strong {
+    color: var(--text-primary);
+}
+
+body.dark-mode .card p {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .page-header h1 {
+    color: var(--text-primary);
+}
+
+body.dark-mode .form-group {
+    color: var(--text-primary);
+}
+
+body.dark-mode .form-group label {
+    color: var(--text-primary);
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+    background-color: var(--card-background);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .budget-item {
+    background-color: var(--card-background);
+    border-color: var(--border-color);
+}
+
+body.dark-mode .budget-item:hover {
+    background-color: #353535;
+}
+
+body.dark-mode .budget-table {
+    background-color: var(--card-background);
+    color: var(--text-primary);
+}
+
+body.dark-mode .budget-table th {
+    background-color: #1e1e1e;
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+body.dark-mode .budget-table td {
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+body.dark-mode .budget-table tr:hover {
+    background-color: #353535;
+}
+
+body.dark-mode .progress-bar {
+    background-color: #404040;
+}
+
+body.dark-mode .progress-bar-fill {
+    background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+}
+
+body.dark-mode .modal-content,
+body.dark-mode .custom-modal,
+body.dark-mode .custom-modal2 {
+    background-color: var(--card-background);
+    color: var(--text-primary);
+}
+
+body.dark-mode .confirm-box {
+    background-color: var(--card-background) !important;
+    color: var(--text-primary);
+}
+
+body.dark-mode .notification-btn {
+    background: rgba(54, 162, 235, 0.15);
+    border-color: rgba(54, 162, 235, 0.3);
+}
+

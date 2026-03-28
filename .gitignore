@@ -1,0 +1,7 @@
+.env
+php/auth/debug_register.txt
+php/transactions/debug_update_transaction.txt
+**/debug_*.txt
+assets/avatars/
+.vscode/
+*.log

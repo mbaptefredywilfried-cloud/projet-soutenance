@@ -1,17 +1,13 @@
-
-    if (localStorage.getItem('resetSuccess') === 'true') {
-        showToast("Données réinitialisées !");
-        localStorage.removeItem('resetSuccess'); // On l'efface pour qu'il ne revienne pas
-    }
 // --- PARAMÈTRES UTILISATEUR ---
 let userSettings = {
     accent_gradient: 'linear-gradient(180deg, #36A2EB 0%, #36A2EB 100%)',
     language: 'fr',
-    currency: '€'
+    currency: '€',
+    dark_mode: false
 };
 
 function loadUserSettings() {
-    fetch('/PROJET/php/data/user_profile.php?action=get', {
+    fetch('php/data/user_profile.php?action=get', {
         method: 'GET',
         credentials: 'same-origin'
     })
@@ -35,7 +31,12 @@ function saveUserSettings(changes) {
         // Émettre un événement pour notifier les autres composants du changement de devise
         window.dispatchEvent(new Event('appCurrencyChanged'));
     }
-    fetch('/PROJET/php/data/save_user_settings.php', {
+    // Mettre à jour le mode sombre globalement si elle change
+    if (changes.dark_mode !== undefined) {
+        window.appDarkMode = changes.dark_mode ? 1 : 0;
+        window.dispatchEvent(new Event('darkModeChanged'));
+    }
+    fetch('php/data/save_user_settings.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',
@@ -50,7 +51,7 @@ function saveUserSettings(changes) {
     })
     .then(result => {
         if (result && result.success) {
-            showToast('Paramètres enregistrés !');
+            // Ne pas afficher de toast ici, c'est géré au niveau de chaque paramètre
         }
         // Ne rien afficher en cas d'erreur réseau, car la base est à jour
     })
@@ -60,11 +61,33 @@ function saveUserSettings(changes) {
 }
 
 function applySettingsToUI() {
-    // Accent
+    // Mode sombre
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    if (darkModeToggle) {
+        darkModeToggle.checked = userSettings.dark_mode === true || userSettings.dark_mode === 1;
+        
+        // Appliquer le mode sombre à toutes les pages
+        if (darkModeToggle.checked) {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
+    }
+    
+    // Accent - Extraire la couleur depuis le gradient pour la comparaison
+    const extractColorFromGradient = (gradient) => {
+        // Si c'est déjà une couleur simple, la retourner
+        if (gradient.startsWith('#')) return gradient;
+        // Sinon, extraire la première couleur du gradient
+        const match = gradient.match(/#[0-9a-fA-F]{6}/);
+        return match ? match[0] : '#36A2EB';
+    };
+    
+    const currentColor = extractColorFromGradient(userSettings.accent_gradient);
     const colorOptions = document.querySelectorAll('.color-option');
     colorOptions.forEach(option => {
         option.style.borderColor = 'transparent';
-        if (option.getAttribute('data-color') === userSettings.accent_gradient) {
+        if (option.getAttribute('data-color').toLowerCase() === currentColor.toLowerCase()) {
             option.style.borderColor = '#1e293b';
         }
     });
@@ -108,23 +131,79 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // --- MODE SOMBRE ---
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    if (darkModeToggle) {
+        darkModeToggle.addEventListener('change', () => {
+            const isDarkMode = darkModeToggle.checked;
+            
+            // Appliquer le mode sombre immédiatement au DOM
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+            
+            // Sauvegarder en BDD
+            saveUserSettings({ dark_mode: isDarkMode ? 1 : 0 });
+            
+            // Émettre un événement pour notifier les autres pages
+            window.dispatchEvent(new Event('darkModeChanged'));
+            
+            const msgKey = isDarkMode ? 'darkModeEnabled' : 'darkModeDisabled';
+            showToast(msgKey);
+        });
+    }
+
     // --- Devise principale ---
     const currencySelect = document.getElementById('currencySelect');
     if (currencySelect) {
         currencySelect.addEventListener('change', () => {
             const selected = currencySelect.value;
             saveUserSettings({ currency: selected });
-            showToast('Devise principale mise à jour !');
+            showToast('currencyUpdated');
         });
     }
 
     // --- Langue ---
     const languageSelect = document.getElementById('languageSelect');
     if (languageSelect) {
-        languageSelect.addEventListener('change', () => {
+        languageSelect.addEventListener('change', async () => {
             const lang = languageSelect.value;
-            saveUserSettings({ language: lang });
-            showToast('Langue mise à jour !');
+            
+            // Stocker la langue dans localStorage pour que les autres composants le détectent
+            localStorage.setItem('appLanguage', lang);
+            
+            // Appliquer les traductions dynamiquement AVANT de sauvegarder
+            if (typeof applyLanguage === 'function') {
+                applyLanguage(lang);
+            }
+            
+            // Envoyer la langue au serveur pour mise à jour en session et BDD
+            try {
+                const response = await fetch('php/data/update_language.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ language: lang })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    // Aussi sauvegarder dans userSettings pour l'UI
+                    saveUserSettings({ language: lang });
+                    // Émettre un événement pour notifier les autres pages du changement de langue
+                    window.dispatchEvent(new Event('languageChanged'));
+                    showToast('languageChanged');
+                } else {
+                    showToast('languageUpdateError');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                saveUserSettings({ language: lang });
+                // Émettre l'événement même en cas d'erreur réseau
+                window.dispatchEvent(new Event('languageChanged'));
+                showToast('languageChanged');
+            }
         });
     }
 
@@ -144,8 +223,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (typeof setNotificationRappel === 'function') {
                 setNotificationRappel(enabled);
             }
-            const msg = enabled ? 'Rappels activés !' : 'Rappels désactivés';
-            showToast(msg);
+            const msgKey = enabled ? 'remindersEnabled' : 'remindersDisabled';
+            showToast(msgKey);
         });
     }
     
@@ -160,8 +239,8 @@ document.addEventListener('DOMContentLoaded', () => {
         budgetOverrunToggle.addEventListener('change', () => {
             const enabled = budgetOverrunToggle.checked;
             localStorage.setItem('budgetOverrunNotification', enabled ? 'true' : 'false');
-            const msg = enabled ? 'Notifications de dépassement activées !' : 'Notifications de dépassement désactivées';
-            showToast(msg);
+            const msgKey = enabled ? 'budgetOverrunEnabled' : 'budgetOverrunDisabled';
+            showToast(msgKey);
         });
     }
 
@@ -211,25 +290,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Validation côté client
             if (!oldPass || !newPass || !confirmPass) {
-                showModernPopup("Erreur", "Tous les champs de mot de passe sont obligatoires.", "error");
+                showModernPopup(getTranslation('popupErrorTitle'), getTranslation('errorPasswordFieldsRequired'), "error");
                 return;
             }
-            if (newPass.length < 6) {
-                showModernPopup("Erreur", "Le nouveau mot de passe doit contenir au moins 6 caractères.", "error");
+            if (newPass.length < 8) {
+                showModernPopup(getTranslation('popupErrorTitle'), getTranslation('errorPasswordMinLength'), "error");
                 return;
             }
             if (newPass !== confirmPass) {
-                showModernPopup("Erreur", "Les nouveaux mots de passe ne correspondent pas.", "error");
+                showModernPopup(getTranslation('popupErrorTitle'), getTranslation('errorPasswordMismatch'), "error");
                 return;
             }
             if (oldPass === newPass) {
-                showModernPopup("Erreur", "Le nouveau mot de passe doit être différent de l'ancien.", "error");
+                showModernPopup(getTranslation('popupErrorTitle'), getTranslation('errorPasswordSame'), "error");
                 return;
             }
 
             // Envoi au serveur
             savePasswordBtn.disabled = true;
-            fetch('/PROJET/php/data/change_password.php', {
+            fetch('php/data/change_password.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'same-origin',
@@ -242,59 +321,71 @@ document.addEventListener('DOMContentLoaded', () => {
                 newPasswordInput.value = '';
                 confirmPasswordInput.value = '';
                 if (result.success) {
-                    showModernPopup("Succès", result.message || 'Mot de passe mis à jour avec succès !', "success");
+                    showModernPopup(getTranslation('popupSuccessTitle'), getTranslation('passwordChangeSuccess'), "success");
                 } else {
-                    showModernPopup("Erreur", result.error || 'Erreur lors du changement de mot de passe.', "error");
+                    showModernPopup(getTranslation('popupErrorTitle'), getTranslation('passwordChangeError'), "error");
                 }
             })
             .catch(err => {
                 savePasswordBtn.disabled = false;
-                showModernPopup("Erreur", "Erreur réseau. Veuillez réessayer.", "error");
+                showModernPopup(getTranslation('popupErrorTitle'), getTranslation('networkError2'), "error");
             });
         });
     }
-    // --- 4. EXPORTATION DES DONNÉES (AVEC POPUP ERREUR ET TOAST SUCCÈS) ---
+    // --- 4. EXPORTATION DES DONNÉES (DEPUIS LA BASE DE DONNÉES) ---
     const exportBtn = document.getElementById('exportCSVBtn');
     if (exportBtn) {
         exportBtn.addEventListener('click', function() {
-            const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+            // Désactiver le bouton pendant l'export
+            exportBtn.disabled = true;
             
-            // Cas 1 : Aucune donnée -> Popup Moderne
-            if (transactions.length === 0) {
+            // Appeler directement l'endpoint PHP qui génère le CSV depuis la BDD
+            fetch('php/data/export_data.php', {
+                method: 'GET',
+                credentials: 'same-origin'
+            })
+            .then(response => {
+                exportBtn.disabled = false;
+                
+                if (!response.ok) {
+                    showModernPopup(
+                        getTranslation('popupErrorTitle'),
+                        getTranslation('exportError'),
+                        "error"
+                    );
+                    return;
+                }
+                
+                // Récupérer le CSV depuis la réponse
+                return response.blob().then(blob => {
+                    // Créer un lien de téléchargement
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement("a");
+                    link.setAttribute("href", url);
+                    link.setAttribute("download", `Export_Numera_${new Date().toISOString().slice(0,10)}.csv`);
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    // Succès -> Toast
+                    showToast('dataExported');
+                    
+                    // Mettre à jour la date de dernière sauvegarde
+                    const lastBackupSpan = document.getElementById('lastBackupSpan');
+                    if (lastBackupSpan) {
+                        lastBackupSpan.textContent = new Date().toLocaleString('fr-FR');
+                    }
+                });
+            })
+            .catch(error => {
+                exportBtn.disabled = false;
+                console.error('Erreur export:', error);
                 showModernPopup(
-                    "Exportation impossible", 
-                    "Vous n'avez aucune transaction enregistrée à exporter pour le moment.", 
-                    "info"
+                    getTranslation('popupErrorTitle'),
+                    getTranslation('exportErrorNetwork'),
+                    "error"
                 );
-                return;
-            }
-
-            // Génération du CSV
-            let csvContent = "\uFEFFDate,Description,Catégorie,Type,Montant\n";
-            transactions.forEach(t => {
-                const date = new Date(t.date).toLocaleDateString('fr-FR');
-                const desc = t.description ? `"${t.description.replace(/"/g, '""')}"` : "";
-                const type = t.type === 'income' ? 'Revenu' : 'Dépense';
-                const row = [date, desc, t.category, type, t.amount].join(",");
-                csvContent += row + "\n";
             });
-
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.setAttribute("href", url);
-            link.setAttribute("download", `Spend2_Export_${new Date().toISOString().slice(0,10)}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            // Succès -> Affichage du Toast
-            showToast("Données exportées avec succès !");
-
-            const lastBackupSpan = document.getElementById('lastBackupSpan');
-            if (lastBackupSpan) {
-                lastBackupSpan.textContent = new Date().toLocaleString('fr-FR');
-            }
         });
     }
 
@@ -303,13 +394,26 @@ document.addEventListener('DOMContentLoaded', () => {
     if (resetBtn) {
         resetBtn.addEventListener('click', function() {
             showResetConfirmModal(
-                "Réinitialisation", 
-                "Êtes-vous sûr ? Toutes vos transactions et vos budgets seront définitivement supprimés."
+                getTranslation('resetConfirmTitle'), 
+                getTranslation('resetConfirmMessage')
             );
         });
 
 // --- 6. FONCTION TOAST (SUCCÈS) ---
 function showToast(message) {
+    // Essayer de traduire le message s'il s'agit d'une clé
+    let displayMessage = message;
+    try {
+        if (typeof translations !== 'undefined') {
+            const lang = localStorage.getItem('appLanguage') || 'fr';
+            if (translations[lang] && translations[lang][message]) {
+                displayMessage = translations[lang][message];
+            }
+        }
+    } catch (e) {
+        // En cas d'erreur, afficher le message tel quel
+    }
+    
     const toast = document.createElement('div');
     toast.style = `
         position: fixed; bottom: 20px; right: 20px; background: #10b981; color: white;
@@ -317,7 +421,7 @@ function showToast(message) {
         z-index: 10005; display: flex; align-items: center; gap: 10px;
         font-weight: 600; font-family: sans-serif; animation: slideInRight 0.5s ease forwards;
     `;
-    toast.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+    toast.innerHTML = `<i class="fas fa-check-circle"></i> ${displayMessage}`;
     document.body.appendChild(toast);
 
     setTimeout(() => {
@@ -343,7 +447,7 @@ function showModernPopup(titre, message, type = "error") {
                 </div>
                 <h2 style="margin:0 0 10px; color:#1e293b;">${titre}</h2>
                 <p style="color:#64748b; margin-bottom:20px; line-height:1.5;">${message}</p>
-                <button id="closePopupBtn" style="background:#1e293b; color:white; border:none; padding:12px; border-radius:10px; width:100%; cursor:pointer; font-weight:600;">Compris</button>
+                <button id="closePopupBtn" style="background:#1e293b; color:white; border:none; padding:12px; border-radius:10px; width:100%; cursor:pointer; font-weight:600;">${getTranslation('buttonUnderstood')}</button>
             </div>
         </div>
     `;
@@ -366,8 +470,8 @@ function showResetConfirmModal(titre, message) {
                 <h2 style="margin:0 0 10px; color:#1e293b;">${titre}</h2>
                 <p style="margin:0 0 25px; color:#64748b; line-height:1.6;">${message}</p>
                 <div style="display:flex; gap:10px;">
-                    <button id="btnCancelReset" style="background:#f1f5f9; color:#475569; border:none; padding:12px; border-radius:10px; font-weight:600; cursor:pointer; flex:1;">Annuler</button>
-                    <button id="btnConfirmReset" style="background:#ef4444; color:white; border:none; padding:12px; border-radius:10px; font-weight:600; cursor:pointer; flex:1;">Supprimer</button>
+                    <button id="btnCancelReset" style="background:#f1f5f9; color:#475569; border:none; padding:12px; border-radius:10px; font-weight:600; cursor:pointer; flex:1;">${getTranslation('buttonCancel')}</button>
+                    <button id="btnConfirmReset" style="background:#ef4444; color:white; border:none; padding:12px; border-radius:10px; font-weight:600; cursor:pointer; flex:1;">${getTranslation('buttonConfirmDelete')}</button>
                 </div>
             </div>
         </div>
@@ -376,7 +480,7 @@ function showResetConfirmModal(titre, message) {
     document.body.appendChild(overlay);
     document.getElementById('btnCancelReset').onclick = () => overlay.remove();
         document.getElementById('btnConfirmReset').onclick = () => {
-            fetch('/PROJET/php/data/reset_data.php', {
+            fetch('php/data/reset_data.php', {
                 method: 'POST',
                 credentials: 'same-origin'
             })
@@ -384,15 +488,15 @@ function showResetConfirmModal(titre, message) {
             .then(result => {
                 overlay.remove();
                 if (result.success) {
-                    showModernPopup('Succès', result.message || 'Données réinitialisées avec succès.', 'success');
+                    showModernPopup(getTranslation('popupSuccessTitle'), getTranslation('resetSuccess'), 'success');
                     setTimeout(() => window.location.reload(), 1500);
                 } else {
-                    showModernPopup('Erreur', result.error || 'Erreur lors de la réinitialisation.', 'error');
+                    showModernPopup(getTranslation('popupErrorTitle'), getTranslation('resetError'), 'error');
                 }
             })
             .catch(() => {
                 overlay.remove();
-                showModernPopup('Erreur', 'Erreur réseau. Veuillez réessayer.', 'error');
+                showModernPopup(getTranslation('popupErrorTitle'), getTranslation('exportErrorNetwork'), 'error');
             });
         };
 }

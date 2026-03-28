@@ -113,6 +113,7 @@ CREATE TABLE `user_settings` (
   `accent_gradient` varchar(100) DEFAULT 'linear-gradient(180deg, #10b981 0%, #059669 100%)',
   `language` varchar(10) DEFAULT 'fr',
   `currency` varchar(10) DEFAULT 'EUR',
+  `dark_mode` tinyint(1) DEFAULT 0,
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 

@@ -69,12 +69,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
 			const email = document.getElementById('loginEmail').value.trim();
 			const password = document.getElementById('loginPass').value;
+			// Récupérer la langue du navigateur
+			const browserLanguage = navigator.language || navigator.userLanguage || 'fr';
+			const languageCode = browserLanguage.startsWith('en') ? 'en' : 'fr';
 			try {
 				const res = await fetch('./php/auth/login.php', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					credentials: 'same-origin',
-					body: JSON.stringify({ email, password })
+					body: JSON.stringify({ email, password, language: languageCode })
 				});
 				const data = await res.json();
 				if (data.status === "success") {

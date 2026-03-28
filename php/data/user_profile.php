@@ -60,7 +60,7 @@ if ($action === 'get_profile') {
 }
 
 if ($action === 'get_settings') {
-    $stmt = $pdo->prepare("SELECT accent_gradient, language, currency FROM user_settings WHERE user_id = ? LIMIT 1");
+    $stmt = $pdo->prepare("SELECT accent_gradient, language, currency, dark_mode FROM user_settings WHERE user_id = ? LIMIT 1");
     $stmt->execute([$user_id]);
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     if ($row) {
@@ -76,8 +76,8 @@ $stmt = $pdo->prepare("SELECT id, name as username, email, phone, created_at, im
 $stmt->execute([$user_id]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// Charger les settings utilisateur (accent_gradient, language, currency)
-$stmt2 = $pdo->prepare("SELECT accent_gradient, language, currency FROM user_settings WHERE user_id = ? LIMIT 1");
+// Charger les settings utilisateur (accent_gradient, language, currency, dark_mode)
+$stmt2 = $pdo->prepare("SELECT accent_gradient, language, currency, dark_mode FROM user_settings WHERE user_id = ? LIMIT 1");
 $stmt2->execute([$user_id]);
 $settings = $stmt2->fetch(PDO::FETCH_ASSOC);
 

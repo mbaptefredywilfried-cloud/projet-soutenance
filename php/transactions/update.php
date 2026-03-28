@@ -1,4 +1,6 @@
 <?php
+error_reporting(0);
+ini_set('display_errors', 0);
 header('Content-Type: application/json');
 require_once '../config/database.php';
 require_once '../auth/require_auth.php';
@@ -68,13 +70,13 @@ $params[] = $user_id;
 
 $sql = "UPDATE transactions SET " . implode(', ', $updates) . " WHERE id = ? AND user_id = ?";
 
-// Log debug
-$logFile = __DIR__ . '/debug_update_transaction.txt';
-$logMsg = "SQL: $sql\nPARAMS: " . print_r($params, true) . "\n";
-file_put_contents($logFile, $logMsg, FILE_APPEND);
-
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 
-echo json_encode(["status" => "success", "message" => "Transaction mise à jour", "data" => null]);
+// Récupérer la transaction mise à jour (avec jointure catégorie)
+$stmt = $pdo->prepare("SELECT t.*, c.name AS category_name, c.type AS category_type, c.translation_key AS category_translation_key FROM transactions t JOIN categories c ON t.category_id = c.id WHERE t.id = ?");
+$stmt->execute([$id]);
+$updatedTransaction = $stmt->fetch(PDO::FETCH_ASSOC);
+
+echo json_encode(["status" => "success", "message" => "Transaction mise à jour", "data" => $updatedTransaction]);
 ?>

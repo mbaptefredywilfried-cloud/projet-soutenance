@@ -112,14 +112,14 @@
                 <form class="budget-form" id="budgetForm" novalidate>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="budgetName" data-i18n="budgetName">Nom du Budget <span class="required">*</span></label>
+                            <label for="budgetName" data-i18n="budgetName"><span class="required">*</span></label>
                             <input type="text" id="budgetName" name="budgetName" placeholder="Ex: Courses alimentaires"
                                 required aria-describedby="nameHelp">
                             <small id="nameHelp" class="form-help" data-i18n="budgetNameHelp">Choisissez un nom descriptif pour votre
                                 budget.</small>
                         </div>
                         <div class="form-group">
-                            <label for="budgetAmount" data-i18n="amount">Montant (€) <span class="required">*</span></label>
+                            <label for="budgetAmount" data-i18n="amount"><span class="required">*</span></label>
                             <input type="number" id="budgetAmount" name="budgetAmount" placeholder="0.00" min="0.01"
                                 step="0.01" required aria-describedby="amountHelp">
                             <small id="amountHelp" class="form-help" data-i18n="maxAmountHint">Entrez le montant maximum alloué.</small>
@@ -127,7 +127,7 @@
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="budgetCategory" data-i18n="selectCategory">Catégorie <span class="required">*</span></label>
+                            <label for="budgetCategory" data-i18n="selectCategory"><span class="required">*</span></label>
                             <select id="budgetCategory" name="budgetCategory" required aria-describedby="categoryHelp">
                                 <option value="">Sélectionnez une catégorie</option>
                             </select>
@@ -135,7 +135,7 @@
                                 suivi.</small>
                         </div>
                         <div class="form-group">
-                            <label for="budgetPeriod" data-i18n="period">Période <span class="required">*</span></label>
+                            <label for="budgetPeriod" data-i18n="period"><span class="required">*</span></label>
                             <select id="budgetPeriod" name="budgetPeriod" required aria-describedby="periodHelp">
                                 <option value="" data-i18n="period">Période</option>
                                 <option value="mensuel" data-i18n="monthly">Mensuel</option>
