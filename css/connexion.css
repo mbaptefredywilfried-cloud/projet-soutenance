@@ -103,6 +103,25 @@ nav h2 {
     letter-spacing: -1px;
 }
 
+/* --- FORMULAIRES (TOUS) --- */
+#loginForm, #forgotForm, #otpForm, #resetForm {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 10% 0 8%;
+    max-width: 650px;
+    animation: fadeInRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+#loginForm h3, #forgotForm h3, #otpForm h3, #resetForm h3 {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
 /* --- FORMULAIRE (PARTIE DROITE) --- */
 #loginForm {
     flex: 1;
@@ -212,6 +231,13 @@ nav h2 {
     box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.4);
 }
 
+.value button:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
 .value p {
     text-align: center;
     margin-top: 25px;
@@ -228,6 +254,30 @@ nav h2 {
 
 .value a:hover {
     text-decoration: underline;
+}
+
+/* --- STYLE POUR LES INFOS EN PARAGRAPHES --- */
+#forgotForm .info-text,
+#otpForm .info-text,
+#resetForm .info-text {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+/* --- STYLE POUR LES LIENS DE RETOUR --- */
+.link-return {
+    color: var(--text-muted) !important;
+    font-weight: 500 !important;
+    font-size: 13px !important;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.link-return:hover {
+    color: var(--primary) !important;
 }
 
 /* --- RESPONSIVE --- */
@@ -325,6 +375,41 @@ nav h2 {
         opacity: 1; 
         transform: translateY(0); 
     }
+}
+
+/* --- STYLE SPÉCIFIQUE POUR L'INPUT OTP --- */
+#otpCode {
+    width: 200px !important;
+    text-align: center !important;
+    font-size: 28px !important;
+    font-weight: bold !important;
+    letter-spacing: 10px !important;
+    border-radius: 12px !important;
+    border: 1.5px solid var(--border) !important;
+    padding: 20px 16px !important;
+    background: var(--bg-light) !important;
+}
+
+#otpCode:focus {
+    border-color: var(--primary) !important;
+    background: white !important;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1) !important;
+}
+
+/* --- CONTENEUR CENTRÉ POUR OTP --- */
+#otpForm .input {
+    display: flex;
+    justify-content: center;
+}
+
+#otpForm .input-box {
+    display: flex;
+    justify-content: center;
+    width: auto;
+}
+
+#otpForm .input-box i {
+    display: none;
 }
 
 /* --- STYLE DU POPUP DE CONNEXION (TOAST) --- */

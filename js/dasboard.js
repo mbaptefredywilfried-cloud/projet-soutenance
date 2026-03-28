@@ -684,16 +684,16 @@ function handleAccountStats() {
         try {
             const transactions = await getTransactionsData();
                 const uniqueCategories = [...new Set(transactions.map(t => (t.category_name ? t.category_name.trim() : '')))].filter(cat => cat);
-                filterCategory.innerHTML = `<option value="all">${translationsObj[document.documentElement.lang]?.allCategories || 'Toutes les catégories'}</option>`;
+                filterCategory.innerHTML = `<option value="all">${translations[document.documentElement.lang]?.allCategories || 'Toutes les catégories'}</option>`;
                 uniqueCategories.forEach(cat => {
                     const option = document.createElement('option');
                     option.value = cat;
                     // Recherche la clé de traduction associée à cette catégorie
                     let translationKey = null;
                     const transaction = transactions.find(t => t.category_name === cat);
-                    if (transaction && transaction.category_translation_key && translationsObj[document.documentElement.lang] && translationsObj[document.documentElement.lang][transaction.category_translation_key]) {
+                    if (transaction && transaction.category_translation_key && translations[document.documentElement.lang] && translations[document.documentElement.lang][transaction.category_translation_key]) {
                         translationKey = transaction.category_translation_key;
-                        option.textContent = translationsObj[document.documentElement.lang][translationKey];
+                        option.textContent = translations[document.documentElement.lang][translationKey];
                     } else {
                         option.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
                     }

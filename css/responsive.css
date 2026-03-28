@@ -110,7 +110,7 @@
 
 /* Accessibilité */
 .tab-item[aria-label] {
-  /* Support aria-label pour accessibilité */
+  outline: none;
 }
 
 /* ============================================

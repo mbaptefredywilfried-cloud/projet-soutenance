@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
 require_once '../config/database.php';
+require_once '../mail/send_mail.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
 
@@ -46,7 +47,14 @@ try {
     $stmt2 = $pdo->prepare("INSERT INTO user_settings (user_id, accent_gradient, language, currency) VALUES (?, ?, ?, ?)");
     $stmt2->execute([$userId, $accent_gradient, $lang, $currency]);
 
-    echo json_encode(["status" => "success", "message" => "Inscription réussie"]);
+    // Envoyer l'email de bienvenue
+    $mailSent = sendWelcomeEmail($email, $name);
+
+    echo json_encode([
+        "status" => "success", 
+        "message" => "Inscription réussie",
+        "emailSent" => $mailSent
+    ]);
 } catch (PDOException $e) {
     if ($e->getCode() == 23000) {
         echo json_encode(["status" => "error", "message" => "Email déjà utilisé"]);
@@ -55,3 +63,4 @@ try {
     }
 }
 ?>
+

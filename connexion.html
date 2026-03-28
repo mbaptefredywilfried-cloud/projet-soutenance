@@ -44,7 +44,93 @@
 
         <div class="value">
             <button type="submit">Se connecter</button>
+            <a href="#" id="forgotPasswordLink" style="display: block; text-align: center; margin-top: 15px; color: var(--primary); text-decoration: none; font-weight: 600; font-size: 14px;">Mot de passe oublié ?</a>
             <p>Pas de compte ? <a href="./inscription.html">Inscrivez-vous</a></p>
+        </div>
+    </form>
+
+    <!-- Formulaire Mot de passe oublié -->
+    <form id="forgotForm" style="display: none;">
+        <h3>Mot de passe oublié</h3>
+        <div class="profil">
+            <i class="fas fa-envelope"></i>
+        </div>
+        <p class="info-text">
+            Entrez votre adresse email. Vous recevrez un code à 6 chiffres valable 15 minutes.
+        </p>
+
+        <div class="input">
+            <div class="input-box">
+                <input type="email" id="forgotEmail" placeholder="Entrez votre adresse e-mail">
+                <i class="fas fa-envelope"></i>
+            </div>
+        </div>
+
+        <div class="value">
+            <button type="submit">Envoyer le code</button>
+            <a href="#" class="link-return" style="display: block; text-align: center; margin-top: 15px;">Retour à la connexion</a>
+        </div>
+    </form>
+
+    <!-- Formulaire Vérification OTP -->
+    <form id="otpForm" style="display: none;">
+        <h3>Vérification</h3>
+        <div class="profil">
+            <i class="fas fa-lock"></i>
+        </div>
+        <p class="info-text">
+            Entrez le code à 6 chiffres envoyé à <strong id="otpEmail"></strong>
+        </p>
+
+        <div class="input">
+            <div class="input-box">
+                <input 
+                    type="text" 
+                    id="otpCode" 
+                    placeholder="000000" 
+                    maxlength="6" 
+                    inputmode="numeric"
+                >
+            </div>
+        </div>
+
+        <div class="value">
+            <button type="submit">Vérifier le code</button>
+            <div style="display: flex; gap: 8px; justify-content: center; margin-top: 15px; flex-wrap: wrap;">
+                <a href="#" id="resendOtpLink" style="color: var(--primary); text-decoration: none; font-weight: 600; font-size: 13px;">Renvoyer le code</a>
+                <span style="color: var(--text-muted); font-size: 13px;">•</span>
+                <a href="#" class="link-return" style="display: inline;">Retour</a>
+            </div>
+        </div>
+    </form>
+
+    <!-- Formulaire Nouveau mot de passe -->
+    <form id="resetForm" style="display: none;">
+        <h3>Nouveau mot de passe</h3>
+        <div class="profil">
+            <i class="fas fa-key"></i>
+        </div>
+
+        <div class="input">
+            <div class="input-box">
+                <input type="password" id="resetPassword" placeholder="Nouveau mot de passe">
+                <i class="fas fa-lock"></i>
+                <button type="button" class="toggle-password" data-target="resetPassword" style="position: absolute; right: 18px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 15px; padding: 0;">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+
+            <div class="input-box">
+                <input type="password" id="resetPasswordConfirm" placeholder="Confirmer le mot de passe">
+                <i class="fas fa-lock"></i>
+                <button type="button" class="toggle-password" data-target="resetPasswordConfirm" style="position: absolute; right: 18px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 15px; padding: 0;">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="value">
+            <button type="submit">Enregistrer le mot de passe</button>
         </div>
     </form>
     <script src="./js/common.js"></script>
