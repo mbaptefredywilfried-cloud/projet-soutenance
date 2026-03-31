@@ -29,7 +29,6 @@ try {
     $records = $stmt->fetchAll();
 
     if (empty($records)) {
-        error_log('Reset Password: No valid tokens found');
         echo json_encode(['status' => 'error', 'message' => 'Lien de réinitialisation invalide ou expiré']);
         exit;
     }
@@ -42,13 +41,12 @@ try {
                 break;
             }
         } catch (Exception $e) {
-            error_log('Password verify error for record ' . $record['id'] . ': ' . $e->getMessage());
+            // Erreur de vérification - continuer
             continue;
         }
     }
 
     if (!$validRecord) {
-        error_log('Reset Password: Token verification failed for ' . count($records) . ' records');
         echo json_encode(['status' => 'error', 'message' => 'Lien de réinitialisation invalide ou expiré']);
         exit;
     }
@@ -64,7 +62,6 @@ try {
     $user = $stmt->fetch();
 
     if (!$user) {
-        error_log('Reset Password: User not found for email ' . $email);
         echo json_encode(['status' => 'error', 'message' => 'Utilisateur non trouvé']);
         exit;
     }
@@ -74,7 +71,6 @@ try {
     $updateResult = $stmt->execute([$hashedPassword, $email]);
 
     if (!$updateResult) {
-        error_log('Reset Password: Failed to update password for ' . $email);
         echo json_encode(['status' => 'error', 'message' => 'Erreur lors de la mise à jour du mot de passe']);
         exit;
     }
@@ -83,16 +79,13 @@ try {
     $stmt = $pdo->prepare('UPDATE password_resets SET used = 1 WHERE id = ?');
     $stmt->execute([$validRecord['id']]);
 
-    error_log('✅ Password reset successfully for ' . $email);
     echo json_encode(['status' => 'success']);
     exit;
 
 } catch (PDOException $e) {
-    error_log('Reset Password - Database Error: ' . $e->getMessage());
     echo json_encode(['status' => 'error', 'message' => 'Erreur base de données']);
     exit;
 } catch (Exception $e) {
-    error_log('Reset Password - Error: ' . $e->getMessage());
     echo json_encode(['status' => 'error', 'message' => 'Erreur serveur']);
     exit;
 }

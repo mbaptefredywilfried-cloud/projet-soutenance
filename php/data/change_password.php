@@ -61,21 +61,17 @@ try {
     $result = $stmt->execute([$hashedPassword, $user_id]);
 
     if ($result && $stmt->rowCount() > 0) {
-        error_log('✅ Password changed successfully for user ' . $user_id);
         echo json_encode(['success' => true, 'message' => 'Mot de passe mis à jour avec succès']);
     } else {
-        error_log('❌ Failed to update password for user ' . $user_id);
         echo json_encode(['success' => false, 'error' => 'Erreur lors de la mise à jour du mot de passe']);
     }
     exit;
 
 } catch (PDOException $e) {
-    error_log('❌ Database Error in change_password: ' . $e->getMessage());
     http_response_code(500);
     echo json_encode(['success' => false, 'error' => 'Erreur base de données']);
     exit;
 } catch (Exception $e) {
-    error_log('❌ Error in change_password: ' . $e->getMessage());
     http_response_code(500);
     echo json_encode(['success' => false, 'error' => 'Erreur serveur']);
     exit;

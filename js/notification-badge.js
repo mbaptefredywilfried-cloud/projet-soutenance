@@ -18,7 +18,6 @@
                 renderNotifications(data.notifications);
             }
         } catch (error) {
-            console.error('Erreur lors du chargement des notifications:', error);
         }
     }
 
@@ -104,48 +103,121 @@
     // Rendre les notifications
     function renderNotifications(notifications) {
         if (!notifications || notifications.length === 0) {
-            notificationList.innerHTML = '<div style="padding: 20px; text-align: center; color: #94a3b8; font-size: 14px;">Aucune notification</div>';
+            const lang = localStorage.getItem('appLanguage') || 'fr';
+            const noNotifText = lang === 'en' ? 'No notifications' : 'Aucune notification';
+            notificationList.innerHTML = '<div style="padding: 30px 20px; text-align: center; color: #94a3b8; font-size: 14px;"><i class="fas fa-bell" style="font-size: 28px; margin-bottom: 10px; opacity: 0.5; display: block;"></i>' + noNotifText + '</div>';
             return;
         }
 
-        notificationList.innerHTML = notifications.map(notif => {
+        // Créer l'en-tête avec options
+        const unreadCount = notifications.filter(n => !n.is_read).length;
+        const headerHTML = `
+            <div style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background-color: white; z-index: 10;">
+                <div style="font-weight: 600; color: #1e293b; font-size: 13px;">
+                    ${unreadCount > 0 ? `${unreadCount} nouveau${unreadCount > 1 ? 'x' : ''}` : 'Notifications'}
+                </div>
+                <div style="display: flex; gap: 6px;">
+                    ${unreadCount > 0 ? `<button id="markAllRead" class="notif-action-btn" title="Tout marquer comme lu" style="
+                        background: none;
+                        border: none;
+                        cursor: pointer;
+                        color: #36A2EB;
+                        font-size: 12px;
+                        padding: 4px 8px;
+                        border-radius: 4px;
+                        transition: all 0.2s ease;
+                    " onmouseover="this.style.backgroundColor='rgba(54, 162, 235, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                        <i class="fas fa-check-double"></i>
+                    </button>` : ''}
+                    ${notifications.length > 0 ? `<button id="deleteAllNotif" class="notif-action-btn" title="Tout supprimer" style="
+                        background: none;
+                        border: none;
+                        cursor: pointer;
+                        color: #ef4444;
+                        font-size: 12px;
+                        padding: 4px 8px;
+                        border-radius: 4px;
+                        transition: all 0.2s ease;
+                    " onmouseover="this.style.backgroundColor='rgba(239, 68, 68, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                        <i class="fas fa-trash"></i>
+                    </button>` : ''}
+                </div>
+            </div>
+        `;
+
+        notificationList.innerHTML = headerHTML + notifications.map(notif => {
             const date = new Date(notif.created_at);
             const timeAgo = getTimeAgo(date);
-            const bgColor = notif.is_read ? '#f8fafc' : '#f0f4f8';
+            const bgColor = notif.is_read ? 'transparent' : 'rgba(54, 162, 235, 0.05)';
             const borderLeft = notif.is_read ? '#e2e8f0' : '#36A2EB';
             const typeIcon = getIconForType(notif.type);
             const translatedMessage = translateMessageCategories(notif.message);
             const translatedTitle = translateNotificationTitle(notif.title);
+            const typeColor = getColorForType(notif.type);
+            const readDot = notif.is_read ? '' : `<div style="width: 8px; height: 8px; background-color: #36A2EB; border-radius: 50%; flex-shrink: 0;"></div>`;
 
             return `
                 <div class="notification-item" data-id="${notif.id}" style="
-                    padding: 12px 16px;
+                    padding: 14px 16px;
                     border-left: 3px solid ${borderLeft};
                     background-color: ${bgColor};
-                    border-bottom: 1px solid #e2e8f0;
+                    border-bottom: 1px solid #f1f5f9;
                     cursor: pointer;
                     transition: all 0.2s ease;
-                    opacity: ${notif.is_read ? '0.7' : '1'};
-                " onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='${bgColor}'">
-                    <div style="display: flex; gap: 10px;">
-                        <div style="font-size: 18px; color: ${getColorForType(notif.type)}; flex-shrink: 0;">
-                            <i class="fas fa-${typeIcon}"></i>
-                        </div>
-                        <div style="flex: 1; min-width: 0;">
-                            <div style="font-weight: 600; color: #1e293b; font-size: 13px; margin-bottom: 4px;">
+                    position: relative;
+                    display: flex;
+                    gap: 12px;
+                    align-items: flex-start;
+                " onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='${bgColor}'">
+                    <div style="
+                        font-size: 20px;
+                        color: ${typeColor};
+                        flex-shrink: 0;
+                        width: 32px;
+                        height: 32px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        background: ${typeColor}15;
+                        border-radius: 8px;
+                    ">
+                        <i class="fas fa-${typeIcon}"></i>
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 4px;">
+                            <div style="font-weight: 600; color: #1e293b; font-size: 13px; flex: 1;">
                                 ${translatedTitle}
                             </div>
-                            <div style="color: #64748b; font-size: 12px; line-height: 1.4; margin-bottom: 6px;">
-                                ${translatedMessage}
-                            </div>
-                            <div style="color: #94a3b8; font-size: 11px;">
-                                ${timeAgo}
-                            </div>
+                            ${readDot}
+                        </div>
+                        <div style="color: #64748b; font-size: 12px; line-height: 1.5; margin-bottom: 6px;">
+                            ${translatedMessage}
+                        </div>
+                        <div style="color: #94a3b8; font-size: 11px;">
+                            ${timeAgo}
                         </div>
                     </div>
                 </div>
             `;
         }).join('');
+
+        // Ajouter l'event listener pour "Tout marquer comme lu"
+        const markAllBtn = notificationList.querySelector('#markAllRead');
+        if (markAllBtn) {
+            markAllBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                markAllAsRead();
+            });
+        }
+
+        // Ajouter l'event listener pour "Tout supprimer"
+        const deleteAllBtn = notificationList.querySelector('#deleteAllNotif');
+        if (deleteAllBtn) {
+            deleteAllBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                deleteAllNotifications();
+            });
+        }
 
         // Ajouter les event listeners pour marquer comme lus
         document.querySelectorAll('.notification-item').forEach(item => {
@@ -216,22 +288,78 @@
             // Recharger les notifications
             loadNotifications();
         } catch (error) {
-            console.error('Erreur lors de la mise à jour:', error);
         }
     }
 
-    // Basculer le dropdown
+    // Marquer toutes les notifications comme lues
+    async function markAllAsRead() {
+        try {
+            const response = await fetch('./php/notifications/get_notifications.php');
+            const data = await response.json();
+            
+            if (data.status === 'success' && data.notifications) {
+                for (const notif of data.notifications) {
+                    if (!notif.is_read) {
+                        const formData = new FormData();
+                        formData.append('notification_id', notif.id);
+                        await fetch('./php/notifications/mark_as_read.php', {
+                            method: 'POST',
+                            body: formData
+                        });
+                    }
+                }
+                loadNotifications();
+            }
+        } catch (error) {
+        }
+    }
+
+    // Supprimer toutes les notifications
+    async function deleteAllNotifications() {
+        try {
+            const response = await fetch('./php/notifications/get_notifications.php');
+            const data = await response.json();
+            
+            if (data.status === 'success' && data.notifications) {
+                for (const notif of data.notifications) {
+                    const formData = new FormData();
+                    formData.append('notification_id', notif.id);
+                    await fetch('./php/notifications/delete.php', {
+                        method: 'POST',
+                        body: formData
+                    }).catch(() => {}); // Continuer même si une suppression échoue
+                }
+                loadNotifications();
+            }
+        } catch (error) {
+        }
+    }
+
+    // Basculer le dropdown avec animations
     notificationBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        notificationDropdown.style.display = notificationDropdown.style.display === 'none' ? 'block' : 'none';
-        if (notificationDropdown.style.display === 'block') {
+        const isHidden = notificationDropdown.style.display === 'none';
+        
+        if (isHidden) {
+            notificationDropdown.style.display = 'block';
+            // Force reflow
+            notificationDropdown.offsetHeight;
             loadNotifications();
+        } else {
+            notificationDropdown.style.display = 'none';
         }
     });
 
     // Fermer le dropdown en cliquant ailleurs
     document.addEventListener('click', (e) => {
         if (!notificationBtn.contains(e.target) && !notificationDropdown.contains(e.target)) {
+            notificationDropdown.style.display = 'none';
+        }
+    });
+
+    // Fermer avec la touche Echap
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && notificationDropdown.style.display !== 'none') {
             notificationDropdown.style.display = 'none';
         }
     });
@@ -244,18 +372,24 @@
 
     // Écouter les changements de langue et retraduite les notifications
     window.addEventListener('languageChanged', () => {
-        loadNotifications();
+        if (notificationDropdown.style.display !== 'none') {
+            loadNotifications();
+        }
     });
 
     // Écouter les changements de devise et retraduite les notifications
     window.addEventListener('appCurrencyChanged', () => {
-        loadNotifications();
+        if (notificationDropdown.style.display !== 'none') {
+            loadNotifications();
+        }
     });
 
     // Écouter les changements de langue via localStorage (pour les onglets multiples)
     window.addEventListener('storage', (e) => {
         if (e.key === 'appLanguage' && e.newValue !== e.oldValue) {
-            loadNotifications();
+            if (notificationDropdown.style.display !== 'none') {
+                loadNotifications();
+            }
         }
     });
 

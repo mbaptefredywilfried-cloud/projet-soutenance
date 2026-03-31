@@ -41,7 +41,7 @@ html {
     cursor: pointer;
     padding: 10px 12px;
     border-radius: 8px;
-    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -53,16 +53,95 @@ html {
 .notification-btn i {
     font-size: 18px;
     color: var(--accent-color, #36A2EB);
+    transition: transform 0.3s ease;
 }
 
 .notification-btn:hover {
     background: rgba(54, 162, 235, 0.15);
     box-shadow: 0 4px 12px rgba(54, 162, 235, 0.15);
+    transform: translateY(-1px);
+}
+
+.notification-btn:hover i {
+    animation: bellRing 0.6s ease;
+}
+
+@keyframes bellRing {
+    0%, 100% { transform: rotate(0deg); }
+    15% { transform: rotate(-15deg); }
+    30% { transform: rotate(15deg); }
+    45% { transform: rotate(-15deg); }
+    60% { transform: rotate(15deg); }
+    75% { transform: rotate(-5deg); }
+}
+
+/* Notification Dropdown Styles */
+.notification-dropdown {
+    animation: slideDownFade 0.3s ease !important;
+    backdrop-filter: blur(0px);
+}
+
+@keyframes slideDownFade {
+    from {
+        opacity: 0;
+        transform: translateY(-12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.notification-item:active {
+    transform: scale(0.98);
+}
+
+/* Notification Action Button */
+.notif-action-btn {
+    font-weight: 500;
+    font-size: 12px;
+    opacity: 0.8;
+    transition: all 0.2s ease;
+}
+
+.notif-action-btn:hover {
+    opacity: 1 !important;
+    font-weight: 600;
 }
 
 /* Masquer scrollbars (webkit) */
 html::-webkit-scrollbar {
     display: none;
+}
+
+/* Scrollbar pour le notification dropdown */
+#notificationList::-webkit-scrollbar {
+    width: 6px;
+}
+
+#notificationList::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#notificationList::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+    transition: background 0.2s ease;
+}
+
+#notificationList::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
 }
 
 * {
@@ -1208,6 +1287,8 @@ main .category .budget-card{
   }
 }
 
+
+
 /* ========== DARK MODE STYLES ========== */
 body.dark-mode {
     --background-color: #1a1a1a;
@@ -1218,7 +1299,7 @@ body.dark-mode {
 }
 
 body.dark-mode aside {
-    background-color: #2d2d2d !important;
+    background: #2d2d2d !important;
     border-right: 1px solid var(--border-color);
 }
 
@@ -1324,5 +1405,60 @@ body.dark-mode .custom-modal2 {
 body.dark-mode .notification-btn {
     background: rgba(54, 162, 235, 0.15);
     border-color: rgba(54, 162, 235, 0.3);
+}
+
+body.dark-mode main .graphic .graph {
+    background-color: var(--card-background);
+}
+
+body.dark-mode main .graphic .graph .text p {
+    background-color: transparent;
+    color: #ffffff;
+}
+
+body.dark-mode main .category {
+    background-color: var(--card-background);
+}
+
+body.dark-mode main .category .budget-card {
+    background-color: transparent;
+    color: #ffffff;
+}
+
+body.dark-mode .linechart-card {
+    background: var(--card-background);
+}
+
+body.dark-mode .linechart-card .budget-card {
+    background-color: transparent;
+    color: #ffffff;
+}
+
+body.dark-mode .top-bar h3 {
+    color: #ffffff;
+}
+
+body.dark-mode #userNameDisplay {
+    color: #ffffff !important;
+}
+
+body.dark-mode .summary-text h2 {
+    color: #ffffff;
+}
+
+body.dark-mode .summary-text p {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .summary-date span:first-child {
+    color: #ffffff;
+}
+
+body.dark-mode .summary-date span:last-child {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .nav span {
+    color: #ffffff;
 }
 

@@ -344,6 +344,11 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            filter: brightness(0) saturate(100%) invert(48%) sepia(78%) saturate(1652%) hue-rotate(187deg) brightness(108%) contrast(108%);
+        }
+
+        body.dark-mode .logo-icon img {
+            filter: brightness(1) saturate(100%);
         }
 
         .logo h1 {
@@ -601,7 +606,7 @@
 
         .hero-illustration {
             width: 100%;
-            height: 400px;
+            aspect-ratio: 16/9;
             background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #e0f7ff 100%);
             border-radius: 1.5rem;
             box-shadow: var(--shadow-xl);
@@ -650,6 +655,62 @@
             color: var(--primary);
             opacity: 0.8;
             z-index: 1;
+        }
+
+        .hero-logo-svg {
+            width: 12rem;
+            height: 12rem;
+            filter: brightness(0) saturate(100%) invert(48%) sepia(78%) saturate(1652%) hue-rotate(187deg) brightness(108%) contrast(108%);
+            transition: opacity 0.3s ease;
+            display: none;
+        }
+
+        body.dark-mode .hero-logo-svg {
+            filter: brightness(1) saturate(100%);
+        }
+
+        .hero-video-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.3s ease;
+            overflow: hidden;
+        }
+
+        .hero-video {
+            width: 100%;
+            height: 100%;
+            border-radius: 1rem;
+            box-shadow: var(--shadow-lg);
+            background: transparent;
+            display: block;
+            object-fit: fill;
+        }
+
+        .close-video-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease;
+            z-index: 10;
+        }
+
+        .close-video-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
         }
 
         body.dark-mode .hero-icon {
@@ -1185,8 +1246,6 @@
                 </div>
                 <nav class="nav-menu">
                     <a href="#features" data-i18n="nav-features">Fonctionnalités</a>
-                    <a href="#pricing" data-i18n="nav-pricing">Tarifs</a>
-                    <a href="#contact" data-i18n="nav-contact">Contact</a>
                 </nav>
                 <div class="nav-buttons">
                     <a href="connexion.html" class="btn btn-outline" data-i18n="nav-login">Connexion</a>
@@ -1205,7 +1264,7 @@
                         <span class="badge-icon">✨</span>
                         <span data-i18n="badge-text">Bienvenue sur Numera</span>
                     </div>
-                    <h2 class="hero-title"><span data-i18n="hero-title-part1">Maîtrisez Vos</span> <span class="gradient-text" data-i18n="hero-title-part2">Finances</span></h2>
+                    <h2 class="hero-title"><span data-i18n="hero-title-part1">Maîtrisez Vos</span> <span class="gradient-text" data-i18n="hero-title-part2">Dépenses</span></h2>
                     <p class="hero-description" data-i18n="hero-description">
                         Numera transforme la complexité budgétaire en une expérience fluide. Suivez, analysez et visualisez votre patrimoine en temps réel.
                     </p>
@@ -1214,7 +1273,7 @@
                             Commencer Gratuitement
                             <i class="fas fa-arrow-right"></i>
                         </a>
-                        <a href="#" class="btn btn-outline btn-lg" data-i18n="hero-btn-demo">
+                        <a href="#" onclick="toggleDemoVideo(event)" class="btn btn-outline btn-lg" data-i18n="hero-btn-demo">
                             <i class="fas fa-play-circle"></i>
                             Voir la Démo
                         </a>
@@ -1222,7 +1281,7 @@
                     <div class="trust-section">
                         <div class="trust-text">
                             <p class="trust-title" data-i18n="trust-title">Approuvé par</p>
-                            <p class="trust-subtitle" data-i18n="trust-subtitle">Milliers d'utilisateurs</p>
+                            <p class="trust-subtitle" data-i18n="trust-subtitle">Plusieurs utilisateurs</p>
                         </div>
                         <div class="avatars">
                             <div class="avatar">A</div>
@@ -1233,7 +1292,16 @@
                 </div>
                 <div class="hero-right">
                     <div class="hero-illustration">
-                        <i class="fas fa-chart-pie hero-icon"></i>
+                        <img src="./img/icon.svg" alt="Numera Logo" class="hero-logo-svg" id="heroLogo">
+                        <div class="hero-video-container" id="heroVideoContainer" style="display: flex;">
+                            <video controls autoplay loop muted class="hero-video">
+                                <source src="./demo/Numera demo.mp4" type="video/mp4">
+                                Votre navigateur ne supporte pas la lecture vidéo.
+                            </video>
+                            <button class="close-video-btn" onclick="closeDemoVideo()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1367,15 +1435,16 @@
                     <ul>
                         <li><a href="#" data-i18n="footer-about">À propos</a></li>
                         <li><a href="#" data-i18n="footer-blog">Blog</a></li>
-                        <li><a href="#contact" data-i18n="nav-contact">Contact</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
                     <h4 data-i18n="footer-nav">Navigation</h4>
                     <ul>
+                        <li><a href="dasboard.html" data-i18n="footer-dashboard">Tableau de Bord</a></li>
                         <li><a href="transaction.html" data-i18n="footer-trans">Transactions</a></li>
                         <li><a href="budget.html" data-i18n="footer-budget">Budget</a></li>
-                        <li><a href="connexion.html" data-i18n="nav-login">Connexion</a></li>
+                        <li><a href="profil.html" data-i18n="footer-profile">Profil</a></li>
+                        <li><a href="parametre.html" data-i18n="footer-settings">Paramètres</a></li>
                     </ul>
                 </div>
             </div>
@@ -1564,12 +1633,12 @@
                 'nav-signup': 'S\'inscrire',
                 'badge-text': 'Bienvenue sur Numera',
                 'hero-title-part1': 'Maîtrisez Vos',
-                'hero-title-part2': 'Finances',
+                'hero-title-part2': 'Dépenses',
                 'hero-description': 'Numera transforme la complexité budgétaire en une expérience fluide. Suivez, analysez et visualisez votre patrimoine en temps réel.',
                 'hero-btn-start': 'Commencer Gratuitement',
                 'hero-btn-demo': 'Voir la Démo',
                 'trust-title': 'Approuvé par',
-                'trust-subtitle': 'Milliers d\'utilisateurs',
+                'trust-subtitle': 'Plusieurs utilisateurs',
                 'stat-users': 'Utilisateurs Actifs',
                 'stat-uptime': 'Disponibilité',
                 'stat-support': 'Support Client',
@@ -1599,7 +1668,10 @@
                 'footer-feature1': 'Paramètres',
                 'footer-feature2': 'Profil',
                 'footer-trans': 'Transactions',
-                'footer-budget': 'Budget'
+                'footer-budget': 'Budget',
+                'footer-dashboard': 'Tableau de Bord',
+                'footer-profile': 'Profil',
+                'footer-settings': 'Paramètres'
             },
             en: {
                 'nav-features': 'Features',
@@ -1609,12 +1681,12 @@
                 'nav-signup': 'Sign Up',
                 'badge-text': 'Welcome to Numera',
                 'hero-title-part1': 'Master Your',
-                'hero-title-part2': 'Finances',
+                'hero-title-part2': 'Expenses',
                 'hero-description': 'Numera transforms budgetary complexity into a seamless experience. Track, analyze, and visualize your wealth in real-time.',
                 'hero-btn-start': 'Get Started Free',
                 'hero-btn-demo': 'View Demo',
                 'trust-title': 'Trusted by',
-                'trust-subtitle': 'Thousands of Users',
+                'trust-subtitle': 'Several Users',
                 'stat-users': 'Active Users',
                 'stat-uptime': 'Availability',
                 'stat-support': 'Customer Support',
@@ -1644,7 +1716,10 @@
                 'footer-feature1': 'Settings',
                 'footer-feature2': 'Profile',
                 'footer-trans': 'Transactions',
-                'footer-budget': 'Budget'
+                'footer-budget': 'Budget',
+                'footer-dashboard': 'Dashboard',
+                'footer-profile': 'Profile',
+                'footer-settings': 'Settings'
             }
         };
 
@@ -1710,6 +1785,45 @@
         // ============================================
         console.log('%cNumera - Gestion Financière Simplifiée', 'font-size: 24px; font-weight: bold; color: #3b82f6;');
         console.log('%cBienvenue sur Numera! 🎉', 'font-size: 16px; color: #60a5fa;');
+
+        // ============================================
+        // Demo Video Toggle
+        // ============================================
+        function toggleDemoVideo(event) {
+            event.preventDefault();
+            const heroLogo = document.getElementById('heroLogo');
+            const videoContainer = document.getElementById('heroVideoContainer');
+            const video = videoContainer.querySelector('.hero-video');
+            
+            if (videoContainer.style.display === 'none') {
+                heroLogo.style.opacity = '0';
+                setTimeout(() => {
+                    heroLogo.style.display = 'none';
+                }, 300);
+                videoContainer.style.display = 'block';
+                videoContainer.style.opacity = '0';
+                setTimeout(() => {
+                    videoContainer.style.opacity = '1';
+                }, 10);
+                video.play();
+            }
+        }
+
+        function closeDemoVideo() {
+            const heroLogo = document.getElementById('heroLogo');
+            const videoContainer = document.getElementById('heroVideoContainer');
+            const video = videoContainer.querySelector('.hero-video');
+            
+            video.pause();
+            video.currentTime = 0;
+            
+            videoContainer.style.opacity = '0';
+            setTimeout(() => {
+                videoContainer.style.display = 'none';
+                heroLogo.style.display = 'block';
+                heroLogo.style.opacity = '1';
+            }, 300);
+        }
     </script>
 </body>
 </html>

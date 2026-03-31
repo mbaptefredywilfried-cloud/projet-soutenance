@@ -75,7 +75,7 @@ window.addEventListener('darkModeChanged', function() {
         }
     })
     .catch((e) => {
-        console.log('Erreur lors de la synchronisation du dark mode');
+        // Erreur lors de la synchronisation du dark mode - mode silencieux
     });
 });
 
@@ -228,14 +228,21 @@ function darkenColor(color, percent) {
 }
 
 
-document.addEventListener('DOMContentLoaded', () => {
+// Gérer la déconnexion (seulement si l'utilisateur est authentifié)
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupLogout);
+} else {
+    setupLogout();
+}
+
+function setupLogout() {
     const logoutLink = document.getElementById('logoutLink');
     const logoutModal = document.getElementById('logoutModal');
     const confirmLogoutBtn = document.getElementById('confirmLogoutBtn');
     const cancelLogoutBtn = document.getElementById('cancelLogoutBtn');
 
-    // Vérifier si les éléments existent sur la page actuelle
-    if (logoutLink && logoutModal) {
+    // Vérifier si les éléments existent sur la page actuelle (pages authentifiées)
+    if (logoutLink && logoutModal && confirmLogoutBtn && cancelLogoutBtn) {
         
         // 1. Afficher le modal au clic
         logoutLink.addEventListener('click', (e) => {
@@ -249,14 +256,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // 3. Rediriger vers la connexion si on confirme
-        // Dans common.js
-confirmLogoutBtn.addEventListener('click', () => {
-    // Appel au backend pour déconnexion sécurisée
-    fetch('php/auth/logout.php', { method: 'POST', credentials: 'same-origin' })
-        .then(() => {
-            window.location.href = "connexion.html";
+        confirmLogoutBtn.addEventListener('click', () => {
+            fetch('php/auth/logout.php', { method: 'POST', credentials: 'same-origin' })
+                .then(() => {
+                    window.location.href = 'connexion.html';
+                });
         });
-});
 
         // 4. Fermer si on clique sur l'arrière-plan sombre
         window.addEventListener('click', (e) => {
@@ -265,7 +270,7 @@ confirmLogoutBtn.addEventListener('click', () => {
             }
         });
     }
-});
+}
 
 
 

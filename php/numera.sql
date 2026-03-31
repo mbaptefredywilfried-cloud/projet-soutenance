@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : lun. 16 mars 2026 à 16:00
+-- Généré le : dim. 29 mars 2026 à 16:47
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -70,6 +70,21 @@ CREATE TABLE `notifications` (
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `password_resets`
+--
+
+CREATE TABLE `password_resets` (
+  `id` int(11) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `expires_at` datetime NOT NULL,
+  `used` tinyint(1) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Structure de la table `transactions`
 --
 
@@ -98,7 +113,8 @@ CREATE TABLE `users` (
   `phone` varchar(30) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `image` varchar(255) DEFAULT NULL,
-  `last_login` datetime DEFAULT NULL
+  `last_login` datetime DEFAULT NULL,
+  `currency` varchar(10) DEFAULT 'XAF'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -143,6 +159,13 @@ ALTER TABLE `notifications`
   ADD KEY `user_id` (`user_id`);
 
 --
+-- Index pour la table `password_resets`
+--
+ALTER TABLE `password_resets`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `email` (`email`);
+
+--
 -- Index pour la table `transactions`
 --
 ALTER TABLE `transactions`
@@ -163,7 +186,7 @@ ALTER TABLE `users`
 --
 ALTER TABLE `user_settings`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `unique_user_id` (`user_id`);
+  ADD UNIQUE KEY `user_id` (`user_id`);
 
 --
 -- AUTO_INCREMENT pour les tables déchargées
@@ -185,6 +208,12 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT pour la table `notifications`
 --
 ALTER TABLE `notifications`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `password_resets`
+--
+ALTER TABLE `password_resets`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -234,30 +263,6 @@ ALTER TABLE `transactions`
 --
 ALTER TABLE `user_settings`
   ADD CONSTRAINT `user_settings_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `password_resets`
---
-
-CREATE TABLE `password_resets` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `email` varchar(255) NOT NULL,
-  `token` varchar(255) NOT NULL,
-  `expires_at` datetime NOT NULL,
-  `used` tinyint(1) DEFAULT 0,
-  `created_at` timestamp DEFAULT current_timestamp(),
-  PRIMARY KEY (`id`),
-  KEY `email` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- AUTO_INCREMENT pour la table `password_resets`
---
-ALTER TABLE `password_resets`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

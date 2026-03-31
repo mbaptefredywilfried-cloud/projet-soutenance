@@ -101,11 +101,9 @@ function sendWelcomeEmail($email, $name) {
         }
         
         $mail->send();
-        error_log("Mail envoye a " . $email);
         return true;
         
     } catch (Exception $e) {
-        error_log("ERREUR MAIL: " . $mail->ErrorInfo);
         return false;
     }
 }

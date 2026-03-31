@@ -416,6 +416,7 @@ const translations = {
     notif_budget_exceeded_title: "Budget dépassé!",
     notif_budget_warning_title: "Budget presque atteint",
     notif_budget_info_title: "Gestion budgétaire",
+    noNotifications: "Aucune notification",
     
     // Time ago translations
     justNow: "À l'instant",
@@ -837,6 +838,7 @@ const translations = {
     notif_budget_exceeded_title: "Budget exceeded!",
     notif_budget_warning_title: "Budget almost reached",
     notif_budget_info_title: "Budget management",
+    noNotifications: "No notifications",
     
     // Time ago translations
     justNow: "Just now",

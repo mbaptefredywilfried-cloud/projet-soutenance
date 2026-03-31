@@ -74,7 +74,7 @@ function showReminderToast(data) {
     toast.className = 'reminder-toast';
     toast.innerHTML = `
         <div class="reminder-icon-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V7a8 8 0 1 0-16 0v5c0 6 8 10 8 10z"/><circle cx="12" cy="11" r="3"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
         </div>
         <div class="reminder-content">
             <div class="reminder-title">Rappel de saisie</div>
@@ -93,3 +93,4 @@ function showReminderToast(data) {
 }
 
 document.addEventListener('DOMContentLoaded', checkAndShowReminderToast);
+

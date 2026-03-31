@@ -12,13 +12,12 @@ try {
     $countData = $countStmt->fetch(PDO::FETCH_ASSOC);
     $unreadCount = $countData['unread_count'] ?? 0;
     
-    // Get recent notifications (last 10)
+    // Get all notifications
     $stmt = $pdo->prepare('
         SELECT id, title, message, type, is_read, created_at 
         FROM notifications 
         WHERE user_id = ? 
-        ORDER BY created_at DESC 
-        LIMIT 10
+        ORDER BY created_at DESC
     ');
     $stmt->execute([$userId]);
     $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);

@@ -68,20 +68,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (deleteBtn && deleteAccountModal && confirmDeleteAccountBtn && cancelDeleteAccountBtn) {
         deleteBtn.addEventListener('click', function() {
-            console.log('Bouton suppression cliqué');
             if (deleteAccountModal) {
-                console.log('deleteAccountModal trouvé');
                 deleteAccountModal.classList.add('active');
-            } else {
-                console.log('deleteAccountModal introuvable');
             }
         });
         cancelDeleteAccountBtn.addEventListener('click', function() {
-            console.log('Bouton annuler suppression cliqué');
             deleteAccountModal.classList.remove('active');
         });
         confirmDeleteAccountBtn.addEventListener('click', function() {
-            console.log('Bouton confirmer suppression cliqué');
             confirmDeleteAccountBtn.disabled = true;
             fetch('php/data/delete_account.php', {
                 method: 'POST',
@@ -89,7 +83,6 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .then(resp => resp.json())
             .then(result => {
-                console.log('Réponse suppression:', result);
                 confirmDeleteAccountBtn.disabled = false;
                 if (result.success) {
                     window.location.href = 'index.html';
@@ -101,7 +94,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             })
             .catch((err) => {
-                console.log('Erreur réseau suppression:', err);
                 confirmDeleteAccountBtn.disabled = false;
                 confirmDeleteAccountBtn.textContent = 'Erreur réseau';
                 setTimeout(() => {
@@ -165,7 +157,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 updateBudgetOverview();
             })
             .catch(err => {
-                console.warn('loadUserData:', err);
             });
     }
 
@@ -236,11 +227,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                     })
                     .catch(error => {
-                        console.error('Erreur lors du chargement des transactions:', error);
                     });
             })
             .catch(error => {
-                console.error('Erreur lors du chargement des budgets:', error);
                 if (budgetAdvice) {
                     const lang = document.documentElement.lang || 'fr';
                     const t = translations[lang] || {};
@@ -356,9 +345,7 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .then(response => response.json())
             .then(data => {
-                console.log('📤 Réponse upload:', data);
                 if (data.success && data.image) {
-                    console.log('✅ Upload réussi!');
                     const lang = document.documentElement.lang || 'fr';
                     const message = (typeof translations !== 'undefined' && translations[lang]?.photoUpdated) 
                         ? translations[lang].photoUpdated 
@@ -372,14 +359,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     
                     closeAvatarModal();
                 } else {
-                    console.log('❌ Upload échoué:', data.error);
                     showErrorToast(data.error || "Erreur lors de l'upload");
                 }
                 confirmAvatarBtn.disabled = false;
                 confirmAvatarBtn.textContent = 'Uploader';
             })
             .catch((err) => {
-                console.error('❌ Erreur fetch:', err);
                 showErrorToast("Erreur réseau");
                 confirmAvatarBtn.disabled = false;
                 confirmAvatarBtn.textContent = 'Uploader';
@@ -389,7 +374,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (avatarInput && avatarImage) {
         avatarInput.addEventListener('change', (e) => {
-            console.log('📸 Changement d\'avatar détecté');
             const file = e.target.files[0];
             if (!file) return;
             
@@ -429,9 +413,7 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .then(response => response.json())
             .then(data => {
-                console.log('📤 Réponse upload:', data);
                 if (data.success && data.image) {
-                    console.log('✅ Upload réussi!');
                     const lang = document.documentElement.lang || 'fr';
                     const message = (typeof translations !== 'undefined' && translations[lang]?.photoUpdated) 
                         ? translations[lang].photoUpdated 
@@ -441,12 +423,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     const newImagePath = data.image + '?t=' + Date.now();
                     avatarImage.src = newImagePath;
                 } else {
-                    console.log('❌ Upload échoué:', data.error);
                     showErrorToast(data.error || "Erreur lors de l'upload");
                 }
             })
             .catch((err) => {
-                console.error('❌ Erreur fetch:', err);
                 showErrorToast("Erreur réseau");
             });
         });
@@ -496,7 +476,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             })
             .catch(err => {
-                console.error('Update profile failed', err);
                 const lang = document.documentElement.lang || 'fr';
                 showSuccessToast(translations[lang]?.networkError || 'Erreur réseau');
             });
@@ -535,7 +514,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if (deleteBtn) {
         deleteBtn.addEventListener('click', () => {
             // En attente de fonctionnalités futures
-            console.log("Bouton suppression en attente...");
         });
     }
 
@@ -575,7 +553,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     function showSuccessToast(message) {
-        console.log('🟢 Affichage toast success:', message);
         const toast = document.createElement('div');
         toast.className = 'success-toast';
         toast.innerHTML = `<i class="fas fa-check-circle"></i> <span>${message}</span>`;
@@ -584,7 +561,6 @@ document.addEventListener('DOMContentLoaded', function () {
         toast.style.right = '20px';
         toast.style.zIndex = '99999';
         document.body.appendChild(toast);
-        console.log('Toast ajouté au DOM:', toast);
         setTimeout(() => {
             toast.classList.add('fade-out');
             setTimeout(() => toast.remove(), 500);
@@ -592,7 +568,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     
     function showErrorToast(message) {
-        console.log('🔴 Affichage toast error:', message);
         const toast = document.createElement('div');
         toast.className = 'error-toast';
         toast.innerHTML = `<i class="fas fa-exclamation-circle"></i> <span>${message}</span>`;
@@ -601,7 +576,6 @@ document.addEventListener('DOMContentLoaded', function () {
         toast.style.right = '20px';
         toast.style.zIndex = '99999';
         document.body.appendChild(toast);
-        console.log('Toast ajouté au DOM:', toast);
         setTimeout(() => {
             toast.classList.add('fade-out');
             setTimeout(() => toast.remove(), 500);

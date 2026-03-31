@@ -44,7 +44,6 @@ document.addEventListener('DOMContentLoaded', function () {
             __cacheTimestamp = now;
             return __transactionsCache;
         } catch (e) {
-            console.error('Erreur fetch transactions:', e);
             return [];
         }
     }
@@ -126,7 +125,6 @@ function loadProfileInfo() {
             handleAccountStats();
         })
         .catch(err => {
-            console.warn('loadProfileInfo:', err);
             // Laisser common.enforceAuth gérer la redirection si nécessaire
         });
 }
@@ -226,128 +224,198 @@ function handleAccountStats() {
         }
     }
 
+    // Fonction robuste pour parser une date
+    function parseTransactionDate(dateField) {
+        if (!dateField) return new Date();
+        
+        let d;
+        
+        // Essayer d'abord comme date ISO/standard
+        d = new Date(dateField);
+        if (!isNaN(d.getTime())) {
+            return d;
+        }
+        
+        // Format "jour mois_texte année" (ex: "15 mars 2026")
+        const parts = dateField.trim().split(/\s+/);
+        if (parts.length === 3) {
+            const mois = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+            const moisIndex = mois.findIndex(m => m === parts[1].toLowerCase());
+            if (moisIndex !== -1) {
+                try {
+                    d = new Date(parseInt(parts[2]), moisIndex, parseInt(parts[0]));
+                    if (!isNaN(d.getTime())) {
+                        return d;
+                    }
+                } catch (e) {}
+            }
+        }
+        
+        // Sinon retourner date actuelle
+        return new Date();
+    }
+
     async function updateSummaryCards() {
         try {
             const transactions = await getTransactionsData();
             let incMois = 0;
-            let expTotal = 0;
+            let expMois = 0;
             const now = new Date();
+            
+            // Calculer mois courant
             transactions.forEach(t => {
-                // Somme de tous les revenus du mois
-                let d;
-                if (t.date) {
-                    d = new Date(t.date);
-                    if (isNaN(d.getTime())) {
-                        const parts = t.date.split(' ');
-                        if (parts.length === 3) {
-                            const mois = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
-                            const moisIndex = mois.findIndex(m => m === parts[1].toLowerCase());
-                            if (moisIndex !== -1) {
-                                d = new Date(parseInt(parts[2]), moisIndex, parseInt(parts[0]));
-                            }
-                        }
-                    }
-                } else if (t.transaction_date) {
-                    d = new Date(t.transaction_date);
-                } else {
-                    d = new Date();
-                }
+                const d = parseTransactionDate(t.date || t.transaction_date);
+                
+                // Vérifier si c'est le mois courant
                 if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) {
-                    if(t.category_type === 'income') incMois += parseFloat(t.amount);
+                    if(t.category_type === 'income') incMois += parseFloat(t.amount) || 0;
+                    if(t.category_type === 'expense') expMois += parseFloat(t.amount) || 0;
                 }
-                // Somme de toutes les dépenses (toutes périodes)
-                if(t.category_type === 'expense') expTotal += parseFloat(t.amount);
             });
+            
+            // Calculer mois précédent
+            const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+            let incMoisPrecedent = 0;
+            let expMoisPrecedent = 0;
+            
+            transactions.forEach(t => {
+                const d = parseTransactionDate(t.date || t.transaction_date);
+                
+                // Vérifier si c'est le mois précédent
+                if (d.getMonth() === lastMonthDate.getMonth() && d.getFullYear() === lastMonthDate.getFullYear()) {
+                    if(t.category_type === 'income') incMoisPrecedent += parseFloat(t.amount) || 0;
+                    if(t.category_type === 'expense') expMoisPrecedent += parseFloat(t.amount) || 0;
+                }
+            });
+            
             const cards = document.querySelectorAll('.stats-value');
             const currencySymbol = window.appCurrency || 'EUR';
             if (cards.length >= 3) {
-                let soldeAffiche = incMois - expTotal;
+                let soldeAffiche = incMois - expMois;
                 if (soldeAffiche < 0) soldeAffiche = 0;
-                // Debug temporaire
-                // console.log('Solde:', soldeAffiche, 'Revenus:', incMois, 'Dépenses:', expTotal);
                 cards[0].textContent = `${formatAmountDash(soldeAffiche)} ${currencySymbol}`;
                 cards[1].textContent = `${formatAmountDash(incMois)} ${currencySymbol}`;
-                // Affichage strict du montant (pas de Math.max)
-                cards[2].textContent = `- ${formatAmountDash(Number(expTotal))} ${currencySymbol}`;
+                cards[2].textContent = `- ${formatAmountDash(Number(expMois))} ${currencySymbol}`;
                 
-                // Mettre à jour les indicateurs dynamiquement
-                // Calculer les données du mois précédent
-                const lastMonthDate = new Date();
-                lastMonthDate.setMonth(lastMonthDate.getMonth() - 1);
-                
-                let incMoisPrecedent = 0;
-                let expMoisPrecedent = 0;
-                
-                transactions.forEach(t => {
-                    let d;
-                    if (t.date) {
-                        d = new Date(t.date);
-                    } else if (t.transaction_date) {
-                        d = new Date(t.transaction_date);
-                    } else {
-                        d = new Date();
-                    }
-                    
-                    // Vérifier si c'est le mois précédent
-                    if (d.getMonth() === lastMonthDate.getMonth() && d.getFullYear() === lastMonthDate.getFullYear()) {
-                        if(t.category_type === 'income') incMoisPrecedent += parseFloat(t.amount);
-                        if(t.category_type === 'expense') expMoisPrecedent += parseFloat(t.amount);
-                    }
-                });
-                
-                // Appeler la fonction pour mettre à jour les indicateurs
-                updateStatsIndicators(incMois, expTotal, incMoisPrecedent, expMoisPrecedent);
+                // Mettre à jour les indicateurs avec les données correctes
+                updateStatsIndicators(incMois, expMois, incMoisPrecedent, expMoisPrecedent);
             }
         } catch (e) {
-            console.error('[DEBUG] Erreur lors de la mise à jour des cartes dashboard:', e);
         }
     }
     
     // Fonction pour mettre à jour les indicateurs de variation
-    function updateStatsIndicators(incMois, expTotal, incMoisPrecedent, expMoisPrecedent) {
+    function updateStatsIndicators(incMois, expMois, incMoisPrecedent, expMoisPrecedent) {
         const indicators = document.querySelectorAll('.stats-indicator');
+        const currentLang = localStorage.getItem('appLanguage') || 'fr';
         
         if (indicators.length >= 3) {
             // Indicateur 1 : Solde Total
-            const soldeActuel = incMois - expTotal;
+            const soldeActuel = incMois - expMois;
             const soldePrecedent = incMoisPrecedent - expMoisPrecedent;
-            const variationSolde = soldePrecedent !== 0 ? ((soldeActuel - soldePrecedent) / Math.abs(soldePrecedent) * 100) : (soldeActuel > 0 ? 100 : 0);
             
-            updateIndicator(indicators[0], variationSolde);
+            if (soldePrecedent === 0 || isNaN(soldePrecedent)) {
+                // Premier mois
+                updateIndicatorDisplay(indicators[0], 'N/A', 'neutral', 'fas fa-minus', 'balance', currentLang);
+            } else {
+                const variationSolde = ((soldeActuel - soldePrecedent) / Math.abs(soldePrecedent)) * 100;
+                updateIndicatorDisplay(indicators[0], variationSolde, null, null, 'balance', currentLang);
+            }
             
-            // Indicateur 2 : Revenus du mois (toujours positif = bon)
-            const variationIncome = incMoisPrecedent > 0 ? ((incMois - incMoisPrecedent) / incMoisPrecedent * 100) : (incMois > 0 ? 100 : 0);
-            updateIndicator(indicators[1], variationIncome);
+            // Indicateur 2 : Revenus du mois
+            if (incMoisPrecedent === 0 || isNaN(incMoisPrecedent)) {
+                updateIndicatorDisplay(indicators[1], 'N/A', 'neutral', 'fas fa-minus', 'income', currentLang);
+            } else {
+                const variationIncome = ((incMois - incMoisPrecedent) / incMoisPrecedent) * 100;
+                updateIndicatorDisplay(indicators[1], variationIncome, null, null, 'income', currentLang);
+            }
             
-            // Indicateur 3 : Dépenses du mois (négatif = bon, positif = mauvais)
-            const variationExpense = expMoisPrecedent > 0 ? ((expTotal - expMoisPrecedent) / expMoisPrecedent * 100) : (expTotal > 0 ? -100 : 0);
-            updateIndicator(indicators[2], variationExpense);
+            // Indicateur 3 : Dépenses du mois
+            if (expMoisPrecedent === 0 || isNaN(expMoisPrecedent)) {
+                updateIndicatorDisplay(indicators[2], 'N/A', 'neutral', 'fas fa-minus', 'expense', currentLang);
+            } else {
+                const variationExpense = ((expMois - expMoisPrecedent) / expMoisPrecedent) * 100;
+                updateIndicatorDisplay(indicators[2], variationExpense, null, null, 'expense', currentLang);
+            }
         }
     }
     
-    // Fonction utilitaire pour mettre à jour un indicateur
-    function updateIndicator(indicator, percentage) {
+    // Afficher un indicateur avec logique de couleur
+    function updateIndicatorDisplay(indicator, variation, forceType, forceIcon, indicatorType, lang = 'fr') {
         const span = indicator.querySelector('span');
         const icon = indicator.querySelector('i');
         
         if (!span || !icon) return;
         
-        // Déterminer le type et l'icône basés sur le pourcentage
-        let type = 'neutral';
+        let displayText = '';
+        let type = forceType || 'neutral';
+        let iconClass = forceIcon || 'fas fa-minus';
         
-        if (percentage > 0.5) { // Plus de 0.5% d'augmentation = positif
-            type = 'positive';
-            icon.className = 'fas fa-arrow-trend-up';
-            span.textContent = `+${Math.abs(percentage).toFixed(1)}%`;
-        } else if (percentage < -0.5) { // Plus de 0.5% de diminution = négatif
-            type = 'negative';
-            icon.className = 'fas fa-arrow-trend-down';
-            span.textContent = `${percentage.toFixed(1)}%`;
-        } else { // Entre -0.5% et +0.5% = neutre
+        // Si variation est "N/A"
+        if (variation === 'N/A') {
+            displayText = '~0%';
             type = 'neutral';
-            icon.className = 'fas fa-circle-notch';
-            span.textContent = `~0%`;
+            iconClass = 'fas fa-circle-notch';
+        } else if (typeof variation === 'number' && !isNaN(variation)) {
+            // Déterminer le seuil minimum de variation significative
+            const threshold = 0.5;
+            
+            if (indicatorType === 'income') {
+                // Revenu : vert si positif, rouge si négatif
+                if (variation > threshold) {
+                    displayText = `+${variation.toFixed(1)}%`;
+                    type = 'positive';
+                    iconClass = 'fas fa-arrow-trend-up';
+                } else if (variation < -threshold) {
+                    displayText = `${variation.toFixed(1)}%`;
+                    type = 'negative';
+                    iconClass = 'fas fa-arrow-trend-down';
+                } else {
+                    displayText = '~0%';
+                    type = 'neutral';
+                    iconClass = 'fas fa-circle';
+                }
+            } else if (indicatorType === 'expense') {
+                // Dépense : vert si baisse (négatif), rouge si hausse (positif)
+                if (variation < -threshold) {
+                    // Baisse = bon
+                    displayText = `${variation.toFixed(1)}%`;
+                    type = 'positive';
+                    iconClass = 'fas fa-arrow-trend-down';
+                } else if (variation > threshold) {
+                    // Hausse = mauvais
+                    displayText = `+${variation.toFixed(1)}%`;
+                    type = 'negative';
+                    iconClass = 'fas fa-arrow-trend-up';
+                } else {
+                    displayText = '~0%';
+                    type = 'neutral';
+                    iconClass = 'fas fa-circle';
+                }
+            } else if (indicatorType === 'balance') {
+                // Solde : vert si positif, rouge si négatif
+                if (variation > threshold) {
+                    displayText = `+${variation.toFixed(1)}%`;
+                    type = 'positive';
+                    iconClass = 'fas fa-arrow-trend-up';
+                } else if (variation < -threshold) {
+                    displayText = `${variation.toFixed(1)}%`;
+                    type = 'negative';
+                    iconClass = 'fas fa-arrow-trend-down';
+                } else {
+                    displayText = '~0%';
+                    type = 'neutral';
+                    iconClass = 'fas fa-circle';
+                }
+            }
+        } else {
+            displayText = '--';
+            type = 'neutral';
+            iconClass = 'fas fa-minus';
         }
+        
+        span.textContent = displayText;
+        icon.className = iconClass;
         
         // Mettre à jour les classes CSS
         indicator.classList.remove('indicator-positive', 'indicator-negative', 'indicator-neutral');
@@ -523,7 +591,6 @@ function handleAccountStats() {
                 }
                 lineChart.update();
         } catch (e) {
-            console.error('Erreur updateLineChart:', e);
         }
     }
 
@@ -675,7 +742,6 @@ function handleAccountStats() {
                 }
                 barChart.update();
         } catch (e) {
-            console.error('Erreur updateBarChart:', e);
         }
     }
 
@@ -700,7 +766,6 @@ function handleAccountStats() {
                     filterCategory.appendChild(option);
                 });
         } catch (e) {
-            console.error('Erreur updateCategoryFilter:', e);
         }
     }
 

@@ -53,14 +53,13 @@
                     <h3 data-i18n="dashboard">Dashboard</h3>
                     <div class="user-info">
                         <div class="notification-wrapper" style="position: relative;">
-                            <button id="notificationBtn" class="notification-btn">
+                            <button id="notificationBtn" class="notification-btn" title="Afficher les notifications">
                                 <i class="fas fa-bell"></i>
-                                <span id="notificationBadge" class="notification-badge" style="display: none; position: absolute; top: -6px; right: -6px; background-color: #ef4444; color: white; font-size: 10px; font-weight: bold; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white;">0</span>
+                                <span id="notificationBadge" class="notification-badge" style="display: none; position: absolute; top: -6px; right: -6px; background-color: #ef4444; color: white; font-size: 10px; font-weight: bold; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; z-index: 10;">0</span>
                             </button>
-                            <div id="notificationDropdown" class="notification-dropdown" style="display: none; position: absolute; top: 100%; right: 0; background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); width: 360px; max-height: 400px; overflow-y: auto; z-index: 1000; margin-top: 8px;">
-                                <div style="padding: 12px; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #1e293b;">Notifications</div>
-                                <div id="notificationList" style="max-height: 350px; overflow-y: auto;">
-                                    <div style="padding: 20px; text-align: center; color: #94a3b8; font-size: 14px;">Aucune notification</div>
+                            <div id="notificationDropdown" class="notification-dropdown" style="display: none; position: absolute; top: 100%; right: 0; background: white; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.12); width: 380px; max-height: 450px; overflow: hidden; z-index: 1000; margin-top: 10px; border: 1px solid #f1f5f9;">
+                                <div id="notificationList" style="max-height: 450px; overflow-y: auto;">
+                                    <div style="padding: 30px 20px; text-align: center; color: #94a3b8; font-size: 14px;"><i class="fas fa-bell" style="font-size: 28px; margin-bottom: 10px; opacity: 0.5; display: block;"></i><span data-i18n="noNotifications">Aucune notification</span></div>
                                 </div>
                             </div>
                         </div>

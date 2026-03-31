@@ -21,7 +21,19 @@ $reminder_needed = false;
 $hours_since = 0;
 
 if ($last_transaction_date === null) {
-    $reminder_needed = true;
+    // Vérifier si c'est vraiment un nouvel utilisateur
+    // Un compte créé depuis moins de 1 jour est considéré comme nouveau
+    $stmt = $pdo->prepare("SELECT DATE(created_at) as creation_date FROM users WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $created_date = $user['creation_date'] ?? $today;
+    
+    // Ne pas afficher le rappel si l'utilisateur vient de créer son compte (créé aujourd'hui)
+    if ($created_date === $today) {
+        $reminder_needed = false;
+    } else {
+        $reminder_needed = true;
+    }
     $hours_since = 999;
 } else {
     $last_date = new DateTime($last_transaction_date);

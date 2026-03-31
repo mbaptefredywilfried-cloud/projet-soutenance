@@ -1014,7 +1014,7 @@ body.dark-mode {
 }
 
 body.dark-mode aside {
-    background-color: #2d2d2d !important;
+    background: #2d2d2d !important;
     border-right: 1px solid var(--border-color);
 }
 

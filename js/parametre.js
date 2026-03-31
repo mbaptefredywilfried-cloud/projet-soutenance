@@ -198,7 +198,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     showToast('languageUpdateError');
                 }
             } catch (error) {
-                console.error('Erreur:', error);
                 saveUserSettings({ language: lang });
                 // Émettre l'événement même en cas d'erreur réseau
                 window.dispatchEvent(new Event('languageChanged'));
@@ -379,7 +378,6 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .catch(error => {
                 exportBtn.disabled = false;
-                console.error('Erreur export:', error);
                 showModernPopup(
                     getTranslation('popupErrorTitle'),
                     getTranslation('exportErrorNetwork'),

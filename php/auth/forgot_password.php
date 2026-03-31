@@ -33,8 +33,8 @@ try {
         // Calculer l'expiration (15 minutes)
         $expiresAt = date('Y-m-d H:i:s', strtotime('+15 minutes'));
         
-        // Marquer les anciens tokens comme utilisés pour cet email
-        $stmt = $pdo->prepare('UPDATE password_resets SET used = 1 WHERE email = ? AND used = 0');
+        // Supprimer les anciens tokens pour cet email (au lieu de les marquer comme utilisés)
+        $stmt = $pdo->prepare('DELETE FROM password_resets WHERE email = ?');
         $stmt->execute([$email]);
         
         // Insérer le nouveau token
@@ -95,15 +95,13 @@ try {
             $mail->AltBody = "Votre code de vérification Numera est : $otp (valide 15 minutes)";
             
             $mailSent = $mail->send();
-            if ($mailSent) {
-                error_log("✅ Email OTP sent successfully to $email");
-            } else {
-                error_log("❌ PHPMailer failed to send: " . $mail->ErrorInfo);
+            if (!$mailSent) {
+                // Email non envoyé, continuer silencieusement
             }
         } catch (\PHPMailer\PHPMailer\Exception $e) {
-            error_log('❌ PHPMailer Exception: ' . $e->getMessage());
+            // PHPMailer Exception - continuer silencieusement
         } catch (Exception $e) {
-            error_log('❌ General Exception in email: ' . $e->getMessage());
+            // Exception générale - continuer silencieusement
         }
     }
 
@@ -113,12 +111,10 @@ try {
     exit;
 
 } catch (PDOException $e) {
-    error_log('❌ Database Error: ' . $e->getMessage());
     http_response_code(200);
     echo json_encode(['status' => 'success']);
     exit;
 } catch (Exception $e) {
-    error_log('❌ Unexpected Error: ' . $e->getMessage());
     http_response_code(200);
     echo json_encode(['status' => 'success']);
     exit;
@@ -144,15 +140,13 @@ try {
             
             $mail->send();
         } catch (\PHPMailer\PHPMailer\Exception $e) {
-            // Enregistrer l'erreur d'email mais continuer (ne pas révéler au client)
-            error_log('PHPMailer Error: ' . $e->getMessage());
+            // Erreur email - continuer silencieusement
         }
     }
 
     echo json_encode($response);
 
 } catch (Exception $e) {
-    error_log('Forgot Password Error: ' . $e->getMessage());
     echo json_encode(['status' => 'success']); // Toujours succès pour sécurité
     exit;
 }

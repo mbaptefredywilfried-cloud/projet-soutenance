@@ -63,7 +63,6 @@
                 localStorage.setItem('lastReminderDate', today);
             }
         } catch (e) {
-            console.error('Reminder check failed', e);
         }
     }
 

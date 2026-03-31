@@ -18,6 +18,39 @@ document.addEventListener('DOMContentLoaded', function () {
 				targetForm.style.opacity = '1';
 			}, 10);
 		}
+
+		// Sauvegarder l'état du formulaire dans sessionStorage
+		sessionStorage.setItem('currentFormId', formId);
+		if (currentEmail) {
+			sessionStorage.setItem('currentEmail', currentEmail);
+		}
+	}
+
+	// ====== RESTAURER L'ÉTAT DU FORMULAIRE APRÈS RECHARGEMENT ======
+	function restoreFormState() {
+		const savedFormId = sessionStorage.getItem('currentFormId');
+		const savedEmail = sessionStorage.getItem('currentEmail');
+
+		// Seulement restaurer otpForm et resetForm (pas les formulaires de connexion)
+		if (savedFormId === 'otpForm' && savedEmail) {
+			currentEmail = savedEmail;
+			const otpEmailEl = document.getElementById('otpEmail');
+			if (otpEmailEl) {
+				otpEmailEl.textContent = currentEmail;
+				showForm('otpForm');
+				// Continuer le timer - ne pas réinitialiser (resetTimer = false)
+				startOtpTimer(false);
+			}
+		} else if (savedFormId === 'resetForm' && savedEmail) {
+			currentEmail = savedEmail;
+			showForm('resetForm');
+		} else {
+			// Par défaut, afficher le formulaire de connexion
+			showForm('loginForm');
+			sessionStorage.removeItem('currentFormId');
+			sessionStorage.removeItem('currentEmail');
+			sessionStorage.removeItem('otpTimerStart');
+		}
 	}
 
 	// ====== STYLE DE TRANSITION POUR LES FORMULAIRES ======
@@ -255,8 +288,11 @@ document.addEventListener('DOMContentLoaded', function () {
 					forgotEmailInput.value = '';
 					forgotEmailInput.classList.remove('input-success');
 					setButtonLoading(submitBtn, false);
+					// Initialiser le timestamp du timer pour un nouveau cycle de 15 minutes
+						sessionStorage.setItem('otpTimerStart', Date.now().toString());
 					showForm('otpForm');
 					document.getElementById('otpEmail').textContent = email;
+					startOtpTimer(true); // Démarrer à 15 minutes
 				} else {
 					setButtonLoading(submitBtn, false);
 					showPopupError(data.message || 'Erreur lors de l\'envoi du code');
@@ -283,10 +319,16 @@ document.addEventListener('DOMContentLoaded', function () {
 			e.preventDefault();
 			currentEmail = '';
 			currentResetToken = '';
-			document.getElementById('forgotEmail').value = '';
-			document.getElementById('otpCode').value = '';
-			document.getElementById('resetPassword').value = '';
-			document.getElementById('resetPasswordConfirm').value = '';
+			const forgotEmailEl = document.getElementById('forgotEmail');
+			const otpCodeEl = document.getElementById('otpCode');
+			const resetPasswordEl = document.getElementById('resetPassword');
+			const resetPasswordConfirmEl = document.getElementById('resetPasswordConfirm');
+			if (forgotEmailEl) forgotEmailEl.value = '';
+			if (otpCodeEl) otpCodeEl.value = '';
+			if (resetPasswordEl) resetPasswordEl.value = '';
+			if (resetPasswordConfirmEl) resetPasswordConfirmEl.value = '';
+			sessionStorage.removeItem('currentFormId');
+			sessionStorage.removeItem('currentEmail');
 			showForm('loginForm');
 		});
 	});
@@ -294,6 +336,55 @@ document.addEventListener('DOMContentLoaded', function () {
 	// ====== FORMULAIRE VÉRIFICATION OTP ======
 	const otpForm = document.getElementById('otpForm');
 	const otpCodeInput = document.getElementById('otpCode');
+	let otpTimerInterval = null;
+
+	function startOtpTimer(resetTimer = true) {
+		// Arrêter le timer précédent s'il existe
+		if (otpTimerInterval) clearInterval(otpTimerInterval);
+
+		const timerDisplay = document.getElementById('otpTimer');
+		let timeRemaining;
+		
+		if (resetTimer) {
+			// Nouveau OTP envoyé - réinitialiser à 15 minutes
+			timeRemaining = 15 * 60;
+			sessionStorage.setItem('otpTimerStart', Date.now().toString());
+		} else {
+			// Rechargement de page - récupérer le temps restant
+			const timerStartTimestamp = sessionStorage.getItem('otpTimerStart');
+			if (timerStartTimestamp) {
+				const elapsedMs = Date.now() - parseInt(timerStartTimestamp);
+				const elapsedSeconds = Math.floor(elapsedMs / 1000);
+				timeRemaining = Math.max(0, 15 * 60 - elapsedSeconds);
+			} else {
+				timeRemaining = 15 * 60;
+				sessionStorage.setItem('otpTimerStart', Date.now().toString());
+			}
+		}
+
+		function updateTimer() {
+			const minutes = Math.floor(timeRemaining / 60);
+			const seconds = timeRemaining % 60;
+			timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+			if (timeRemaining <= 0) {
+				clearInterval(otpTimerInterval);
+				timerDisplay.textContent = 'Expiré';
+				timerDisplay.style.color = '#ef4444'; // Rouge
+				otpCodeInput.disabled = true;
+				const submitBtn = otpForm.querySelector('button[type="submit"]');
+				submitBtn.disabled = true;
+				submitBtn.style.opacity = '0.5';
+				sessionStorage.removeItem('otpTimerStart');
+				return;
+			}
+
+			timeRemaining--;
+		}
+
+		updateTimer(); // Afficher immédiatement
+		otpTimerInterval = setInterval(updateTimer, 1000);
+	}
 
 	if (otpCodeInput) {
 		otpCodeInput.addEventListener('input', function () {
@@ -330,6 +421,7 @@ document.addEventListener('DOMContentLoaded', function () {
 					otpCodeInput.value = '';
 					otpCodeInput.classList.remove('input-error');
 					setButtonLoading(submitBtn, false);
+					if (otpTimerInterval) clearInterval(otpTimerInterval);
 					showForm('resetForm');
 				} else {
 					setButtonLoading(submitBtn, false);
@@ -364,6 +456,7 @@ document.addEventListener('DOMContentLoaded', function () {
 				if (data.status === 'success') {
 					otpCodeInput.value = '';
 					setButtonLoading(submitBtn, false);
+				startOtpTimer(true); // Redémarrer à 15 minutes (nouveau OTP envoyé)
 					showPopupError('Un nouveau code a été envoyé à votre email');
 				} else {
 					setButtonLoading(submitBtn, false);
@@ -495,6 +588,18 @@ document.addEventListener('DOMContentLoaded', function () {
 			input.addEventListener('focus', function () {
 				this.classList.remove('input-error');
 			});
+		}
+	});
+
+	// Restaurer l'état au chargement de la page - DOIT être appelé APRÈS toutes les définitions
+	restoreFormState();
+
+	// Nettoyer sessionStorage quand on quitte connexion.html (sauf otpForm qui est une session en cours)
+	window.addEventListener('beforeunload', () => {
+		const currentForm = sessionStorage.getItem('currentFormId');
+		if (currentForm !== 'otpForm') {
+			sessionStorage.removeItem('currentFormId');
+			sessionStorage.removeItem('currentEmail');
 		}
 	});
 });

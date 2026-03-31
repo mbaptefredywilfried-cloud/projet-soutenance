@@ -62,7 +62,6 @@ try {
     echo json_encode(['status' => 'success', 'reset_token' => $resetToken]);
 
 } catch (Exception $e) {
-    error_log('Verify OTP Error: ' . $e->getMessage());
     echo json_encode(['status' => 'error', 'message' => 'Erreur serveur']);
     exit;
 }
