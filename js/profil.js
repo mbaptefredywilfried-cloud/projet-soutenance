@@ -30,6 +30,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // Réappliquer si la couleur d'accent change (par exemple, après un changement de paramètres)
     const observer = new MutationObserver(applyProfileAccentColor);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['style'] });
+    
+    // Nettoyer l'observer quand on quitte la page pour éviter les fuites mémoire
+    window.addEventListener('beforeunload', () => {
+        observer.disconnect();
+    });
 
     // --- 1. SÉLECTEURS ---
     const avatarInput = document.getElementById('avatarInput');
@@ -114,7 +119,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (userNameDisplay) userNameDisplay.textContent = user.username || user.name || '';
                 if (fullNameDisplay) fullNameDisplay.textContent = user.username || user.name || '';
                 if (emailDisplay) emailDisplay.textContent = user.email || '';
-                if (phoneDisplay) phoneDisplay.textContent = user.phone || '';
+                // Afficher le téléphone ou "Non spécifié" s'il est vide
+                if (phoneDisplay) {
+                    if (user.phone && user.phone.trim()) {
+                        phoneDisplay.textContent = user.phone.trim();
+                    } else {
+                        const lang = document.documentElement.lang || 'fr';
+                        const t = (typeof translations !== 'undefined' && translations[lang]) ? translations[lang] : {};
+                        phoneDisplay.textContent = t.notSpecified || 'Non spécifié';
+                    }
+                }
                 const avatarPlaceholder = document.querySelector('.avatar-placeholder');
                 if (user.image && avatarImage) {
                     avatarImage.src = user.image;
@@ -440,7 +454,13 @@ document.addEventListener('DOMContentLoaded', function () {
             // Pré-remplir depuis le DOM ou laisser vide
             inputName.value = userNameDisplay ? userNameDisplay.textContent : '';
             inputEmail.value = emailDisplay ? emailDisplay.textContent : '';
-            inputPhone.value = phoneDisplay ? (phoneDisplay.textContent === 'Non specifie' ? '' : phoneDisplay.textContent) : '';
+            // Vérifier si le téléphone est "Non spécifié" (dans n'importe quelle langue)
+            // On utilise les clés de traduction pour vérifier
+            const lang = document.documentElement.lang || 'fr';
+            const t = (typeof translations !== 'undefined' && translations[lang]) ? translations[lang] : {};
+            const notSpecifiedText = t.notSpecified || 'Non spécifié';
+            const phoneText = phoneDisplay ? phoneDisplay.textContent.trim() : '';
+            inputPhone.value = (phoneText === notSpecifiedText || !phoneText) ? '' : phoneText;
             modal.style.display = 'flex';
         });
     }

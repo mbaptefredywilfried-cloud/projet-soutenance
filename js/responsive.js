@@ -208,9 +208,11 @@
   // 11. OBSERVE DARK MODE CHANGES
   // ============================================
 
+  let darkModeObserver = null;
+
   function observeDarkModeChanges() {
     // Watch for dark mode class changes on body
-    const observer = new MutationObserver((mutations) => {
+    darkModeObserver = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (
           mutation.type === 'attributes' &&
@@ -221,9 +223,16 @@
       });
     });
 
-    observer.observe(document.body, {
+    darkModeObserver.observe(document.body, {
       attributes: true,
       attributeFilter: ['class']
+    });
+
+    // Nettoyer l'observer quand on quitte la page
+    window.addEventListener('beforeunload', () => {
+      if (darkModeObserver) {
+        darkModeObserver.disconnect();
+      }
     });
   }
 

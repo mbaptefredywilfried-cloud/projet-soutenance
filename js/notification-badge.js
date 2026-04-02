@@ -24,7 +24,7 @@
     // Mettre à jour le badge
     function updateBadge(count) {
         if (count > 0) {
-            notificationBadge.textContent = count;
+            notificationBadge.textContent = count > 100 ? '99+' : count;
             notificationBadge.style.display = 'flex';
         } else {
             notificationBadge.style.display = 'none';

@@ -501,7 +501,8 @@ function handleAccountStats() {
             } 
         });
 
-        updatePieChart('7J');
+        // Afficher l'état vide du pie chart par défaut
+        showEmptyPieState();
         updateBarChart('Mois');
         updateLineChart();
     }
@@ -594,19 +595,120 @@ function handleAccountStats() {
         }
     }
 
+    // GESTION DE L'ÉTAT VIDE DES GRAPHIQUES
+    function showEmptyPieState() {
+        const chartContainer = document.querySelector('.dashed');
+        if (!chartContainer) return;
+
+        const currentLang = document.documentElement.lang || 'fr';
+        const t = translations[currentLang] || translations['fr'];
+        chartContainer.innerHTML = `
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 250px; text-align: center; color: #a0aec0;">
+                <i class="fa-solid fa-chart-pie" style="font-size: 3.5rem; margin-bottom: 15px; color: var(--accent-color); opacity: 0.6;"></i>
+                <p style="font-weight: 600; color: #64748b; margin: 0; font-size: 18px;" data-i18n="noExpense">${t.noExpense}</p>
+                <span style="font-size: 0.85rem; font-weight: 500; margin-top: 5px;" data-i18n="addExpenseToSeeDistribution">${t.addExpenseToSeeDistribution}</span>
+            </div>
+        `;
+    }
+
+    function ensurePieCanvasExists() {
+        const chartContainer = document.querySelector('.dashed');
+        if (chartContainer && !document.getElementById('piechart')) {
+            chartContainer.innerHTML = '<canvas id="piechart"></canvas>';
+            const pieCtx = document.getElementById('piechart').getContext('2d');
+            const centerTextPlugin = {
+                id: 'centerText',
+                afterDraw(chart) {
+                    if (chart.config._centerText) {
+                        const ctx = chart.ctx;
+                        const txt = chart.config._centerText.text;
+                        const fontSize = chart.config._centerText.fontSize || 13;
+                        const color = chart.config._centerText.color || '#1e293b';
+                        ctx.save();
+                        ctx.font = `bold ${fontSize}px Inter, Arial, sans-serif`;
+                        ctx.fillStyle = color;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        const meta = chart.getDatasetMeta(0);
+                        const arc = meta.data[0];
+                        let x = chart.width / 2;
+                        let y = chart.height / 2;
+                        if (arc) {
+                            x = arc.x;
+                            y = arc.y;
+                        }
+                        const lines = txt.split('\n');
+                        const lineHeight = fontSize * 1.3;
+                        const totalHeight = lineHeight * lines.length;
+                        lines.forEach((line, i) => {
+                            ctx.fillText(line, x, y - totalHeight/2 + i*lineHeight + lineHeight/2);
+                        });
+                        ctx.restore();
+                    }
+                }
+            };
+            pieChart = new Chart(pieCtx, { 
+                type: 'doughnut', 
+                data: { labels: [], datasets: [{ data: [], backgroundColor: [] }] },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    cutout: '65%',
+                    plugins: { legend: { position: 'right' } }
+                },
+                plugins: [centerTextPlugin]
+            });
+        }
+    }
+
    async function updatePieChart(period) {
-        if (!pieChart) return;
         try {
+            // S'assurer que le canvas existe (le créer s'il a été détruit par showEmptyPieState)
+            ensurePieCanvasExists();
+            if (!pieChart) return;
+            
             const transactions = await getTransactionsData();
-                const now = new Date();
-                // 1. Filtrage par période
-                const periodFiltered = transactions.filter(t => {
-                    const d = new Date(t.date);
-                    if (period === '7J') return (now - d) / (1000*60*60*24) <= 7;
-                    if (period === '1M') return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-                    if (period === '1A') return d.getFullYear() === now.getFullYear();
-                    return true;
-                });
+            const now = new Date();
+            
+            // Fonction pour parser une date correctement (éviter problèmes de fuseau horaire)
+            function parseDate(dateStr) {
+                const parts = dateStr.split('-');
+                if (parts.length === 3) {
+                    // Format YYYY-MM-DD
+                    return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                }
+                return new Date(dateStr);
+            }
+            
+            // 1. Filtrage par période
+            const periodFiltered = transactions.filter(t => {
+                const dateStr = t.transaction_date || t.date;
+                const d = parseDate(dateStr);
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                if (period === '7J') {
+                    const sevenDaysAgo = new Date(today);
+                    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+                    // Exclure aujourd'hui
+                    return d >= sevenDaysAgo && d < today;
+                }
+                if (period === '1M') {
+                    const oneMonthAgo = new Date(today);
+                    oneMonthAgo.setDate(oneMonthAgo.getDate() - 30);
+                    // Exclure aujourd'hui
+                    return d >= oneMonthAgo && d < today;
+                }
+                if (period === '3M') {
+                    const threeMonthsAgo = new Date(today);
+                    threeMonthsAgo.setDate(threeMonthsAgo.getDate() - 90);
+                    // Exclure aujourd'hui
+                    return d >= threeMonthsAgo && d < today;
+                }
+                // Par défaut: afficher le mois courant
+                if (period === 'currentMonth' || !period) {
+                    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+                }
+                return true;
+            });
                 // 2. Filtrage strict : UNIQUEMENT les dépenses
                 const expenseDataOnly = periodFiltered.filter(t => t.category_type === 'expense');
                 // 3. CONDITION CRUCIALE : Si aucune dépense, on force l'état "Aucune donnée"
@@ -777,7 +879,9 @@ function handleAccountStats() {
         btn.addEventListener('click', function() {
             timeButtons.forEach(b => b.classList.remove('active-time'));
             this.classList.add('active-time');
-            updatePieChart(this.textContent);
+            // Mapper le texte du bouton à la période
+            const period = this.textContent === 'Mois' ? 'currentMonth' : this.textContent;
+            updatePieChart(period);
         });
     });
 
@@ -798,6 +902,9 @@ function handleAccountStats() {
     updateSummaryCards();
     renderDashboardTransactions();
     initCharts();
+    
+    // Afficher les données du mois courant par défaut avec le bouton "Mois" actif
+    updatePieChart('currentMonth');
 
     // Rafraîchir le dashboard après une transaction
     window.addEventListener('transactionsUpdated', function() {
@@ -805,43 +912,19 @@ function handleAccountStats() {
         updateSummaryCards();
         renderDashboardTransactions();
         updateCategoryFilter();
-        if (typeof updatePieChart === 'function') updatePieChart('7J');
+        
+        // Déterminer le bouton actuellement actif et mettre à jour le pie chart
+        let activePeriod = 'currentMonth'; // Par défaut: mois courant
+        timeButtons.forEach(btn => {
+            if (btn.classList.contains('active-time')) {
+                activePeriod = btn.textContent === 'Mois' ? 'currentMonth' : btn.textContent;
+            }
+        });
+        
+        if (typeof updatePieChart === 'function') updatePieChart(activePeriod);
         if (typeof updateBarChart === 'function') updateBarChart('Mois');
         if (typeof updateLineChart === 'function') updateLineChart();
     });
 });
 
-// GESTION DE L'ÉTAT VIDE DES GRAPHIQUES
-function showEmptyPieState() {
-    const chartContainer = document.querySelector('.dashed');
-    const accentColor = localStorage.getItem('accentColor') || '#36A2EB';
-    if (!chartContainer) return;
 
-    const currentLang = document.documentElement.lang || 'fr';
-    const t = translations[currentLang] || translations['fr'];
-    chartContainer.innerHTML = `
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 250px; text-align: center; color: #a0aec0;">
-            <i class="fa-solid fa-chart-pie" style="font-size: 3.5rem; margin-bottom: 15px; color: ${accentColor}; opacity: 0.3;"></i>
-            <p style="font-weight: 600; color: #64748b; margin: 0; font-size: 18px;" data-i18n="noExpense">${t.noExpense}</p>
-            <span style="font-size: 0.85rem; font-weight: 500; margin-top: 5px;" data-i18n="addExpenseToSeeDistribution">${t.addExpenseToSeeDistribution}</span>
-        </div>
-    `;
-}
-
-function ensurePieCanvasExists() {
-    const chartContainer = document.querySelector('.dashed');
-    if (chartContainer && !document.getElementById('piechart')) {
-        chartContainer.innerHTML = '<canvas id="piechart"></canvas>';
-        const pieCtx = document.getElementById('piechart').getContext('2d');
-        pieChart = new Chart(pieCtx, { 
-            type: 'doughnut', 
-            data: { labels: [], datasets: [{ data: [], backgroundColor: [] }] },
-            options: { 
-                responsive: true, 
-                maintainAspectRatio: false, 
-                cutout: '60%',
-                plugins: { legend: { position: 'left' } }
-            }
-        });
-    }
-}

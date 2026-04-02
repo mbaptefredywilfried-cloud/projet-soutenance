@@ -113,6 +113,14 @@ function applySettingsToUI() {
     }
 }
 
+// --- CLEANUP DES OBSERVATEURS ---
+window.addEventListener('beforeunload', () => {
+    // Cleanup de tous les observateurs potentiels
+    if (window.themeObserver) {
+        window.themeObserver.disconnect();
+    }
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     loadUserSettings();
 
@@ -372,7 +380,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Mettre à jour la date de dernière sauvegarde
                     const lastBackupSpan = document.getElementById('lastBackupSpan');
                     if (lastBackupSpan) {
-                        lastBackupSpan.textContent = new Date().toLocaleString('fr-FR');
+                        const lang = document.documentElement.lang || 'fr';
+                        const locale = lang === 'en' ? 'en-US' : 'fr-FR';
+                        lastBackupSpan.textContent = new Date().toLocaleString(locale);
                     }
                 });
             })

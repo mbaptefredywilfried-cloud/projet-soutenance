@@ -107,6 +107,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     renderTransactions();
                     showSuccessToast('transactionAdded');
                     transactionForm.reset();
+                    // Remettre la date à aujourd'hui après reset
+                    const transactionDateInput = document.getElementById('transactionDate');
+                    if (transactionDateInput) {
+                        const today = new Date();
+                        const yyyy = today.getFullYear();
+                        const mm = String(today.getMonth() + 1).padStart(2, '0');
+                        const dd = String(today.getDate()).padStart(2, '0');
+                        transactionDateInput.value = `${yyyy}-${mm}-${dd}`;
+                    }
                     window.dispatchEvent(new Event('transactionsUpdated'));
                     // Rafraîchir les notifications après l'ajout d'une transaction
                     if (window.refreshNotifications) {
@@ -376,27 +385,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return toggleBtn;
     }
 
-    // Edition transaction (à adapter selon ton modal)
-    window.editTransaction = function(id) {
-        const transaction = transactions.find(t => t.id === id);
-        if (!transaction) return;
-        // Ouvre le modal d'édition
-        document.getElementById('editModal').style.display = 'flex';
-        // Pré-remplit le formulaire
-        document.getElementById('editTransactionId').value = transaction.id;
-        document.getElementById('editTransactionType').value = transaction.category_type;
-        // Met à jour les catégories selon le type
-        if (typeof updateCategoryOptions === 'function') {
-            updateCategoryOptions(document.getElementById('editTransactionType'), document.getElementById('editTransactionCategory'));
-        }
-        document.getElementById('editTransactionCategory').value = transaction.category_id;
-        document.getElementById('editTransactionAmount').value = transaction.amount;
-        document.getElementById('editTransactionDate').value = transaction.transaction_date || transaction.date;
-        document.getElementById('editTransactionDescription').value = transaction.description || '';
-    };
 
-    // Soumission du formulaire de modification
-    // (supprimé car doublon, voir plus bas addEventListener)
 
     // Confirmation suppression
     window.confirmDeleteTransaction = function(id) {
@@ -473,14 +462,14 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!transaction) return;
 
         document.getElementById('editTransactionId').value = transaction.id;
-        document.getElementById('editTransactionType').value = transaction.type;
+        document.getElementById('editTransactionType').value = transaction.category_type;
         
         // Charger les catégories correspondantes au type avant de sélectionner la valeur
         updateCategoryOptions(editTypeSelect, editCategorySelect);
         editCategorySelect.value = transaction.category_id;
         
         document.getElementById('editTransactionAmount').value = transaction.amount;
-        document.getElementById('editTransactionDate').value = transaction.date;
+        document.getElementById('editTransactionDate').value = transaction.transaction_date || transaction.date;
         document.getElementById('editTransactionDescription').value = transaction.description || '';
 
         editModal.style.display = 'flex'; // Affiche le modal
@@ -568,8 +557,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
     }
-    
-    initializeDateValidation();
 
     // --- Logique des filtres + COULEUR D'ACCENT AU SURVOL ---
     const filterBtns = document.querySelectorAll('.filter-btn');

@@ -55,7 +55,7 @@
                         <div class="notification-wrapper" style="position: relative;">
                             <button id="notificationBtn" class="notification-btn" title="Afficher les notifications">
                                 <i class="fas fa-bell"></i>
-                                <span id="notificationBadge" class="notification-badge" style="display: none; position: absolute; top: -6px; right: -6px; background-color: #ef4444; color: white; font-size: 10px; font-weight: bold; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; z-index: 10;">0</span>
+                                <span id="notificationBadge" class="notification-badge" style="display: none; position: absolute; top: -7px; right: -7px; background-color: #ef4444; color: white; font-size: 12px; font-weight: bold; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; z-index: 10;">0</span>
                             </button>
                             <div id="notificationDropdown" class="notification-dropdown" style="display: none; position: absolute; top: 100%; right: 0; background: white; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.12); width: 380px; max-height: 450px; overflow: hidden; z-index: 1000; margin-top: 10px; border: 1px solid #f1f5f9;">
                                 <div id="notificationList" style="max-height: 450px; overflow-y: auto;">
@@ -79,7 +79,7 @@
                             <p data-i18n="summaryDescription">Suivez votre progression financière et maîtrisez votre budget pour atteindre vos objectifs</p>
                         </div>
                         <div class="summary-date">
-                            <span id="currentMonth">MARS</span>
+                            <span id="currentMonth" class="apply-accent-color">MARS</span>
                             <span id="currentYear">2026</span>
                         </div>
                     </div>
@@ -129,7 +129,8 @@
                         <div class="text">
                             <p data-i18n="expenseDistribution">Répartition des dépenses</p>
                             <div class="button">
-                                <button class="active-time">7J</button>
+                                <button class="active-time">Mois</button>
+                                <button>7J</button>
                                 <button>1M</button>
                                 <button>3M</button>
                             </div>

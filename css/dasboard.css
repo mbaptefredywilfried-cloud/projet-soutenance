@@ -148,6 +148,7 @@ html::-webkit-scrollbar {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
 }
 
 body {
@@ -350,6 +351,10 @@ main .top-bar {
     font-size: 16px;
     font-weight: 700;
     color: #1e293b;
+}
+
+.summary-date span:first-child.apply-accent-color {
+    color: var(--accent-color, #36A2EB);
 }
 
 .summary-date span:last-child {
