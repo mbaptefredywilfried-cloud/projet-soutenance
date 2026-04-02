@@ -1547,12 +1547,12 @@ main > header {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(30, 64, 175, 0.85) 0%, rgba(59, 130, 246, 0.75) 100%);
+    background: rgba(0, 0, 0, 0.6);
     z-index: 10000;
     align-items: center;
     justify-content: center;
-    animation: fadeInBackdrop 0.4s ease;
-    backdrop-filter: blur(8px);
+    animation: fadeIn 0.3s ease;
+    backdrop-filter: blur(4px);
 }
 
 .avatar-modal-overlay.active {
@@ -1561,13 +1561,11 @@ main > header {
 
 .avatar-modal-content {
     background: white;
-    border-radius: 24px;
-    box-shadow: 0 20px 60px -10px rgba(30, 64, 175, 0.3), 
-                0 0 0 1px rgba(255, 255, 255, 0.1) inset,
-                0 0 0 2px rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05);
     width: 90%;
-    max-width: 450px;
-    animation: slideUpScale 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    max-width: 380px;
+    animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
 }
 
@@ -1575,8 +1573,8 @@ main > header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 28px 28px;
-    background: linear-gradient(135deg, #2563eb 0%, #1e40af 50%, #1e3a8a 100%);
+    padding: 20px 24px;
+    background: linear-gradient(135deg, #36A2EB 0%, #1e40af 100%);
     color: white;
     position: relative;
 }
@@ -1588,48 +1586,46 @@ main > header {
     left: 0;
     right: 0;
     bottom: 0;
-    background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
     pointer-events: none;
 }
 
 .avatar-modal-header h2 {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
     margin: 0;
     position: relative;
     z-index: 1;
-    letter-spacing: -0.5px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    letter-spacing: -0.3px;
 }
 
 .avatar-modal-close {
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
     color: white;
-    font-size: 26px;
+    font-size: 24px;
     cursor: pointer;
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 12px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 10px;
+    transition: all 0.2s ease;
     position: relative;
     z-index: 1;
 }
 
 .avatar-modal-close:hover {
-    background: rgba(255, 255, 255, 0.25);
-    border-color: rgba(255, 255, 255, 0.4);
-    transform: rotate(90deg) scale(1.1);
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
 }
 
 .avatar-modal-body {
-    padding: 32px 28px;
+    padding: 28px 24px;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 20px;
 }
 
 .avatar-preview-section {
@@ -1639,23 +1635,18 @@ main > header {
 
 .avatar-preview-wrapper {
     position: relative;
-    width: 200px;
-    height: 200px;
-    border-radius: 20px;
+    width: 180px;
+    height: 180px;
+    border-radius: 16px;
     overflow: hidden;
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-    border: 4px solid white;
-    box-shadow: 0 16px 32px rgba(30, 64, 175, 0.15), 
-                0 0 0 1px rgba(30, 64, 175, 0.08),
-                inset 0 1px 0 rgba(255, 255, 255, 0.8);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+    border: 3px solid white;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12), inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
 }
 
 .avatar-preview-wrapper:hover {
-    transform: scale(1.05);
-    box-shadow: 0 20px 40px rgba(30, 64, 175, 0.2),
-                0 0 0 1px rgba(30, 64, 175, 0.12),
-                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    transform: scale(1.02);
 }
 
 .avatar-preview-img {
@@ -1671,12 +1662,12 @@ main > header {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.85), rgba(30, 64, 175, 0.85));
+    background: linear-gradient(135deg, rgba(54, 162, 235, 0.8), rgba(30, 64, 175, 0.8));
     display: flex;
     align-items: center;
     justify-content: center;
     opacity: 0;
-    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.3s ease;
 }
 
 .avatar-preview-wrapper:hover .avatar-preview-overlay {
@@ -1684,60 +1675,59 @@ main > header {
 }
 
 .avatar-preview-overlay i {
-    font-size: 64px;
+    font-size: 56px;
     color: white;
-    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.25));
-    animation: pulseIcon 2s ease-in-out infinite;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .avatar-upload-section {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
     align-items: center;
 }
 
 .avatar-choose-btn {
     width: 100%;
-    padding: 16px 24px;
-    font-size: 16px;
+    padding: 14px 20px;
+    font-size: 15px;
     font-weight: 600;
     border: none;
-    border-radius: 12px;
+    border-radius: 10px;
     cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+    gap: 10px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     color: white;
-    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 .avatar-choose-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.45);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
 }
 
 .avatar-choose-btn:active {
-    transform: translateY(-1px);
+    transform: translateY(0);
 }
 
 .avatar-choose-btn i {
-    font-size: 18px;
+    font-size: 16px;
 }
 
 .avatar-file-info {
     font-size: 13px;
-    color: #64748b;
+    color: var(--text-secondary);
     text-align: center;
     margin: 0;
-    min-height: 28px;
-    padding: 8px 14px;
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(59, 130, 246, 0.08));
-    border-radius: 10px;
-    border-left: 4px solid #2563eb;
+    min-height: 24px;
+    padding: 6px 12px;
+    background: linear-gradient(135deg, rgba(54, 162, 235, 0.08), rgba(16, 185, 129, 0.08));
+    border-radius: 8px;
+    border-left: 3px solid #36A2EB;
     width: 100%;
     font-weight: 500;
 }
@@ -1745,55 +1735,53 @@ main > header {
 .avatar-modal-footer {
     display: flex;
     gap: 12px;
-    padding: 20px 28px;
-    border-top: 1px solid #e2e8f0;
-    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    padding: 16px 24px;
+    border-top: 1px solid var(--border-color);
+    background: var(--background-color);
     justify-content: flex-end;
 }
 
 .avatar-modal-footer button {
-    padding: 12px 28px;
+    padding: 12px 24px;
     border: none;
-    border-radius: 12px;
+    border-radius: 10px;
     font-weight: 600;
-    font-size: 15px;
+    font-size: 14px;
     cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    min-width: 120px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-width: 110px;
 }
 
 .avatar-modal-footer .btn-secondary {
-    background: #f1f5f9;
-    color: #475569;
-    border: 1.5px solid #e2e8f0;
+    background: var(--border-color);
+    color: var(--text-primary);
+    border: 1px solid #cbd5e1;
 }
 
 .avatar-modal-footer .btn-secondary:hover {
-    background: #e2e8f0;
-    transform: translateY(-2px);
-    border-color: #cbd5e1;
+    background: #cbd5e1;
+    transform: translateY(-1px);
 }
 
 .avatar-modal-footer .btn-primary {
-    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+    background: linear-gradient(135deg, #36A2EB 0%, #1e40af 100%);
     color: white;
-    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+    box-shadow: 0 4px 12px rgba(54, 162, 235, 0.3);
 }
 
 .avatar-modal-footer .btn-primary:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.45);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(54, 162, 235, 0.4);
 }
 
 .avatar-modal-footer .btn-primary:active {
-    transform: translateY(-1px);
+    transform: translateY(0);
 }
 
 .avatar-modal-footer .btn-primary:disabled {
     opacity: 0.6;
     cursor: not-allowed;
     transform: none;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
 
 @keyframes fadeIn {
@@ -1805,17 +1793,6 @@ main > header {
     }
 }
 
-@keyframes fadeInBackdrop {
-    from {
-        opacity: 0;
-        backdrop-filter: blur(0px);
-    }
-    to {
-        opacity: 1;
-        backdrop-filter: blur(8px);
-    }
-}
-
 @keyframes slideUp {
     from {
         transform: translateY(40px);
@@ -1824,26 +1801,6 @@ main > header {
     to {
         transform: translateY(0);
         opacity: 1;
-    }
-}
-
-@keyframes slideUpScale {
-    from {
-        transform: translateY(60px) scale(0.85);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0) scale(1);
-        opacity: 1;
-    }
-}
-
-@keyframes pulseIcon {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.1);
     }
 }
 
