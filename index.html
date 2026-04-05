@@ -413,248 +413,12 @@
         .nav-buttons {
             display: flex;
             gap: 0.5rem;
-            align-items: center;
-            margin-left: auto;
+            /* leave room for the fixed toggle button */
+            padding-right: 1rem;
         }
 
         .nav-buttons .btn-outline {
             display: inline-flex;
-        }
-
-        /* Nav Controls (Langue/Thème dans navbar) */
-        .nav-buttons .nav-language-select {
-            display: none;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.5rem;
-            font-size: 0.85rem;
-        }
-
-        .nav-buttons .nav-theme-toggle {
-            display: none;
-            width: 2.5rem;
-            height: 2.5rem;
-            font-size: 1rem;
-            border-radius: 50%;
-            background: var(--surface);
-            border: 2px solid var(--primary);
-            cursor: pointer;
-            color: var(--primary);
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-lg);
-        }
-
-        @media (min-width: 768px) {
-            .nav-buttons .nav-language-select {
-                display: inline-block !important;
-                padding: 0.625rem 1rem;
-                border-radius: 0.75rem;
-                background: var(--surface);
-                border: 2px solid var(--primary);
-                color: var(--foreground);
-                font-size: 0.95rem;
-                font-weight: 600;
-                cursor: pointer;
-                box-shadow: var(--shadow-lg);
-                font-family: 'Inter', sans-serif;
-            }
-
-            .nav-buttons .nav-language-select:hover {
-                transform: scale(1.05);
-                box-shadow: var(--shadow-xl);
-            }
-
-            .nav-buttons .nav-language-select:focus {
-                outline: none;
-                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-            }
-
-            .nav-buttons .nav-language-select option {
-                background: var(--card-bg);
-                color: var(--foreground);
-                padding: 0.5rem;
-            }
-
-            .nav-buttons .nav-theme-toggle {
-                display: inline-flex !important;
-                align-items: center;
-                justify-content: center;
-                width: 3rem;
-                height: 3rem;
-                font-size: 1.25rem;
-            }
-
-            .nav-buttons .nav-theme-toggle:hover {
-                transform: scale(1.1) rotate(20deg);
-                box-shadow: var(--shadow-xl);
-            }
-
-            .nav-buttons .nav-theme-toggle i {
-                transition: transform 0.3s ease;
-            }
-
-            .nav-buttons .nav-theme-toggle:active i {
-                transform: rotate(180deg);
-            }
-        }
-
-        /* Mobile Controls Bar */
-        .mobile-controls-bar {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 0.75rem;
-            background: var(--surface);
-            border-top: 1px solid var(--card-border);
-            padding: 1rem 0;
-        }
-
-        @media (min-width: 768px) {
-            .mobile-controls-bar {
-                display: none;
-            }
-        }
-
-        .mobile-controls-bar .language-select {
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.5rem;
-            background: var(--surface);
-            border: 2px solid var(--primary);
-            color: var(--foreground);
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-lg);
-            font-family: 'Inter', sans-serif;
-        }
-
-        .mobile-controls-bar .language-select:hover {
-            transform: scale(1.05);
-            box-shadow: var(--shadow-xl);
-        }
-
-        .mobile-controls-bar .language-select:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-        }
-
-        .mobile-controls-bar .language-select option {
-            background: var(--card-bg);
-            color: var(--foreground);
-            padding: 0.5rem;
-        }
-
-        .mobile-controls-bar .theme-toggle {
-            width: 2.5rem;
-            height: 2.5rem;
-            border-radius: 50%;
-            background: var(--surface);
-            border: 2px solid var(--primary);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            color: var(--primary);
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-lg);
-        }
-
-        .mobile-controls-bar .theme-toggle:hover {
-            transform: scale(1.1) rotate(20deg);
-            box-shadow: var(--shadow-xl);
-        }
-
-        .mobile-controls-bar .theme-toggle i {
-            transition: transform 0.3s ease;
-        }
-
-        .mobile-controls-bar .theme-toggle:active i {
-            transform: rotate(180deg);
-        }
-
-        /* ============================================
-           HERO SECTION
-           ============================================ */
-        .controls-container {
-            position: fixed;
-            top: 1.25rem;
-            right: 1.25rem;
-            z-index: 200;
-            display: flex;
-            gap: 0.75rem;
-            align-items: center;
-        }
-
-        @media (max-width: 767px) {
-            .controls-container {
-                position: static;
-                background: var(--surface);
-                border-top: 1px solid var(--card-border);
-                padding: 1rem 0;
-                width: 100%;
-                justify-content: center;
-                gap: 0.75rem;
-            }
-        }
-
-        .controls-container .language-select {
-            padding: 0.625rem 1rem;
-            border-radius: 0.75rem;
-            background: var(--surface);
-            border: 2px solid var(--primary);
-            color: var(--foreground);
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-lg);
-            font-family: 'Inter', sans-serif;
-        }
-
-        .controls-container .language-select:hover {
-            transform: scale(1.05);
-            box-shadow: var(--shadow-xl);
-        }
-
-        .controls-container .language-select:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-        }
-
-        .controls-container .language-select option {
-            background: var(--card-bg);
-            color: var(--foreground);
-            padding: 0.5rem;
-        }
-
-        .controls-container .theme-toggle {
-            width: 3rem;
-            height: 3rem;
-            border-radius: 50%;
-            background: var(--surface);
-            border: 2px solid var(--primary);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            color: var(--primary);
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-lg);
-        }
-
-        .controls-container .theme-toggle:hover {
-            transform: scale(1.1) rotate(20deg);
-            box-shadow: var(--shadow-xl);
-        }
-
-        .controls-container .theme-toggle i {
-            transition: transform 0.3s ease;
-        }
-
-        .controls-container .theme-toggle:active i {
-            transform: rotate(180deg);
         }
 
         /* ============================================
@@ -816,11 +580,7 @@
 
         .hero-right {
             position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 300px;
-            width: 100%;
+            display: none;
         }
 
         @media (min-width: 768px) {
@@ -828,7 +588,6 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                min-height: auto;
             }
         }
 
@@ -859,13 +618,6 @@
             position: relative;
             overflow: hidden;
             transition: background 0.3s ease;
-        }
-
-        @media (max-width: 767px) {
-            .hero-illustration {
-                aspect-ratio: 4/3;
-                border-radius: 1rem;
-            }
         }
 
         /* Dark mode overrides the illustration */
@@ -913,13 +665,6 @@
             filter: brightness(0) saturate(100%) invert(48%) sepia(78%) saturate(1652%) hue-rotate(187deg) brightness(108%) contrast(108%);
             transition: opacity 0.3s ease;
             display: none;
-        }
-
-        @media (max-width: 767px) {
-            .hero-logo-svg {
-                width: 8rem;
-                height: 8rem;
-            }
         }
 
         body.dark-mode .hero-logo-svg {
@@ -1463,17 +1208,16 @@
             .logo h1 { font-size: 1rem; }
             .logo p { font-size: 0.6rem; }
             .nav-menu { display: none; }
-            .nav-buttons { gap: 0.4rem; }
+            .nav-buttons { gap: 0.4rem; padding-right: 0.5rem; }
             .nav-buttons .btn { padding: 0.6rem 0.8rem; font-size: 0.8rem; }
             .nav-buttons .btn-outline { display: inline-flex; }
             
             /* Hero */
-            .hero { padding: 1.5rem 0; }
-            .hero-content { gap: 1rem; }
-            .hero-title { font-size: 1.5rem; line-height: 1.2; }
-            .hero-description { font-size: 0.9rem; }
-            .hero-buttons { gap: 0.5rem; flex-direction: column; }
-            .hero-right { min-height: 250px; }
+            .hero { padding: 2rem 0; }
+            .hero-content { gap: 1.5rem; }
+            .hero-title { font-size: 1.75rem; line-height: 1.2; }
+            .hero-description { font-size: 0.95rem; }
+            .hero-buttons { gap: 0.75rem; }
             .btn { padding: 0.75rem 1rem; font-size: 0.9rem; }
             .btn-lg { padding: 0.9rem 1.25rem; }
             .trust-section { flex-direction: column; gap: 1rem; }
@@ -1522,7 +1266,7 @@
             .navbar-content { padding: 1rem 0; }
             .logo h1 { font-size: 1.15rem; }
             .nav-menu { display: none; }
-            .nav-buttons { gap: 0.75rem; }
+            .nav-buttons { gap: 0.75rem; padding-right: 3.5rem; }
             .nav-buttons .btn-outline { display: inline-flex; }
             
             /* Hero */
@@ -1620,6 +1364,20 @@
 </head>
 <body>
 
+    <!-- Controls Container -->
+    <div class="controls-container">
+        <!-- Language Select -->
+        <select class="language-select" id="languageSelect" aria-label="Choisir la langue">
+            <option value="fr">Français</option>
+            <option value="en">English</option>
+        </select>
+        
+        <!-- Theme Toggle Button -->
+        <button class="theme-toggle" id="themeToggle" aria-label="Changer de thème">
+            <i class="fas fa-moon"></i>
+        </button>
+    </div>
+
     <!-- Navigation Header -->
     <header class="navbar">
         <div class="container">
@@ -1639,28 +1397,10 @@
                 <div class="nav-buttons">
                     <a href="connexion.html" class="btn btn-outline" data-i18n="nav-login">Connexion</a>
                     <a href="inscription.html" class="btn btn-primary" data-i18n="nav-signup">S'inscrire</a>
-                    <select class="language-select nav-language-select" id="languageSelect" aria-label="Choisir la langue">
-                        <option value="fr">Français</option>
-                        <option value="en">English</option>
-                    </select>
-                    <button class="theme-toggle nav-theme-toggle" id="themeToggle" aria-label="Changer de thème">
-                        <i class="fas fa-moon"></i>
-                    </button>
                 </div>
             </div>
         </div>
     </header>
-
-    <!-- Mobile Controls Bar -->
-    <div class="mobile-controls-bar">
-        <select class="language-select" id="languageSelectMobile" aria-label="Choisir la langue">
-            <option value="fr">Français</option>
-            <option value="en">English</option>
-        </select>
-        <button class="theme-toggle" id="themeToggleMobile" aria-label="Changer de thème">
-            <i class="fas fa-moon"></i>
-        </button>
-    </div>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -1700,7 +1440,7 @@
                 <div class="hero-right">
                     <div class="hero-illustration">
                         <img src="./img/icon.svg" alt="Numera Logo" class="hero-logo-svg" id="heroLogo">
-                        <div class="hero-video-container" id="heroVideoContainer" style="display: block;">
+                        <div class="hero-video-container" id="heroVideoContainer" style="display: flex;">
                             <video controls autoplay loop muted class="hero-video">
                                 <source src="./demo/Numera demo.mp4" type="video/mp4">
                                 Votre navigateur ne supporte pas la lecture vidéo.
@@ -1866,34 +1606,25 @@
         // Theme Toggle — light (no_images) ↔ dark
         // ============================================
         const themeToggle = document.getElementById('themeToggle');
-        const themeToggleMobile = document.getElementById('themeToggleMobile');
         const body = document.body;
 
         // Par défaut : light. On lit la préférence sauvegardée.
         const savedTheme = localStorage.getItem('numera-theme') || 'light';
-        
-        function updateThemeIcons(isDark) {
-            const icon = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-            if (themeToggle) themeToggle.innerHTML = icon;
-            if (themeToggleMobile) themeToggleMobile.innerHTML = icon;
-        }
-        
         if (savedTheme === 'dark') {
             body.classList.add('dark-mode');
-            updateThemeIcons(true);
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
         } else {
-            updateThemeIcons(false);
+            themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
         }
 
-        function toggleTheme() {
+        themeToggle.addEventListener('click', () => {
             body.classList.toggle('dark-mode');
             const isDark = body.classList.contains('dark-mode');
             localStorage.setItem('numera-theme', isDark ? 'dark' : 'light');
-            updateThemeIcons(isDark);
-        }
-
-        if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
-        if (themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
+            themeToggle.innerHTML = isDark
+                ? '<i class="fas fa-sun"></i>'
+                : '<i class="fas fa-moon"></i>';
+        });
 
         // ============================================
         // Page Load Animation
@@ -2035,11 +1766,8 @@
         // Language Selector - Dynamic Translation
         // ============================================
         const languageSelect = document.getElementById('languageSelect');
-        const languageSelectMobile = document.getElementById('languageSelectMobile');
         const savedLanguage = localStorage.getItem('numera-language') || 'fr';
-        
-        if (languageSelect) languageSelect.value = savedLanguage;
-        if (languageSelectMobile) languageSelectMobile.value = savedLanguage;
+        languageSelect.value = savedLanguage;
         document.documentElement.lang = savedLanguage;
 
         // Dictionnaire de traductions avec des clés uniques
@@ -2171,21 +1899,9 @@
         }
 
         // Événement changement de langue
-        if (languageSelect) {
-            languageSelect.addEventListener('change', (e) => {
-                applyLanguage(e.target.value);
-                // Synchroniser l'autre sélecteur
-                if (languageSelectMobile) languageSelectMobile.value = e.target.value;
-            });
-        }
-
-        if (languageSelectMobile) {
-            languageSelectMobile.addEventListener('change', (e) => {
-                applyLanguage(e.target.value);
-                // Synchroniser l'autre sélecteur
-                if (languageSelect) languageSelect.value = e.target.value;
-            });
-        }
+        languageSelect.addEventListener('change', (e) => {
+            applyLanguage(e.target.value);
+        });
 
         // Appliquer la langue sauvegardée au chargement
         applyLanguage(savedLanguage);

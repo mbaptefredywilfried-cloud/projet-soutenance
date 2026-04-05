@@ -260,16 +260,23 @@ function handleAccountStats() {
             const transactions = await getTransactionsData();
             let incMois = 0;
             let expMois = 0;
+            let incTotal = 0;  // Revenus TOUS les mois
+            let expTotal = 0;  // Dépenses TOUS les mois
             const now = new Date();
             
-            // Calculer mois courant
+            // Calculer mois courant + TOTAL depuis le début
             transactions.forEach(t => {
                 const d = parseTransactionDate(t.date || t.transaction_date);
+                const amount = parseFloat(t.amount) || 0;
+                
+                // Calculer TOTAL depuis le début
+                if(t.category_type === 'income') incTotal += amount;
+                if(t.category_type === 'expense') expTotal += amount;
                 
                 // Vérifier si c'est le mois courant
                 if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) {
-                    if(t.category_type === 'income') incMois += parseFloat(t.amount) || 0;
-                    if(t.category_type === 'expense') expMois += parseFloat(t.amount) || 0;
+                    if(t.category_type === 'income') incMois += amount;
+                    if(t.category_type === 'expense') expMois += amount;
                 }
             });
             
@@ -291,8 +298,9 @@ function handleAccountStats() {
             const cards = document.querySelectorAll('.stats-value');
             const currencySymbol = window.appCurrency || 'EUR';
             if (cards.length >= 3) {
-                let soldeAffiche = incMois - expMois;
-                if (soldeAffiche < 0) soldeAffiche = 0;
+                // Solde Total = Somme de TOUS les revenus - Somme de TOUTES les dépenses
+                let soldeAffiche = incTotal - expTotal;
+                
                 cards[0].textContent = `${formatAmountDash(soldeAffiche)} ${currencySymbol}`;
                 cards[1].textContent = `${formatAmountDash(incMois)} ${currencySymbol}`;
                 cards[2].textContent = `- ${formatAmountDash(Number(expMois))} ${currencySymbol}`;
@@ -310,17 +318,7 @@ function handleAccountStats() {
         const currentLang = localStorage.getItem('appLanguage') || 'fr';
         
         if (indicators.length >= 3) {
-            // Indicateur 1 : Solde Total
-            const soldeActuel = incMois - expMois;
-            const soldePrecedent = incMoisPrecedent - expMoisPrecedent;
-            
-            if (soldePrecedent === 0 || isNaN(soldePrecedent)) {
-                // Premier mois
-                updateIndicatorDisplay(indicators[0], 'N/A', 'neutral', 'fas fa-minus', 'balance', currentLang);
-            } else {
-                const variationSolde = ((soldeActuel - soldePrecedent) / Math.abs(soldePrecedent)) * 100;
-                updateIndicatorDisplay(indicators[0], variationSolde, null, null, 'balance', currentLang);
-            }
+            // Indicateur 1 : Solde Total - SUPPRIMÉ (pas d'utilité avec solde cumulatif)
             
             // Indicateur 2 : Revenus du mois
             if (incMoisPrecedent === 0 || isNaN(incMoisPrecedent)) {
