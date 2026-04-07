@@ -119,7 +119,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     window.dispatchEvent(new Event('transactionsUpdated'));
                     // Rafraîchir les notifications après l'ajout d'une transaction
                     if (window.refreshNotifications) {
-                        setTimeout(() => window.refreshNotifications(), 500);
+                        window.refreshNotifications();
+                    }
+                    // Vérifier et mettre à jour le statut du budget
+                    if (window.checkAndUpdateBudgetStatus) {
+                        setTimeout(() => window.checkAndUpdateBudgetStatus(), 500);
                     }
                 }
             } else {
@@ -151,6 +155,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 renderTransactions();
                 showSuccessToast('transactionModified');
                 window.dispatchEvent(new Event('transactionsUpdated'));
+                // Rafraîchir les notifications après la modification d'une transaction
+                if (window.refreshNotifications) {
+                    window.refreshNotifications();
+                }
             } else {
                 showErrorToast(data.message || 'Erreur lors de la modification.');
             }
@@ -173,6 +181,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 showSuccessToast('transactionDeleted');
                 await fetchTransactions();
                 window.dispatchEvent(new Event('transactionsUpdated'));
+                // Rafraîchir les notifications après la suppression d'une transaction
+                if (window.refreshNotifications) {
+                    window.refreshNotifications();
+                }
             } else {
                 showErrorPopup(data.message || 'Erreur lors de la suppression.');
             }
@@ -622,6 +634,10 @@ document.addEventListener('DOMContentLoaded', function () {
                             ? translations[currentLang].historyCleared
                             : (translations['en'] && translations['en'].historyCleared ? translations['en'].historyCleared : 'History cleared!');
                         showSuccessToast(message);
+                        // Rafraîchir les notifications après la suppression de toutes les transactions
+                        if (window.refreshNotifications) {
+                            window.refreshNotifications();
+                        }
                     } else {
                         showErrorToast("Erreur lors de la suppression");
                     }

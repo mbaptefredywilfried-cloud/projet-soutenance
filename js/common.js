@@ -26,8 +26,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        // Forcer le symbole € si la valeur est EUR
-        if (currency === 'EUR') currency = '€';
+        // Normaliser et convertir le code de devise en symbole
+        const currencySymbols = {
+            'EUR': '€',
+            'USD': '$',
+            'FCFA': 'FCFA'
+        };
+        // Si c'est un code, convertir en symbole; sinon garder comme est
+        currency = currencySymbols[currency] || currency;
+        
         // Stocker la devise dans une variable globale
         window.appCurrency = currency;
         window.appDarkMode = darkMode ? 1 : 0;

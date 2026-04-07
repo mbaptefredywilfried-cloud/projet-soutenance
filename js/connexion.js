@@ -1,4 +1,22 @@
 document.addEventListener('DOMContentLoaded', function () {
+	// ====== ATTENDRE QUE LE TOKEN CSRF SOIT CHARGÉ ======
+	async function fetchWithCSRF(url, options = {}) {
+		// Attendre que window.CSRF soit disponible
+		let attempts = 0;
+		while (!window.CSRF && attempts < 20) {
+			await new Promise(r => setTimeout(r, 50));
+			attempts++;
+		}
+		
+		if (!window.CSRF) {
+			console.error('CSRF manager non disponible après timeout');
+			throw new Error('Système de sécurité CSRF non disponible');
+		}
+
+		// Utiliser le method CSRF.fetch() qui gère automatiquement le token
+		return window.CSRF.fetch(url, options);
+	}
+
 	// ====== VARIABLES GLOBALES ======
 	let currentEmail = '';
 	let currentResetToken = '';
@@ -219,10 +237,9 @@ document.addEventListener('DOMContentLoaded', function () {
 			const languageCode = browserLanguage.startsWith('en') ? 'en' : 'fr';
 			
 			try {
-				const res = await fetch('./php/auth/login.php', {
+				const res = await fetchWithCSRF('./php/auth/login.php', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					credentials: 'same-origin',
 					body: JSON.stringify({ email, password, language: languageCode })
 				});
 				const data = await res.json();
@@ -234,6 +251,7 @@ document.addEventListener('DOMContentLoaded', function () {
 					showPopupError(data.message || "Échec de la connexion.");
 				}
 			} catch (err) {
+				console.error('Erreur login:', err);
 				showPopupError("Erreur lors de la connexion.");
 			}
 		});
@@ -275,10 +293,9 @@ document.addEventListener('DOMContentLoaded', function () {
 			setButtonLoading(submitBtn, true);
 
 			try {
-				const res = await fetch('./php/auth/forgot_password.php', {
+				const res = await fetchWithCSRF('./php/auth/forgot_password.php', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					credentials: 'same-origin',
 					body: JSON.stringify({ email })
 				});
 				const data = await res.json();
@@ -408,10 +425,9 @@ document.addEventListener('DOMContentLoaded', function () {
 			setButtonLoading(submitBtn, true);
 
 			try {
-				const res = await fetch('./php/auth/verify_otp.php', {
+				const res = await fetchWithCSRF('./php/auth/verify_otp.php', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					credentials: 'same-origin',
 					body: JSON.stringify({ email: currentEmail, otp })
 				});
 				const data = await res.json();
@@ -445,10 +461,9 @@ document.addEventListener('DOMContentLoaded', function () {
 			setButtonLoading(submitBtn, true);
 
 			try {
-				const res = await fetch('./php/auth/forgot_password.php', {
+				const res = await fetchWithCSRF('./php/auth/forgot_password.php', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					credentials: 'same-origin',
 					body: JSON.stringify({ email: currentEmail })
 				});
 				const data = await res.json();
@@ -520,10 +535,9 @@ document.addEventListener('DOMContentLoaded', function () {
 			setButtonLoading(submitBtn, true);
 
 			try {
-				const res = await fetch('./php/auth/reset_password.php', {
+				const res = await fetchWithCSRF('./php/auth/reset_password.php', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					credentials: 'same-origin',
 					body: JSON.stringify({ reset_token: currentResetToken, new_password: password })
 				});
 				const data = await res.json();

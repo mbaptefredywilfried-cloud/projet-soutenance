@@ -1,6 +1,8 @@
 <?php
 header('Content-Type: application/json');
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../auth/require_csrf.php';
+require_once __DIR__ . '/../auth/require_rate_limit.php';
 
 $input = json_decode(file_get_contents('php://input'), true);
 $email = $input['email'] ?? '';
@@ -11,6 +13,10 @@ if (empty($email) || empty($otp) || !is_numeric($otp) || strlen($otp) !== 6) {
     echo json_encode(['status' => 'error', 'message' => 'Code invalide ou expiré']);
     exit;
 }
+
+// Créer l'instance et vérifier les limites de taux (strict pour OTP)
+$rateLimit = getRateLimitMiddleware('verify_otp');
+$rateLimit->check($email);
 
 try {
     // Chercher le token non expiré et non utilisé pour cet email
@@ -24,12 +30,16 @@ try {
     $record = $stmt->fetch();
 
     if (!$record) {
+        // Enregistrer comme tentative échouée
+        $rateLimit->record($email, false);
         echo json_encode(['status' => 'error', 'message' => 'Code invalide ou expiré']);
         exit;
     }
 
     // Vérifier l'OTP avec password_verify
     if (!password_verify($otp, $record['token'])) {
+        // Enregistrer comme tentative échouée
+        $rateLimit->record($email, false);
         echo json_encode(['status' => 'error', 'message' => 'Code invalide ou expiré']);
         exit;
     }
@@ -59,6 +69,8 @@ try {
     $stmt->execute([$hashedResetToken, $expiresAt, $record['id']]);
 
     // Répondre avec le reset_token (en clair, pour le client)
+    // Enregistrer comme tentative réussie (efface les compteurs)
+    $rateLimit->record($email, true);
     echo json_encode(['status' => 'success', 'reset_token' => $resetToken]);
 
 } catch (Exception $e) {

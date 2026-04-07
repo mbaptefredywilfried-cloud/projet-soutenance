@@ -94,10 +94,12 @@ function loadProfileInfo() {
             // Mettre à jour la photo de profil DESKTOP (dans la top bar)
             const desktopPhotoContainer = document.querySelector('.top-bar .profile-circle');
             if (desktopPhotoContainer) {
+                const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color')?.trim() || '#36A2EB';
+                desktopPhotoContainer.style.borderColor = accentColor;
                 if (userPhoto && userPhoto.trim() !== "") {
                     desktopPhotoContainer.innerHTML = `<img src="${userPhoto}" id="userPhotoDisplay" alt="Profil" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
                 } else {
-                    desktopPhotoContainer.innerHTML = `<i class="fas fa-user" id="userPhotoDisplay" style="font-size: 1.2rem; color: var(--primary-color);"></i>`;
+                    desktopPhotoContainer.innerHTML = `<i class="fas fa-user" id="userPhotoDisplay" style="font-size: 1.2rem; color: ${accentColor};"></i>`;
                 }
             }
 
@@ -114,6 +116,8 @@ function loadProfileInfo() {
             // Mettre à jour la photo dans la sidebar (si elle existe)
             const sidebarProfile = document.querySelector('.profile-circle:not(.top-bar .profile-circle)');
             if (sidebarProfile) {
+                const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color')?.trim() || '#36A2EB';
+                sidebarProfile.style.borderColor = accentColor;
                 if (userPhoto && userPhoto.trim() !== "") {
                     sidebarProfile.innerHTML = `<img src="${userPhoto}" alt="Profil" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
                 } else {
@@ -314,26 +318,34 @@ function handleAccountStats() {
     
     // Fonction pour mettre à jour les indicateurs de variation
     function updateStatsIndicators(incMois, expMois, incMoisPrecedent, expMoisPrecedent) {
-        const indicators = document.querySelectorAll('.stats-indicator');
+        const cards = document.querySelectorAll('.current .card');
         const currentLang = localStorage.getItem('appLanguage') || 'fr';
         
-        if (indicators.length >= 3) {
-            // Indicateur 1 : Solde Total - SUPPRIMÉ (pas d'utilité avec solde cumulatif)
-            
-            // Indicateur 2 : Revenus du mois
-            if (incMoisPrecedent === 0 || isNaN(incMoisPrecedent)) {
-                updateIndicatorDisplay(indicators[1], 'N/A', 'neutral', 'fas fa-minus', 'income', currentLang);
-            } else {
-                const variationIncome = ((incMois - incMoisPrecedent) / incMoisPrecedent) * 100;
-                updateIndicatorDisplay(indicators[1], variationIncome, null, null, 'income', currentLang);
+        if (cards.length >= 3) {
+            // Card 2 : Revenus du mois (index 1)
+            const indicatorIncome = cards[1].querySelector('.stats-indicator');
+            if (indicatorIncome) {
+                if (incMoisPrecedent === 0 || isNaN(incMoisPrecedent)) {
+                    // Masquer l'indicateur s'il n'y a pas de données du mois précédent
+                    indicatorIncome.style.display = 'none';
+                } else {
+                    indicatorIncome.style.display = 'flex';
+                    const variationIncome = ((incMois - incMoisPrecedent) / incMoisPrecedent) * 100;
+                    updateIndicatorDisplay(indicatorIncome, variationIncome, null, null, 'income', currentLang);
+                }
             }
             
-            // Indicateur 3 : Dépenses du mois
-            if (expMoisPrecedent === 0 || isNaN(expMoisPrecedent)) {
-                updateIndicatorDisplay(indicators[2], 'N/A', 'neutral', 'fas fa-minus', 'expense', currentLang);
-            } else {
-                const variationExpense = ((expMois - expMoisPrecedent) / expMoisPrecedent) * 100;
-                updateIndicatorDisplay(indicators[2], variationExpense, null, null, 'expense', currentLang);
+            // Card 3 : Dépenses du mois (index 2)
+            const indicatorExpense = cards[2].querySelector('.stats-indicator');
+            if (indicatorExpense) {
+                if (expMoisPrecedent === 0 || isNaN(expMoisPrecedent)) {
+                    // Masquer l'indicateur s'il n'y a pas de données du mois précédent
+                    indicatorExpense.style.display = 'none';
+                } else {
+                    indicatorExpense.style.display = 'flex';
+                    const variationExpense = ((expMois - expMoisPrecedent) / expMoisPrecedent) * 100;
+                    updateIndicatorDisplay(indicatorExpense, variationExpense, null, null, 'expense', currentLang);
+                }
             }
         }
     }

@@ -1,10 +1,13 @@
 <?php
 header('Content-Type: application/json');
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../auth/require_csrf.php';
+require_once __DIR__ . '/../auth/require_rate_limit.php';
 
 $input = json_decode(file_get_contents('php://input'), true);
 $resetToken = $input['reset_token'] ?? '';
 $newPassword = $input['new_password'] ?? '';
+$email = $input['email'] ?? '';
 
 // Valider les inputs
 if (empty($resetToken) || empty($newPassword)) {
@@ -15,6 +18,12 @@ if (empty($resetToken) || empty($newPassword)) {
 if (strlen($newPassword) < 8) {
     echo json_encode(['status' => 'error', 'message' => 'Le mot de passe doit contenir au moins 8 caractères']);
     exit;
+}
+
+// Créer l'instance et vérifier les limites de taux si email fourni
+if (!empty($email)) {
+    $rateLimit = getRateLimitMiddleware('reset_password');
+    $rateLimit->check($email);
 }
 
 try {
@@ -79,10 +88,19 @@ try {
     $stmt = $pdo->prepare('UPDATE password_resets SET used = 1 WHERE id = ?');
     $stmt->execute([$validRecord['id']]);
 
+    // Enregistrer comme tentative réussie (efface les compteurs)
+    if (!empty($email)) {
+        $rateLimit->record($email, true);
+    }
+
     echo json_encode(['status' => 'success']);
     exit;
 
 } catch (PDOException $e) {
+    // Enregistrer comme tentative échouée si email fourni
+    if (!empty($email)) {
+        $rateLimit->record($email, false);
+    }
     echo json_encode(['status' => 'error', 'message' => 'Erreur base de données']);
     exit;
 } catch (Exception $e) {

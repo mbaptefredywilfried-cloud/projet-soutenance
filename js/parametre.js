@@ -101,15 +101,19 @@ function applySettingsToUI() {
     // Devise
     const currencySelect = document.getElementById('currencySelect');
     if (currencySelect) {
-        const hasOption = Array.from(currencySelect.options).some(o => o.value === userSettings.currency);
-        if (hasOption) currencySelect.value = userSettings.currency;
+        // Normaliser la devise stockée (convertir symboles en codes)
+        const currencyMap = {'€': 'EUR', 'EUR': 'EUR', '$': 'USD', 'USD': 'USD', 'FCFA': 'FCFA'};
+        const normalizedCurrency = currencyMap[userSettings.currency] || userSettings.currency || 'EUR';
+        currencySelect.value = normalizedCurrency;
     }
 
     // Langue
     const languageSelect = document.getElementById('languageSelect');
     if (languageSelect) {
-        const hasLang = Array.from(languageSelect.options).some(o => o.value === userSettings.language);
-        if (hasLang) languageSelect.value = userSettings.language;
+        // Récupérer la langue depuis localStorage en priorité, sinon depuis userSettings
+        const currentLang = localStorage.getItem('appLanguage') || userSettings.language || 'fr';
+        const hasLang = Array.from(languageSelect.options).some(o => o.value === currentLang);
+        if (hasLang) languageSelect.value = currentLang;
     }
 }
 

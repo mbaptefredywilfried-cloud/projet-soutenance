@@ -138,6 +138,8 @@
             <button type="submit">Enregistrer le mot de passe</button>
         </div>
     </form>
+    <!-- Protection CSRF - Charger EN PREMIER avant tous les autres scripts -->
+    <script src="./js/csrf-manager.js"></script>
     <script src="./js/common.js"></script>
     <script src="./js/connexion.js"></script>
 </body>

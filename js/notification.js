@@ -52,14 +52,20 @@
                 daysSince = Math.floor(diffMs / (24 * 60 * 60 * 1000));
             }
             if (latestISO === today) return;
+            
+            // Récupérer la langue courante et les traductions
+            const currentLang = localStorage.getItem('appLanguage') || 'fr';
+            const t = window.translations?.[currentLang] || window.translations?.fr || {};
+            
             let message = null;
             if (latestISO === null || daysSince >= 7) {
-                message = "Aucune transaction enregistrée depuis plus de 7 jours. Pensez à suivre vos dépenses.";
+                message = t.notificationNoTransactionWeek || "Aucune transaction enregistrée depuis plus de 7 jours. Pensez à suivre vos dépenses.";
             } else if (daysSince >= 1) {
-                message = "Aucune transaction enregistrée aujourd'hui. N'oubliez pas d'ajouter vos dépenses.";
+                message = t.notificationNoTransactionToday || "Aucune transaction enregistrée aujourd'hui. N'oubliez pas d'ajouter vos dépenses.";
             }
             if (message) {
-                createToast(message, 'Saisir', 'transaction.html');
+                const buttonLabel = t.notificationTransactionButton || 'Saisir';
+                createToast(message, buttonLabel, 'transaction.html');
                 localStorage.setItem('lastReminderDate', today);
             }
         } catch (e) {
@@ -96,7 +102,7 @@
     // Garde seulement un système passif pour afficher l'indicateur rouge
     // mais sans créer de toast (les notifications viennent du serveur)
     
-    function showBudgetIndicator() {
+    function showBudgetIndicator(color = '#ef4444') {
         // Find Budget link in sidebar and add a static red dot
         const budgetLink = document.querySelector('aside a[href="./budget.html"]');
         if (!budgetLink) return;
@@ -105,14 +111,14 @@
         const oldIndicator = budgetLink.querySelector('.budget-alert-dot');
         if (oldIndicator) oldIndicator.remove();
 
-        // Add red dot indicator (static, no animation)
+        // Add dot indicator with specified color
         const dot = document.createElement('span');
         dot.className = 'budget-alert-dot';
         dot.style.cssText = `
             position: absolute;
             width: 8px;
             height: 8px;
-            background: #ef4444;
+            background: ${color};
             border-radius: 50%;
             top: 6px;
             right: 6px;
@@ -125,21 +131,43 @@
         budgetLink.appendChild(dot);
     }
 
+    function removeBudgetIndicator() {
+        const budgetLink = document.querySelector('aside a[href="./budget.html"]');
+        if (!budgetLink) return;
+        const oldIndicator = budgetLink.querySelector('.budget-alert-dot');
+        if (oldIndicator) oldIndicator.remove();
+    }
+
+    // Fonction principale pour vérifier et mettre à jour le statut du budget
+    async function checkAndUpdateBudgetStatus() {
+        try {
+            const response = await fetch('./php/budgets/check_status.php');
+            const data = await response.json();
+            if (data.status === 'success') {
+                if (data.budget_status === 'error') {
+                    // Point rouge pour budget dépassé
+                    showBudgetIndicator('#ef4444');
+                } else if (data.budget_status === 'warning') {
+                    // Point jaune pour budget presque atteint (80%+)
+                    showBudgetIndicator('#f59e0b');
+                } else {
+                    // Aucun indicateur si tout va bien
+                    removeBudgetIndicator();
+                }
+            }
+        } catch (e) {
+            console.log('Budget status check error:', e);
+        }
+    }
+
     // Expose public API
     window.checkBudgetOverrun = function() {};
+    window.checkAndUpdateBudgetStatus = checkAndUpdateBudgetStatus;
 
-    // Update indicator on page load based on notifications server
+    // Update indicator on page load based on actual budget status
     document.addEventListener('DOMContentLoaded', function () {
         try {
-            // Vérifier s'il y a des notifications de type 'error' ou 'warning'
-            fetch('./php/notifications/get_notifications.php')
-                .then(r => r.json())
-                .then(data => {
-                    if (data.notifications && data.notifications.some(n => n.type === 'error' || n.type === 'warning')) {
-                        showBudgetIndicator();
-                    }
-                })
-                .catch(e => console.log('Budget check skipped'));
+            checkAndUpdateBudgetStatus();
         } catch (e) {}
     });
 })();

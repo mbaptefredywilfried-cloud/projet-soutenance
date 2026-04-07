@@ -1,6 +1,8 @@
 <?php
 header('Content-Type: application/json');
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../auth/require_csrf.php';
+require_once __DIR__ . '/../auth/require_rate_limit.php';
 require_once __DIR__ . '/../config/mail_config.php';
 
 // Récupérer l'input
@@ -15,6 +17,10 @@ if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     echo json_encode($response);
     exit;
 }
+
+// Définir l'action et vérifier les limites de taux
+$rateLimit = getRateLimitMiddleware('forgot_password');
+$rateLimit->check($email);
 
 try {
     // Vérifier que l'email existe dans users
@@ -104,6 +110,9 @@ try {
             // Exception générale - continuer silencieusement
         }
     }
+
+    // Enregistrer comme tentative réussie (efface les compteurs)
+    $rateLimit->record($email, true);
 
     // Toujours retourner succès (anti-énumération)
     http_response_code(200);

@@ -5,6 +5,7 @@ ini_set('display_errors', 0);
 
 try {
     require_once '../config/database.php';
+    require_once '../auth/require_csrf.php';
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode(["success" => false, "error" => "Erreur config: " . $e->getMessage()]);

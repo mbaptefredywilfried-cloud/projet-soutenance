@@ -60,12 +60,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const inputPhone = document.getElementById('editPhone');
 
     // Sélecteurs Sécurité (Card 5)
-    const exportBtn = document.getElementById('exportDataBtn');
-        if (exportBtn) {
-            exportBtn.addEventListener('click', function() {
-                window.location.href = 'php/data/export_data.php';
-            });
-        }
     const deleteBtn = document.getElementById('deleteAccountBtn');
     const deleteAccountModal = document.getElementById('deleteAccountModal');
     const confirmDeleteAccountBtn = document.getElementById('confirmDeleteAccountBtn');
@@ -175,20 +169,54 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // --- 3. APERÇU BUDGÉTAIRE DYNAMIQUE ---
+    // Fonction pour calculer les dépenses d'un budget selon sa période (identique à budget.js)
+    function calculateSpentForBudget(budget, transactions) {
+        if (!transactions || transactions.length === 0) return 0;
+        const currentDate = new Date();
+        const currentMonth = currentDate.toISOString().slice(0, 7); // "2026-04"
+        const currentYear = currentDate.getFullYear().toString();
+        const budgetMonth = String(budget.month).toLowerCase();
+        let relevantTransactions = transactions.filter(t => 
+            t.category_id == budget.category_id && (t.category_type === 'expense' || t.type === 'expense')
+        );
+        if (budgetMonth.includes('mensuel') || budgetMonth === 'mois') {
+            // Dépenses du mois courant
+            relevantTransactions = relevantTransactions.filter(t => 
+                t.date && t.date.slice(0, 7) === currentMonth
+            );
+        } else if (budgetMonth.includes('annuel') || budgetMonth === 'an' || budgetMonth === 'année') {
+            // Dépenses de l'année courante
+            relevantTransactions = relevantTransactions.filter(t => 
+                t.date && t.date.slice(0, 4) === currentYear
+            );
+        } else if (budgetMonth.includes('hebdo') || budgetMonth === 'semaine') {
+            // Dépenses de la semaine courante (lundi-dimanche)
+            const now = new Date();
+            const day = now.getDay();
+            const diffToMonday = day === 0 ? 6 : day - 1;
+            const monday = new Date(now);
+            monday.setDate(now.getDate() - diffToMonday);
+            monday.setHours(0,0,0,0);
+            const sunday = new Date(monday);
+            sunday.setDate(monday.getDate() + 6);
+            sunday.setHours(23,59,59,999);
+            relevantTransactions = relevantTransactions.filter(t => {
+                if (!t.date) return false;
+                const tDate = new Date(t.date);
+                return tDate >= monday && tDate <= sunday;
+            });
+        }
+        return relevantTransactions.reduce((sum, t) => sum + Number(t.amount), 0);
+    }
+
     function updateBudgetOverview() {
         fetch('./php/budgets/list.php')
             .then(response => response.json())
             .then(data => {
                 const budgets = Array.isArray(data.data) ? data.data : [];
-                let totalBudget = 0;
                 let currencySymbol = window.appCurrency || 'EUR';
-                // Récupérer les category_id des budgets actifs
-                const activeCategoryIds = budgets.map(b => b.category_id);
-                budgets.forEach(b => {
-                    totalBudget += parseFloat(b.amount) || 0;
-                });
                 // CONSEIL : aucun budget défini
-                if (totalBudget === 0) {
+                if (budgets.length === 0) {
                     if (statsValues.length >= 3) {
                         statsValues[0].textContent = '--%';
                         statsValues[1].textContent = `0.00 ${currencySymbol}`;
@@ -205,49 +233,75 @@ document.addEventListener('DOMContentLoaded', function () {
                     .then(resp => resp.json())
                     .then(transData => {
                         const transactions = Array.isArray(transData.data) ? transData.data : [];
-                        let totalSpent = 0;
-                        let totalSpentActive = 0;
+                        let totalBudget = 0;
+                        let totalSpentByPeriod = 0;
                         let totalSpentAll = 0;
+                        let overBudgetCount = 0;
+                        let almostExceededCount = 0;
+
+                        // Calculer pour CHAQUE budget selon sa période
+                        budgets.forEach(budget => {
+                            totalBudget += parseFloat(budget.amount) || 0;
+                            const spent = calculateSpentForBudget(budget, transactions);
+                            totalSpentByPeriod += spent;
+                            const percentage = budget.amount > 0 ? (spent / budget.amount) * 100 : 0;
+                            if (percentage > 100) overBudgetCount++;
+                            else if (percentage >= 80) almostExceededCount++;
+                        });
+
+                        // Total de toutes les dépenses (toutes transactions)
                         transactions.forEach(t => {
-                            if (t.category_type === 'expense') {
+                            if (t.category_type === 'expense' || t.type === 'expense') {
                                 totalSpentAll += parseFloat(t.amount) || 0;
-                                if (activeCategoryIds.includes(t.category_id)) {
-                                    totalSpentActive += parseFloat(t.amount) || 0;
-                                }
                             }
                         });
-                        const rawPercentage = totalBudget > 0 ? (totalSpentActive / totalBudget) * 100 : 0;
+
+                        const rawPercentage = totalBudget > 0 ? (totalSpentByPeriod / totalBudget) * 100 : 0;
                         const displayPercentage = Math.min(100, Math.round(rawPercentage));
+                        
                         if (statsValues.length >= 3) {
-                            // Carte orange : Utilisé
                             statsValues[0].textContent = `${displayPercentage}%`;
-                            // Carte bleue : Total Budgétisé
                             statsValues[1].textContent = `${totalBudget.toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ${currencySymbol}`;
-                            // Carte rouge : Dépensé (toutes transactions)
                             statsValues[2].textContent = `${totalSpentAll.toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ${currencySymbol}`;
                         }
+                        
                         if (budgetAdvice) {
                             const lang = document.documentElement.lang || 'fr';
                             const t = translations[lang] || {};
-                            if (rawPercentage > 100) {
-                                budgetAdvice.innerHTML = `<i class="fas fa-times-circle" style="color:#ef4444;"></i> <span style="color:#ef4444;font-weight:bold;">${t.budgetAdviceExceeded || 'Budget dépassé'}</span>`;
-                            } else if (rawPercentage > 80) {
-                                budgetAdvice.innerHTML = `<i class="fas fa-exclamation" style="color:#f59e0b;"></i> <span style="color:#f59e0b;font-weight:bold;">${t.budgetAdviceAlmostReached || 'Budget presque atteint'}</span>`;
+                            let adviceIcon = '';
+                            let adviceText = '';
+                            let adviceColor = '';
+
+                            if (overBudgetCount > 0) {
+                                adviceIcon = '<i class="fas fa-times-circle"></i>';
+                                adviceText = `${t.budgetAdviceExceeded || 'Budget dépassé'} (${overBudgetCount})`;
+                                adviceColor = '#ef4444';
+                            } else if (almostExceededCount > 0) {
+                                adviceIcon = '<i class="fas fa-exclamation"></i>';
+                                adviceText = `${t.budgetAdviceAlmostReached || 'Budget presque atteint'} (${almostExceededCount})`;
+                                adviceColor = '#f59e0b';
                             } else if (rawPercentage >= 50) {
-                                budgetAdvice.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:#f59e0b;"></i> <span style="color:#f59e0b;font-weight:bold;">${t.budgetAdviceWarning || 'Attention à vos dépenses'}</span>`;
+                                adviceIcon = '<i class="fas fa-exclamation-triangle"></i>';
+                                adviceText = t.budgetAdviceWarning || 'Attention à vos dépenses';
+                                adviceColor = '#f59e0b';
                             } else {
-                                budgetAdvice.innerHTML = `<i class="fas fa-check-circle" style="color:#10b981;"></i> <span style="color:#10b981;font-weight:bold;">${t.budgetAdviceExcellent || 'Gestion excellente'}</span>`;
+                                adviceIcon = '<i class="fas fa-check-circle"></i>';
+                                adviceText = t.budgetAdviceExcellent || 'Gestion excellente';
+                                adviceColor = '#10b981';
                             }
+
+                            budgetAdvice.innerHTML = `${adviceIcon} <span style="color:${adviceColor};font-weight:bold;">${adviceText}</span>`;
                         }
                     })
                     .catch(error => {
+                        console.error('Erreur transactions:', error);
                     });
             })
             .catch(error => {
                 if (budgetAdvice) {
                     const lang = document.documentElement.lang || 'fr';
                     const t = translations[lang] || {};
-                    budgetAdvice.innerHTML = `<i class=\"fas fa-exclamation-triangle\"></i> <span style=\"color: #ef4444; font-weight:bold;\">${t.errorTitle || 'Erreur'} :</span> ${t.budgetAdviceError || 'Impossible de charger les données budgétaires.'}`;
+                    budgetAdvice.innerHTML = `<i class="fas fa-exclamation-triangle"></i> <span style="color: #ef4444; font-weight:bold;">${t.errorTitle || 'Erreur'} :</span> ${t.budgetAdviceError || 'Impossible de charger les données budgétaires.'}`;
                 }
             });
     }
@@ -503,33 +557,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // --- 7. SÉCURITÉ ET DONNÉES (Boutons Card 5) ---
-    if (exportBtn) {
-        exportBtn.addEventListener('click', () => {
-            fetch('php/data/user_profile.php?action=get', { credentials: 'same-origin' })
-                .then(resp => resp.json())
-                .then(result => {
-                    if (!result.success) throw new Error('No profile');
-                    const user = result.user || {};
-                    const data = {
-                        nom: user.username,
-                        email: user.email
-                    };
-                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'mon_profil_data.json';
-                    a.click();
-                    // Utilise la langue courante pour le toast
-                    const lang = document.documentElement.lang || 'fr';
-                    showSuccessToast(translations[lang]?.dataExported || "Données exportées !");
-                })
-                .catch(() => {
-                    const lang = document.documentElement.lang || 'fr';
-                    showSuccessToast(translations[lang]?.profileExportError || "Impossible d'exporter : utilisateur non authentifié");
-                });
-        });
-    }
+    // Code d'export supprimé - bouton n'existe pas
 
     if (deleteBtn) {
         deleteBtn.addEventListener('click', () => {
@@ -600,6 +628,60 @@ document.addEventListener('DOMContentLoaded', function () {
             toast.classList.add('fade-out');
             setTimeout(() => toast.remove(), 500);
         }, 3000);
+    }
+
+    // --- SUPPRESSION DE LA PHOTO DE PROFIL ---
+    const deleteAvatarBtn = document.getElementById('deleteAvatarBtn');
+    if (deleteAvatarBtn) {
+        deleteAvatarBtn.addEventListener('click', function() {
+            deleteAvatarBtn.disabled = true;
+            deleteAvatarBtn.style.opacity = '0.6';
+
+            fetch('php/data/delete_avatar.php', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRF-Token': window.csrfToken || ''
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Réinitialise l'avatar à la photo par défaut
+                    if (avatarImage) {
+                        avatarImage.src = './assets/default-avatar.png';
+                    }
+                    const avatarPlaceholder = document.querySelector('.avatar-placeholder');
+                    if (avatarPlaceholder) {
+                        avatarPlaceholder.classList.remove('hidden');
+                    }
+                    const lang = document.documentElement.lang || 'fr';
+                    const t = translations[lang] || {};
+                    showSuccessToast(t.deleteProfilePhotoSuccess || 'Photo de profil supprimée avec succès');
+                } else {
+                    const lang = document.documentElement.lang || 'fr';
+                    const t = translations[lang] || {};
+                    let errorMsg = data.error;
+                    if (errorMsg === 'noPhotoToDelete') {
+                        errorMsg = t.noPhotoToDelete || 'Aucune photo à supprimer';
+                    } else {
+                        errorMsg = t.deleteProfilePhotoError || 'Erreur lors de la suppression';
+                    }
+                    showErrorToast(errorMsg);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                const lang = document.documentElement.lang || 'fr';
+                const t = translations[lang] || {};
+                showErrorToast(t.deleteProfilePhotoError || 'Erreur lors de la suppression de la photo');
+            })
+            .finally(() => {
+                deleteAvatarBtn.disabled = false;
+                deleteAvatarBtn.style.opacity = '1';
+            });
+        });
     }
 
     loadUserData();

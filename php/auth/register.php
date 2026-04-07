@@ -1,6 +1,8 @@
 <?php
 header('Content-Type: application/json');
 require_once '../config/database.php';
+require_once '../auth/require_csrf.php';
+require_once '../auth/require_rate_limit.php';
 require_once '../mail/send_mail.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
@@ -13,6 +15,10 @@ if (!isset($data['name'], $data['email'], $data['password'])) {
 $name = trim($data['name']);
 $email = trim($data['email']);
 $password = $data['password'];
+
+// Définir l'action et vérifier les limites de taux
+$rateLimit = getRateLimitMiddleware('register');
+$rateLimit->check($email);
 
 if (strlen($password) < 8) {
     echo json_encode(["status" => "error", "message" => "Le mot de passe doit contenir au moins 8 caractères"]);
@@ -50,12 +56,17 @@ try {
     // Envoyer l'email de bienvenue
     $mailSent = sendWelcomeEmail($email, $name);
 
+    // Enregistrer comme tentative réussie (efface les compteurs)
+    $rateLimit->record($email, true);
+
     echo json_encode([
         "status" => "success", 
         "message" => "Inscription réussie",
         "emailSent" => $mailSent
     ]);
 } catch (PDOException $e) {
+    // Enregistrer comme tentative échouée
+    $rateLimit->record($email, false);
     if ($e->getCode() == 23000) {
         echo json_encode(["status" => "error", "message" => "Email déjà utilisé"]);
     } else {

@@ -16,6 +16,10 @@ $lang = isset($data['language']) ? trim($data['language']) : 'fr';
 $currency = isset($data['currency']) ? trim($data['currency']) : 'EUR';
 $dark_mode = isset($data['dark_mode']) ? (int)$data['dark_mode'] : 0;
 
+// Normaliser la devise (convertir symboles en codes)
+$currencyMap = ['€' => 'EUR', 'EUR' => 'EUR', '$' => 'USD', 'USD' => 'USD', 'FCFA' => 'FCFA'];
+$currency = isset($currencyMap[$currency]) ? $currencyMap[$currency] : 'EUR';
+
 // Valider la langue
 if (!in_array($lang, ['fr', 'en'])) {
     $lang = 'fr';

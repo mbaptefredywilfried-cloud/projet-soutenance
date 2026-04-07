@@ -340,6 +340,10 @@ const translations = {
     errorSelectCategory: "Veuillez sélectionner une catégorie.",
     errorBudgetAmount: "Veuillez entrer un montant valide.",
     errorSelectPeriod: "Veuillez choisir une période.",
+    budgetAlreadyExists: "Un budget existe déjà pour cette catégorie et cette période.",
+    errorCreatingBudget: "Erreur lors de la création.",
+    errorModifyingBudget: "Erreur lors de la modification.",
+    errorDeletingBudget: "Erreur lors de la suppression.",
     resetBtn: "Réinitialiser",
     budgetCreated: "Budget créé avec succès!",
     budgetUpdated: "Budget mis à jour!",
@@ -357,6 +361,10 @@ const translations = {
     phone: "Téléphone",
     email: "Email",
     editProfile: "Modifier le profil",
+    deleteProfilePhoto: "Supprimer photo",
+    deleteProfilePhotoSuccess: "Photo de profil supprimée avec succès",
+    deleteProfilePhotoError: "Erreur lors de la suppression de la photo",
+    noPhotoToDelete: "Aucune photo à supprimer",
     notSpecified: "Non spécifié",
 
     budgetOverview: "Aperçu Budgétaire",
@@ -428,6 +436,23 @@ const translations = {
     selectImage: "Veuillez sélectionner une image",
     unsupportedFile: "Fichier non pris en charge. Veuillez uploader une image (JPG ou PNG)",
     fileTooLarge: "Le fichier est trop volumineux (max 2MB)",
+    
+    // Reminder toast
+    reminderTitle: "Rappel de saisie",
+    reminderText: "N'oubliez pas d'enregistrer vos dernières transactions pour un suivi précis.",
+    reminderButton: "D'accord",
+    
+    // Transaction notifications
+    notificationNoTransactionWeek: "Aucune transaction enregistrée depuis plus de 7 jours. Pensez à suivre vos dépenses.",
+    notificationNoTransactionToday: "Aucune transaction enregistrée aujourd'hui. N'oubliez pas d'ajouter vos dépenses.",
+    notificationTransactionButton: "Saisir",
+    
+    // Notification badge
+    noNotifications: "Aucune notification",
+    newNotifications: "{count} nouveau{plural}",
+    notificationsLabel: "Notifications",
+    markAllAsRead: "Tout marquer comme lu",
+    deleteAllNotifications: "Tout supprimer",
   },
 
 
@@ -775,6 +800,10 @@ const translations = {
     errorSelectCategory: "Please select a category.",
     errorBudgetAmount: "Please enter a valid amount.",
     errorSelectPeriod: "Please choose a period.",
+    budgetAlreadyExists: "A budget already exists for this category and period.",
+    errorCreatingBudget: "Error creating budget.",
+    errorModifyingBudget: "Error modifying budget.",
+    errorDeletingBudget: "Error deleting budget.",
     resetBtn: "Reset",
     
     yourActiveBudgets: "Your Active Budgets",
@@ -790,6 +819,10 @@ const translations = {
     phone: "Phone",
     email: "Email",
     editProfile: "Edit profile",
+    deleteProfilePhoto: "Delete photo",
+    deleteProfilePhotoSuccess: "Profile photo deleted successfully",
+    deleteProfilePhotoError: "Error deleting profile photo",
+    noPhotoToDelete: "No photo to delete",
     notSpecified: "Not specified",
 
     budgetOverview: "Budget Overview",
@@ -850,6 +883,23 @@ const translations = {
     selectImage: "Please select an image",
     unsupportedFile: "Unsupported file. Please upload an image (JPG or PNG)",
     fileTooLarge: "File is too large (max 2MB)",
+    
+    // Reminder toast
+    reminderTitle: "Entry reminder",
+    reminderText: "Don't forget to record your latest transactions for accurate tracking.",
+    reminderButton: "Okay",
+    
+    // Transaction notifications
+    notificationNoTransactionWeek: "No transactions recorded for more than 7 days. Remember to track your spending.",
+    notificationNoTransactionToday: "No transactions recorded today. Don't forget to add your expenses.",
+    notificationTransactionButton: "Add",
+    
+    // Notification badge
+    noNotifications: "No notifications",
+    newNotifications: "{count} new",
+    notificationsLabel: "Notifications",
+    markAllAsRead: "Mark all as read",
+    deleteAllNotifications: "Delete all",
 
   },
 };

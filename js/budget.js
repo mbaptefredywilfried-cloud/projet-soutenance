@@ -27,8 +27,12 @@ class BudgetManager {
                             showToast(t.budgetUpdatedSuccess || 'Budget modifié avec succès !');
                             document.getElementById('editModal').classList.remove('show');
                             await this.fetchAndRenderBudgets();
+                            // Rafraîchir les notifications après la modification du budget
+                            if (window.refreshNotifications) {
+                                window.refreshNotifications();
+                            }
                         } else {
-                            showToast(data.message || 'Erreur lors de la modification.', true);
+                            showToast(data.message || t.errorModifyingBudget || 'Erreur lors de la modification.', true);
                         }
                     } catch (err) {
                         const t = (typeof translations !== 'undefined' && translations[document.documentElement.lang]) ? translations[document.documentElement.lang] : {};
@@ -116,6 +120,24 @@ class BudgetManager {
                 period.classList.add('input-error');
                 BudgetManager.showFieldError(period, t.errorSelectPeriod || 'Veuillez choisir une période.');
             }
+
+            // Vérification d'unicité : pas deux budgets avec la même catégorie + période (sauf si édition du même budget)
+            if (valid && !form.querySelector('[name="budgetId"]')) {
+                // Seulement pour la création
+                const categoryId = parseInt(category.value, 10);
+                const periodValue = String(period.value).toLowerCase().trim();
+                
+                const existingBudget = this.budgets.find(b => 
+                    parseInt(b.category_id, 10) === categoryId && 
+                    String(b.month).toLowerCase().trim() === periodValue
+                );
+                
+                if (existingBudget) {
+                    valid = false;
+                    category.classList.add('input-error');
+                    BudgetManager.showFieldError(category, t.budgetAlreadyExists || 'Un budget existe déjà pour cette catégorie et cette période.');
+                }
+            }
             return valid;
         }
 
@@ -145,19 +167,13 @@ class BudgetManager {
     // Calcule les dépenses pour un budget selon sa période
     calculateSpentForBudget(budget, transactions) {
         if (!transactions || transactions.length === 0) return 0;
-        
         const currentDate = new Date();
-        const currentMonth = currentDate.toISOString().slice(0, 7); // "2026-03"
+        const currentMonth = currentDate.toISOString().slice(0, 7); // "2026-04"
         const currentYear = currentDate.getFullYear().toString();
-        
-        // Déterminer le type de période du budget
         const budgetMonth = String(budget.month).toLowerCase();
-        
         let relevantTransactions = transactions.filter(t => 
-            t.category_id == budget.category_id && t.category_type === 'expense'
+            t.category_id == budget.category_id && (t.category_type === 'expense' || t.type === 'expense')
         );
-        
-        // Filtrer selon la période
         if (budgetMonth.includes('mensuel') || budgetMonth === 'mois') {
             // Dépenses du mois courant
             relevantTransactions = relevantTransactions.filter(t => 
@@ -169,19 +185,23 @@ class BudgetManager {
                 t.date && t.date.slice(0, 4) === currentYear
             );
         } else if (budgetMonth.includes('hebdo') || budgetMonth === 'semaine') {
-            // Dépenses de la semaine courante
-            const weekStart = new Date(currentDate);
-            weekStart.setDate(currentDate.getDate() - currentDate.getDay());
-            const weekEnd = new Date(weekStart);
-            weekEnd.setDate(weekStart.getDate() + 6);
-            
+            // Dépenses de la semaine courante (lundi-dimanche)
+            const now = new Date();
+            const day = now.getDay();
+            // 0 = dimanche, 1 = lundi, ..., 6 = samedi
+            const diffToMonday = day === 0 ? 6 : day - 1;
+            const monday = new Date(now);
+            monday.setDate(now.getDate() - diffToMonday);
+            monday.setHours(0,0,0,0);
+            const sunday = new Date(monday);
+            sunday.setDate(monday.getDate() + 6);
+            sunday.setHours(23,59,59,999);
             relevantTransactions = relevantTransactions.filter(t => {
                 if (!t.date) return false;
                 const tDate = new Date(t.date);
-                return tDate >= weekStart && tDate <= weekEnd;
+                return tDate >= monday && tDate <= sunday;
             });
         }
-        
         return relevantTransactions.reduce((sum, t) => sum + Number(t.amount), 0);
     }
 
@@ -331,8 +351,13 @@ class BudgetManager {
                         const t = (typeof translations !== 'undefined' && translations[document.documentElement.lang]) ? translations[document.documentElement.lang] : {};
                         showToast(t.allBudgetsDeleted || 'Tous les budgets ont été supprimés.');
                         await this.fetchAndRenderBudgets();
+                        // Rafraîchir les notifications après la suppression de tous les budgets
+                        if (window.refreshNotifications) {
+                            window.refreshNotifications();
+                        }
                     } else {
-                        showToast(data.message || 'Erreur lors de la suppression.', true);
+                        const t = (typeof translations !== 'undefined' && translations[document.documentElement.lang]) ? translations[document.documentElement.lang] : {};
+                        showToast(data.message || t.errorDeletingBudget || 'Erreur lors de la suppression.', true);
                     }
                 } catch (err) {
                     const t = (typeof translations !== 'undefined' && translations[document.documentElement.lang]) ? translations[document.documentElement.lang] : {};
@@ -408,8 +433,13 @@ class BudgetManager {
                         const t = (typeof translations !== 'undefined' && translations[document.documentElement.lang]) ? translations[document.documentElement.lang] : {};
                         showToast(t.budgetDeleted || 'Budget supprimé avec succès !');
                         await this.fetchAndRenderBudgets();
+                        // Rafraîchir les notifications après la suppression du budget
+                        if (window.refreshNotifications) {
+                            window.refreshNotifications();
+                        }
                     } else {
-                        showToast(data.message || 'Erreur lors de la suppression.', true);
+                        const t = (typeof translations !== 'undefined' && translations[document.documentElement.lang]) ? translations[document.documentElement.lang] : {};
+                        showToast(data.message || t.errorDeletingBudget || 'Erreur lors de la suppression.', true);
                     }
                 } catch (err) {
                     const t = (typeof translations !== 'undefined' && translations[document.documentElement.lang]) ? translations[document.documentElement.lang] : {};
@@ -442,8 +472,13 @@ class BudgetManager {
                 showToast(t.budgetCreatedSuccess || 'Budget créé avec succès !');
                 form.reset();
                 await this.fetchAndRenderBudgets();
+                // Rafraîchir les notifications après la création du budget
+                if (window.refreshNotifications) {
+                    window.refreshNotifications();
+                }
             } else {
-                showToast(data.message || 'Erreur lors de la création.', true);
+                const t = (typeof translations !== 'undefined' && translations[document.documentElement.lang]) ? translations[document.documentElement.lang] : {};
+                showToast(data.message || t.errorCreatingBudget || 'Erreur lors de la création.', true);
             }
         } catch (err) {
             const t = (typeof translations !== 'undefined' && translations[document.documentElement.lang]) ? translations[document.documentElement.lang] : {};
@@ -467,6 +502,10 @@ class BudgetManager {
         await this.fetchTransactions();
         this.renderBudgets();
         this.updateSummary();
+        // Mettre à jour l'indicateur de statut du budget
+        if (window.checkAndUpdateBudgetStatus) {
+            setTimeout(() => window.checkAndUpdateBudgetStatus(), 300);
+        }
     }
 
     // Affiche les budgets dans le DOM avec la devise utilisateur et une carte riche

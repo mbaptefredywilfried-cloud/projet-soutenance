@@ -12,6 +12,10 @@ async function checkAndShowReminderToast() {
 }
 
 function showReminderToast(data) {
+    // Récupérer la langue courante
+    const currentLang = localStorage.getItem('appLanguage') || 'fr';
+    const t = window.translations?.[currentLang] || window.translations?.fr || {};
+    
     // Style exact du modèle fourni
     if (!document.getElementById('reminder-toast-style')) {
         const style = document.createElement('style');
@@ -77,10 +81,10 @@ function showReminderToast(data) {
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
         </div>
         <div class="reminder-content">
-            <div class="reminder-title">Rappel de saisie</div>
-            <div class="reminder-text">N'oubliez pas d'enregistrer vos dernières transactions pour un suivi précis.</div>
+            <div class="reminder-title">${t.reminderTitle || 'Rappel de saisie'}</div>
+            <div class="reminder-text">${t.reminderText || 'N\'oubliez pas d\'enregistrer vos dernières transactions pour un suivi précis.'}</div>
             <div class="reminder-actions">
-                <button onclick="window.location.href='transaction.html'">D'accord</button>
+                <button onclick="window.location.href='transaction.html'">${t.reminderButton || 'D\'accord'}</button>
             </div>
         </div>
         <button class="close-btn" title="Fermer">✕</button>

@@ -118,8 +118,8 @@
                         <label data-i18n="mainCurrency">Devise principale</label>
                         <select id="currencySelect">
                             <option value="FCFA" data-i18n="fcfaCurrency">FCFA (XAF)</option>
-                            <option value="€" data-i18n="euroCurrency">Euro (€)</option>
-                            <option value="$" data-i18n="dollarCurrency">Dollar US ($)</option>
+                            <option value="EUR" data-i18n="euroCurrency">Euro (€)</option>
+                            <option value="USD" data-i18n="dollarCurrency">Dollar US ($)</option>
                         </select>
                     </div>
                     <div class="setting-item">
@@ -252,6 +252,8 @@
         </div>
     </div>
 
+    <!-- Protection CSRF - Charger EN PREMIER avant tous les autres scripts -->
+    <script src="./js/csrf-manager.js"></script>
     <script src="./js/common.js"></script>
     <script src="./js/traduction.js"></script>
     <script src="./js/langue.js"></script>

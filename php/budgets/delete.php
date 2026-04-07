@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
 require_once '../config/database.php';
+require_once '../auth/require_csrf.php';
 require_once '../auth/require_auth.php';
 
 $data = json_decode(file_get_contents('php://input'), true);

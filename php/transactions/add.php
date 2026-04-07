@@ -3,6 +3,7 @@ error_reporting(0);
 ini_set('display_errors', 0);
 header('Content-Type: application/json');
 require_once '../config/database.php';
+require_once '../auth/require_csrf.php';
 require_once '../auth/require_auth.php';
 require_once '../notifications/create_notification.php';
 
@@ -43,9 +44,9 @@ if (!$category) {
 
 $category_name = $category['name'];
 
-// Ajouter la transaction
-$stmt = $pdo->prepare("INSERT INTO transactions (user_id, category_id, amount, description, date) VALUES (?, ?, ?, ?, ?)");
-$result = $stmt->execute([$user_id, $category_id, $amount, $description, $transaction_date]);
+// Ajouter la transaction (incluant le type)
+$stmt = $pdo->prepare("INSERT INTO transactions (user_id, category_id, amount, description, date, type) VALUES (?, ?, ?, ?, ?, ?)");
+$result = $stmt->execute([$user_id, $category_id, $amount, $description, $transaction_date, $type]);
 
 if (!$result) {
     echo json_encode(["status" => "error", "message" => "Erreur lors de l'ajout de la transaction", "data" => null]);

@@ -38,4 +38,8 @@ if (session_status() === PHP_SESSION_NONE) {
     ]);
     session_start();
 }
+
+// Initialiser le système CSRF
+require_once __DIR__ . '/csrf.php';
+CSRFToken::init();
 ?>

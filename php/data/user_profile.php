@@ -3,6 +3,7 @@ error_reporting(0); // Masquer les notices/warnings pour garantir un JSON propre
 ini_set('display_errors', 0);
 header('Content-Type: application/json');
 require_once '../config/database.php';
+require_once '../auth/require_csrf.php';
 session_start();
 
 
@@ -67,6 +68,25 @@ if ($action === 'get_settings') {
         echo json_encode(["success" => true, "settings" => $row]);
     } else {
         echo json_encode(["success" => true, "settings" => null]);
+    }
+    exit;
+}
+
+// Traiter l'action 'get' (utilisée par le JavaScript)
+if ($action === 'get') {
+    $stmt = $pdo->prepare("SELECT id, name as username, email, phone, created_at, image, last_login FROM users WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    // Charger aussi les settings
+    $stmt2 = $pdo->prepare("SELECT accent_gradient, language, currency, dark_mode FROM user_settings WHERE user_id = ? LIMIT 1");
+    $stmt2->execute([$user_id]);
+    $settings = $stmt2->fetch(PDO::FETCH_ASSOC);
+    
+    if ($user) {
+        echo json_encode(["success" => true, "user" => $user, "settings" => $settings]);
+    } else {
+        echo json_encode(["success" => false, "error" => "Utilisateur introuvable"]);
     }
     exit;
 }

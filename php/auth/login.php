@@ -1,6 +1,8 @@
 <?php
 header('Content-Type: application/json');
 require_once '../config/database.php';
+require_once '../auth/require_csrf.php';
+require_once '../auth/require_rate_limit.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
@@ -22,6 +24,10 @@ if (!in_array($language, ['fr', 'en'])) {
     $language = 'fr';
 }
 
+// Créer l'instance et vérifier les limites de taux
+$rateLimit = getRateLimitMiddleware('login');
+$rateLimit->check($email);
+
 $stmt = $pdo->prepare("SELECT id, password FROM users WHERE email = ?");
 $stmt->execute([$email]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -32,8 +38,12 @@ if ($user && password_verify($password, $user['password'])) {
     // Mettre à jour la date de dernière connexion
     $stmtUpdate = $pdo->prepare("UPDATE users SET last_login = NOW() WHERE id = ?");
     $stmtUpdate->execute([$user['id']]);
+    // Enregistrer comme tentative réussie (efface les compteurs)
+    $rateLimit->record($email, true);
     echo json_encode(["status" => "success", "message" => "Connexion réussie"]);
 } else {
+    // Enregistrer comme tentative échouée
+    $rateLimit->record($email, false);
     echo json_encode(["status" => "error", "message" => "Email ou mot de passe incorrect"]);
 }
 ?>

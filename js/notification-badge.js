@@ -9,15 +9,33 @@
 
     // Charger les notifications du serveur
     async function loadNotifications() {
+        console.log('[NOTIF] Chargement des notifications...');
         try {
             const response = await fetch('./php/notifications/get_notifications.php');
             const data = await response.json();
 
             if (data.status === 'success') {
+                console.log('[NOTIF] Notifications reçues:', data.notifications);
+                console.log('[NOTIF] Nombre total de notifications:', data.notifications ? data.notifications.length : 0);
+                console.log('[NOTIF] Nombre non lues:', data.unread_count);
+                
+                // Log les types de notifications reçues
+                if (data.notifications && data.notifications.length > 0) {
+                    const typeCount = {};
+                    data.notifications.forEach(notif => {
+                        typeCount[notif.type] = (typeCount[notif.type] || 0) + 1;
+                    });
+                    console.log('[NOTIF] Répartition par type:', typeCount);
+                }
+                
                 updateBadge(data.unread_count);
+                // Toujours re-rendre les notifications pour appliquer les traductions mises à jour
                 renderNotifications(data.notifications);
+            } else {
+                console.error('[NOTIF] Erreur du serveur:', data.message);
             }
         } catch (error) {
+            console.error('[NOTIF] Erreur lors du chargement:', error);
         }
     }
 
@@ -75,28 +93,26 @@
         return translatedMessage;
     }
 
-    // Traduire les titres des notifications
+    // Traduire les titres des notifications à partir de la clée de traduction
     function translateNotificationTitle(title) {
         const currentLang = localStorage.getItem('appLanguage') || 'fr';
         const trans = translations[currentLang];
-        const frenchTrans = translations['fr'];
         
-        if (!trans || !frenchTrans) return title;
+        console.log(`[NOTIF] Traduction titre: "${title}" (langue: ${currentLang})`);
         
-        // Mapping des titres français vers les clés de traduction
-        const titleMappings = {
-            [frenchTrans?.notif_income_title]: 'notif_income_title',
-            [frenchTrans?.notif_expense_title]: 'notif_expense_title',
-            [frenchTrans?.notif_budget_exceeded_title]: 'notif_budget_exceeded_title',
-            [frenchTrans?.notif_budget_warning_title]: 'notif_budget_warning_title',
-            [frenchTrans?.notif_budget_info_title]: 'notif_budget_info_title',
-        };
-        
-        const translationKey = titleMappings[title];
-        if (translationKey && trans[translationKey]) {
-            return trans[translationKey];
+        if (!trans) {
+            console.warn('[NOTIF] Traductions manquantes');
+            return title;
         }
         
+        // Si le titre commence par 'notif_', c'est une clée de traduction
+        if (title.startsWith('notif_') && trans[title]) {
+            const translated = trans[title];
+            console.log(`[NOTIF] Traduction appliquée via clée: "${translated}"`);
+            return translated;
+        }
+        
+        console.log('[NOTIF] Titre original retourné (pas une clée)');
         return title;
     }
 
@@ -104,20 +120,36 @@
     function renderNotifications(notifications) {
         if (!notifications || notifications.length === 0) {
             const lang = localStorage.getItem('appLanguage') || 'fr';
-            const noNotifText = lang === 'en' ? 'No notifications' : 'Aucune notification';
+            const trans = translations?.[lang] || translations?.fr || {};
+            const noNotifText = trans.noNotifications || (lang === 'en' ? 'No notifications' : 'Aucune notification');
             notificationList.innerHTML = '<div style="padding: 30px 20px; text-align: center; color: #94a3b8; font-size: 14px;"><i class="fas fa-bell" style="font-size: 28px; margin-bottom: 10px; opacity: 0.5; display: block;"></i>' + noNotifText + '</div>';
             return;
         }
 
         // Créer l'en-tête avec options
         const unreadCount = notifications.filter(n => !n.is_read).length;
+        const lang = localStorage.getItem('appLanguage') || 'fr';
+        const trans = translations?.[lang] || translations?.fr || {};
+        
+        let headerLabel = '';
+        if (unreadCount > 0) {
+            const newText = trans.newNotifications || (lang === 'en' ? '{count} new' : '{count} nouveau{plural}');
+            const plural = lang === 'fr' ? (unreadCount > 1 ? 'x' : '') : '';
+            headerLabel = newText.replace('{count}', unreadCount).replace('{plural}', plural);
+        } else {
+            headerLabel = trans.notificationsLabel || 'Notifications';
+        }
+        
+        const markAllReadTitle = trans.markAllAsRead || (lang === 'en' ? 'Mark all as read' : 'Tout marquer comme lu');
+        const deleteAllTitle = trans.deleteAllNotifications || (lang === 'en' ? 'Delete all' : 'Tout supprimer');
+        
         const headerHTML = `
             <div style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background-color: white; z-index: 10;">
                 <div style="font-weight: 600; color: #1e293b; font-size: 13px;">
-                    ${unreadCount > 0 ? `${unreadCount} nouveau${unreadCount > 1 ? 'x' : ''}` : 'Notifications'}
+                    ${headerLabel}
                 </div>
                 <div style="display: flex; gap: 6px;">
-                    ${unreadCount > 0 ? `<button id="markAllRead" class="notif-action-btn" title="Tout marquer comme lu" style="
+                    ${unreadCount > 0 ? `<button id="markAllRead" class="notif-action-btn" title="${markAllReadTitle}" style="
                         background: none;
                         border: none;
                         cursor: pointer;
@@ -129,7 +161,7 @@
                     " onmouseover="this.style.backgroundColor='rgba(54, 162, 235, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
                         <i class="fas fa-check-double"></i>
                     </button>` : ''}
-                    ${notifications.length > 0 ? `<button id="deleteAllNotif" class="notif-action-btn" title="Tout supprimer" style="
+                    ${notifications.length > 0 ? `<button id="deleteAllNotif" class="notif-action-btn" title="${deleteAllTitle}" style="
                         background: none;
                         border: none;
                         cursor: pointer;
@@ -149,12 +181,12 @@
             const date = new Date(notif.created_at);
             const timeAgo = getTimeAgo(date);
             const bgColor = notif.is_read ? 'transparent' : 'rgba(54, 162, 235, 0.05)';
-            const borderLeft = notif.is_read ? '#e2e8f0' : '#36A2EB';
             const typeIcon = getIconForType(notif.type);
             const translatedMessage = translateMessageCategories(notif.message);
             const translatedTitle = translateNotificationTitle(notif.title);
             const typeColor = getColorForType(notif.type);
-            const readDot = notif.is_read ? '' : `<div style="width: 8px; height: 8px; background-color: #36A2EB; border-radius: 50%; flex-shrink: 0;"></div>`;
+            const borderLeft = typeColor;
+            const readDot = notif.is_read ? '' : `<div style="width: 8px; height: 8px; background-color: ${typeColor}; border-radius: 50%; flex-shrink: 0;"></div>`;
 
             return `
                 <div class="notification-item" data-id="${notif.id}" style="
@@ -233,7 +265,7 @@
         const icons = {
             'info': 'circle-info',
             'warning': 'exclamation-triangle',
-            'error': 'circle-xmark',
+            'error': 'times-circle',
             'success': 'check-circle',
             'budget': 'piggy-bank',
             'transaction': 'exchange-alt'
@@ -367,29 +399,25 @@
     // Charger les notifications au chargement de la page
     document.addEventListener('DOMContentLoaded', loadNotifications);
 
-    // Recharger les notifications toutes les 30 secondes
-    setInterval(loadNotifications, 30000);
-
     // Écouter les changements de langue et retraduite les notifications
     window.addEventListener('languageChanged', () => {
-        if (notificationDropdown.style.display !== 'none') {
-            loadNotifications();
-        }
+        console.log('[NOTIF] Événement languageChanged détecté');
+        // Recharger les notifications chaque fois que la langue change, même si le dropdown est fermé
+        loadNotifications();
     });
 
     // Écouter les changements de devise et retraduite les notifications
     window.addEventListener('appCurrencyChanged', () => {
-        if (notificationDropdown.style.display !== 'none') {
-            loadNotifications();
-        }
+        console.log('[NOTIF] Événement appCurrencyChanged détecté');
+        loadNotifications();
     });
 
     // Écouter les changements de langue via localStorage (pour les onglets multiples)
     window.addEventListener('storage', (e) => {
         if (e.key === 'appLanguage' && e.newValue !== e.oldValue) {
-            if (notificationDropdown.style.display !== 'none') {
-                loadNotifications();
-            }
+            console.log(`[NOTIF] Changement de langue détecté via storage: ${e.oldValue} → ${e.newValue}`);
+            // Recharger les notifications pour que la langue soit appliquée
+            loadNotifications();
         }
     });
 

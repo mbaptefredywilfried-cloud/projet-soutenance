@@ -94,9 +94,14 @@
                             <p id="display-phone" data-i18n="notSpecified">Non spécifié</p>
                         </div>
                     </div>
-                    <button class="btn-primary" id="openEditModal">
-                        <i class="fas fa-edit"></i> <span data-i18n="editProfile">Modifier le profil</span>
-                    </button>
+                    <div style="display: flex; gap: 10px; justify-content: center;">
+                        <button class="btn-primary" id="openEditModal" style="flex: 1;">
+                            <i class="fas fa-edit"></i> <span data-i18n="editProfile">Modifier le profil</span>
+                        </button>
+                        <button class="btn-danger" id="deleteAvatarBtn" style="flex: 1;">
+                            <i class="fas fa-trash"></i> <span data-i18n="deleteProfilePhoto">Supprimer photo</span>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="card3">
@@ -205,9 +210,6 @@
                     </div>
 
                     <div class="button">
-                        <button class="btn-primary" id="exportDataBtn">
-                            <i class="fas fa-file-export"></i><span data-i18n="exportData">Exporter les données</span>
-                        </button>
                         <button class="btn-danger" id="deleteAccountBtn">
                             <i class="fas fa-trash"></i><span data-i18n="deleteAccount">Supprimer le compte</span>
                         </button>
@@ -307,6 +309,8 @@
         </div>
     </div>
 
+    <!-- Protection CSRF - Charger EN PREMIER avant tous les autres scripts -->
+    <script src="./js/csrf-manager.js"></script>
     <script src="./js/common.js"></script>
     <script src="./js/traduction.js"></script>
     <script src="./js/langue.js"></script>
