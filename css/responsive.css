@@ -18,11 +18,15 @@
   left: 0;
   right: 0;
   height: 56px;
-  background-color: var(--primary-color, #36A2EB);
+  background: var(--accent-gradient, linear-gradient(180deg, #36A2EB 0%, #2563eb 100%));
   color: white;
   z-index: 9999;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
 }
 
 .mobile-top-bar-logo {
@@ -32,25 +36,123 @@
   color: white;
 }
 
+.mobile-top-bar-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  flex-shrink: 0;
+}
+
 .mobile-top-bar-logo svg {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   color: white;
 }
 
-.mobile-top-bar-logo span {
-  font-weight: 600;
-  font-size: 16px;
-}
-
 .mobile-top-bar-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
   margin: 0;
   font-size: 16px;
   font-weight: 600;
   white-space: nowrap;
+  text-align: left;
+  margin-left: 12px;
+}
+
+/* Mobile Top Bar Right Elements */
+.mobile-top-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+/* Notification Button Mobile */
+.notification-btn-mobile {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  padding: 8px 10px;
+  border-radius: 6px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.1);
+  position: relative;
+  will-change: background-color, box-shadow;
+}
+
+.notification-btn-mobile i {
+  font-size: 16px;
+  color: white;
+  transition: transform 0.3s ease;
+}
+
+.notification-btn-mobile:hover {
+  background: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.notification-btn-mobile:hover i {
+  animation: bellRing 0.6s ease;
+}
+
+.notification-badge-mobile {
+  position: absolute !important;
+  top: -7px !important;
+  right: -7px !important;
+  background-color: #ef4444 !important;
+  color: white !important;
+  font-size: 10px !important;
+  font-weight: bold !important;
+  width: 20px !important;
+  height: 20px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 2px solid white !important;
+  z-index: 10 !important;
+}
+
+/* Notification Dropdown Mobile */
+.notification-dropdown-mobile {
+  animation: slideDownFade 0.3s ease !important;
+}
+
+/* Profile Circle Mobile */
+.profile-circle-mobile {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-circle-mobile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.profile-circle-mobile:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+  transform: scale(1.05);
+}
+
+.notification-wrapper-mobile {
+  position: relative;
 }
 
 /* ============================================
@@ -99,7 +201,7 @@
 }
 
 .tab-item.active {
-  color: var(--primary-color, #36A2EB);
+  color: var(--accent-color, #36A2EB);
 }
 
 .tab-item i {
@@ -126,6 +228,214 @@
 }
 
 /* ============================================
+   C-EXTRA) BREAKPOINT: EXTRA SMALL (max-width: 480px)
+   ============================================ */
+
+@media (max-width: 480px) {
+  main {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    padding-top: 56px !important;
+    padding-bottom: 80px !important;
+  }
+
+  main .containt h3 {
+    font-size: 16px;
+    padding: 0 4px;
+    margin: 6px 0;
+  }
+
+  /* Quick Summary ultra-compacte */
+  .quick-summary {
+    margin: 6px 4px 0 4px !important;
+    padding: 8px 10px !important;
+    border-radius: 8px;
+  }
+
+  .summary-content {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .summary-text h2 {
+    font-size: 12px;
+    margin-bottom: 2px;
+  }
+
+  .summary-text p {
+    font-size: 10px;
+    line-height: 1.2;
+  }
+
+  .summary-date {
+    align-self: flex-start;
+    gap: 4px;
+  }
+
+  .summary-date span:first-child {
+    font-size: 12px;
+  }
+
+  .summary-date span:last-child {
+    font-size: 10px;
+  }
+
+  /* Cards stats - Une seule colonne, très compactes */
+  main .containt .current {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    padding: 6px 4px !important;
+  }
+
+  main .containt .current .card {
+    padding: 12px !important;
+    gap: 10px !important;
+  }
+
+  main .containt .current .card p {
+    font-size: 12px;
+  }
+
+  main .containt .current .card i {
+    font-size: 18px;
+  }
+
+  main .containt .current .card .stats-value {
+    font-size: 18px;
+  }
+
+  main .containt .current .card .stats-indicator {
+    font-size: 10px;
+    padding: 3px 6px;
+  }
+
+  /* Graphics très compactes */
+  main .graphic {
+    gap: 10px !important;
+    padding: 0 4px 10px 4px !important;
+  }
+
+  main .graphic .graph,
+  main .graphic .category {
+    padding: 10px !important;
+  }
+
+  main .graphic .graph .text {
+    padding: 10px;
+    gap: 6px;
+  }
+
+  main .graphic .graph .text p {
+    font-size: 13px;
+  }
+
+  main .graphic .graph .text .button {
+    width: 100%;
+  }
+
+  main .graphic .graph .text .button button {
+    padding: 4px 6px;
+    font-size: 10px;
+  }
+
+  main .graphic .graph .dashed {
+    height: 180px !important;
+    margin: 0 !important;
+    padding: 0 6px;
+  }
+
+  main .graphic .category {
+    padding: 10px !important;
+  }
+
+  main .graphic .category .budget-card {
+    font-size: 13px;
+    padding: 0 0 10px 0;
+  }
+
+  main .graphic .category canvas {
+    height: 160px !important;
+  }
+
+  .linechart-card {
+    margin: 0 !important;
+    padding: 10px !important;
+  }
+
+  .linechart-card .budget-card {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  .linechart-card canvas {
+    height: 160px !important;
+  }
+
+  /* Table très compacte */
+  .table-container {
+    padding: 0 4px;
+    margin: 8px 0;
+  }
+
+  .table-container table {
+    font-size: 11px;
+  }
+
+  .transaction-table th,
+  .transaction-table td {
+    padding: 8px 4px;
+  }
+
+  .transaction-table th {
+    font-size: 10px;
+  }
+
+  .transaction-table td {
+    font-size: 11px;
+  }
+
+  .transaction-table td:last-child {
+    font-size: 12px;
+    padding-right: 6px;
+  }
+
+  .badge {
+    padding: 3px 6px;
+    font-size: 9px;
+  }
+
+  .recent {
+    margin: 6px;
+    padding: 10px;
+  }
+
+  .recent-header {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .recent p {
+    font-size: 13px;
+  }
+
+  .filters {
+    gap: 4px;
+  }
+
+  .filters select {
+    min-width: 100%;
+    padding: 6px 8px;
+    font-size: 11px;
+    margin-bottom: 4px;
+  }
+
+  .btn-view-more {
+    padding: 8px;
+    font-size: 12px;
+  }
+}
+
+/* ============================================
    D) BREAKPOINT: MOBILE (max-width: 768px)
    ============================================ */
 
@@ -134,7 +444,8 @@
   .mobile-top-bar {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    flex-wrap: wrap;
   }
 
   .tab-nav {
@@ -169,24 +480,150 @@
 
   /* ====== DASHBOARD RESPONSIVE ====== */
 
-  /* Cards stats grid */
-  .current {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
+  /* Quick Summary Card - Optimisé pour mobile */
+  .quick-summary {
+    margin: 8px 8px 0 8px !important;
+    padding: 10px 12px !important;
+    border-radius: 10px;
   }
 
-  /* Graphics layout */
-  .graphic {
-    display: flex;
+  .summary-content {
     flex-direction: column;
-    gap: 16px;
+    align-items: flex-start;
+    gap: 10px;
   }
 
-  .graph,
-  .category,
+  .summary-text h2 {
+    font-size: 13px;
+    margin-bottom: 3px;
+  }
+
+  .summary-text p {
+    font-size: 11px;
+    line-height: 1.3;
+  }
+
+  .summary-date {
+    align-self: flex-start;
+  }
+
+  .summary-date span:first-child {
+    font-size: 14px;
+  }
+
+  .summary-date span:last-child {
+    font-size: 11px;
+  }
+
+  /* Cards stats grid - Une colonne sur mobile */
+  main .containt .current {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    padding: 8px 8px 8px 8px !important;
+    margin: 0 !important;
+  }
+
+  main .containt .current .card {
+    width: 100% !important;
+    padding: 16px !important;
+    gap: 12px !important;
+    height: auto !important;
+  }
+
+  main .containt .current .card p {
+    font-size: 13px;
+  }
+
+  main .containt .current .card i {
+    font-size: 20px;
+  }
+
+  main .containt .current .card .stats-value {
+    font-size: 22px;
+  }
+
+  main .containt .current .card .stats-value-wrapper {
+    gap: 8px;
+  }
+
+  /* Graphics layout - Full width en colonne */
+  main .graphic {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    padding: 0 8px 12px 8px !important;
+  }
+
+  main .graphic .graph,
+  main .graphic .category,
   .linechart-card {
+    width: 100% !important;
+    height: auto !important;
+    padding: 12px !important;
+  }
+
+  main .graphic .graph {
+    height: auto !important;
+  }
+
+  main .graphic .graph .text {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px;
+    gap: 8px;
+  }
+
+  main .graphic .graph .text p {
     width: 100%;
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+
+  main .graphic .graph .text .button {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  main .graphic .graph .text .button button {
+    width: auto;
+    flex: 1;
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  main .graphic .graph .dashed {
+    margin: 0 !important;
+    height: 200px !important;
+    padding: 0 8px;
+  }
+
+  main .category {
+    height: auto !important;
+    padding: 12px !important;
+  }
+
+  main .category .budget-card {
+    font-size: 15px;
+    padding: 0 0 12px 0;
+  }
+
+  main .category canvas {
+    height: 180px !important;
+  }
+
+  .linechart-card {
+    margin: 0 !important;
+    padding: 12px !important;
+  }
+
+  .linechart-card .budget-card {
+    font-size: 15px;
+    margin-bottom: 8px;
+  }
+
+  .linechart-card canvas {
+    height: 180px !important;
   }
 
   /* Top bar responsive */
@@ -194,31 +631,93 @@
     display: none !important;
   }
 
+  main .containt h3 {
+    font-size: 18px;
+    padding: 0 8px;
+    margin: 8px 0;
+  }
+
   /* Table scrolling */
   .table-container {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    padding: 0 8px;
   }
 
   .table-container table {
-    min-width: 500px;
+    min-width: 100%;
+    font-size: 12px;
+  }
+
+  .transaction-table th,
+  .transaction-table td {
+    padding: 10px 6px;
+    font-size: 12px;
+  }
+
+  .transaction-table th:last-child,
+  .transaction-table td:last-child {
+    padding-right: 10px;
+    text-align: right;
+  }
+
+  .transaction-table td:last-child {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .badge {
+    padding: 4px 8px;
+    font-size: 10px;
   }
 
   .recent {
     margin: 8px;
-    padding: 16px;
+    padding: 12px;
+  }
+
+  .recent-header {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .recent p {
+    font-size: 15px;
+  }
+
+  .filters {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .filters select {
+    flex: 1;
+    min-width: 45%;
+    padding: 8px 10px;
+    font-size: 12px;
   }
 
   /* Period buttons */
   .period-buttons {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
+    width: 100%;
   }
 
   .period-buttons button {
-    padding: 6px 12px;
-    font-size: 12px;
+    padding: 6px 10px;
+    font-size: 11px;
+    flex: 1;
+    min-width: 45px;
+  }
+
+  .btn-view-more {
+    width: 100%;
+    padding: 10px;
+    font-size: 13px;
   }
 
   /* ====== TRANSACTION RESPONSIVE ====== */
@@ -314,27 +813,256 @@
   /* ====== PROFILE RESPONSIVE ====== */
 
   .container {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    padding: 8px !important;
+    margin-bottom: 20px !important;
+    max-width: 100% !important;
+    grid-template-columns: unset !important;
+    grid-template-areas: unset !important;
   }
 
-  .card,
+  .card {
+    grid-area: unset !important;
+    width: 100% !important;
+    padding: 12px !important;
+    margin: 0 !important;
+  }
+
   .card2,
   .card3,
   .card4,
   .card5 {
-    width: 100%;
+    grid-area: unset !important;
+    width: 100% !important;
+    padding: 12px !important;
+    margin: 0 !important;
+    min-width: unset !important;
   }
 
   .side-header {
-    padding: 20px;
+    padding: 12px !important;
+    margin-bottom: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+  }
+
+  .avatar-wrapper {
+    width: 70px !important;
+    height: 70px !important;
+    margin: 0 auto 6px !important;
+  }
+
+  .avatar-image,
+  .avatar-placeholder {
+    width: 70px !important;
+    height: 70px !important;
+  }
+
+  .avatar-upload-btn {
+    width: 36px !important;
+    height: 36px !important;
+    right: -6px !important;
+    bottom: -6px !important;
+    font-size: 14px !important;
+  }
+
+  .side-header h3 {
+    font-size: 16px !important;
+    margin: 4px 0 2px !important;
+    max-width: 100%;
+    white-space: normal !important;
+  }
+
+  .side-header .statut-actif {
+    font-size: 12px;
+  }
+
+  .navigation {
+    gap: 10px;
+  }
+
+  .navigation h4 {
+    font-size: 13px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .navigation ul {
+    gap: 8px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .navigation li {
+    padding: 8px !important;
+    font-size: 12px !important;
+  }
+
+  .navigation li i {
+    font-size: 14px;
+  }
+
+  .account-info-header {
+    margin-bottom: 10px;
+  }
+
+  .account-info-header h3 {
+    font-size: 14px !important;
+    margin-bottom: 2px !important;
+  }
+
+  .account-info-header p {
+    font-size: 11px !important;
+    color: var(--text-secondary) !important;
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .profil-detail-group {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .profil-detail-group label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  .profil-detail-group p,
+  .profil-detail-group span {
+    font-size: 13px;
+    color: var(--text-primary);
+    word-break: break-word;
   }
 
   .stat-budget {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    margin-bottom: 10px;
+  }
+
+  .stat-card {
+    padding: 10px !important;
+    border-radius: 8px;
+  }
+
+  .stat-header {
+    font-size: 11px !important;
+    margin-bottom: 4px !important;
+    gap: 6px;
+  }
+
+  .stat-header i {
+    font-size: 13px;
+  }
+
+  .stat-value {
+    font-size: 16px !important;
+  }
+
+  .account-info-id {
+    padding: 10px;
+    background: var(--background-color);
+    border-radius: 6px;
+    margin-bottom: 10px;
+  }
+
+  .user-id-label {
+    gap: 6px;
+    font-size: 12px;
+  }
+
+  .user-id-label i {
+    font-size: 13px;
+  }
+
+  .account-info-group {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    margin-bottom: 10px;
+  }
+
+  .security-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .security-item {
+    padding: 10px;
+    background: var(--background-color);
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .security-item-left {
+    display: flex;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .security-icon {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 13px;
+  }
+
+  .security-item-info h4 {
+    font-size: 12px !important;
+    margin-bottom: 1px !important;
+  }
+
+  .security-item-info p {
+    font-size: 10px !important;
+    line-height: 1.2;
+  }
+
+  .security-item-arrow {
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .button {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .button button,
+  .btn-primary,
+  .btn-danger {
+    width: 100% !important;
+    padding: 10px !important;
+    font-size: 12px !important;
+  }
+
+  .btn-primary i,
+  .btn-danger i {
+    font-size: 13px !important;
+    margin-right: 4px !important;
   }
 
   header[data-i18n="profile"] {
@@ -398,12 +1126,121 @@
     margin-left: 70px;
   }
 
+  /* ====== DASHBOARD TABLET OPTIMIZATIONS ====== */
+
+  main .containt {
+    padding: 0;
+  }
+
+  main .containt h3 {
+    font-size: 20px;
+    padding: 0 16px;
+    margin: 8px 0;
+  }
+
+  /* Quick Summary optimisé */
+  .quick-summary {
+    margin: 8px 16px 0 16px !important;
+    padding: 12px;
+  }
+
+  .summary-content {
+    flex-direction: row;
+  }
+
+  .summary-text h2 {
+    font-size: 14px;
+  }
+
+  .summary-text p {
+    font-size: 12px;
+  }
+
+  /* Cards stats - 2 colonnes sur tablette */
+  main .containt .current {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 14px !important;
+    padding: 12px 16px !important;
+  }
+
+  main .containt .current .card {
+    width: 100% !important;
+    padding: 18px;
+  }
+
+  /* Graphics - 2 colonnes pour les graphiques */
+  main .graphic {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 14px !important;
+    padding: 0 16px 16px 16px !important;
+  }
+
+  main .graphic .graph,
+  main .graphic .category {
+    width: 100% !important;
+    height: 320px;
+  }
+
+  main .graphic .graph .dashed {
+    height: 220px;
+  }
+
+  main .graphic .category canvas {
+    height: 240px !important;
+  }
+
+  .linechart-card {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    height: auto;
+  }
+
+  .linechart-card canvas {
+    height: 240px !important;
+  }
+
+  /* Table responsive */
+  .table-container {
+    padding: 0 16px;
+  }
+
+  .table-container table {
+    min-width: 100%;
+    font-size: 13px;
+  }
+
+  .transaction-table th,
+  .transaction-table td {
+    padding: 12px 8px;
+  }
+
+  .recent {
+    margin: 16px;
+    padding: 18px;
+  }
+
+  .recent-header {
+    gap: 12px;
+  }
+
+  .filters {
+    gap: 10px;
+  }
+
+  .filters select {
+    min-width: 120px;
+    padding: 8px 12px;
+  }
+
   .content {
     display: flex;
   }
 
   /* Grid adjustments */
-  .current {
+  main .containt .current {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
@@ -469,12 +1306,129 @@
     padding-bottom: 0 !important;
   }
 
+  /* ====== DASHBOARD DESKTOP OPTIMIZATIONS ====== */
+
+  main .containt {
+    padding: 0;
+  }
+
+  main .containt h3 {
+    font-size: 23px;
+    padding: 0 35px;
+  }
+
+  .quick-summary {
+    margin: 10px 20px 0 20px;
+    padding: 12px 15px;
+  }
+
+  .summary-content {
+    justify-content: space-between;
+  }
+
+  .summary-text h2 {
+    font-size: 14px;
+  }
+
+  .summary-text p {
+    font-size: 12px;
+  }
+
+  /* Cards stats - 3 colonnes sur desktop */
+  main .containt .current {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 20px !important;
+    padding: 18px 20px 18px 35px !important;
+  }
+
+  main .containt .current .card {
+    width: 100%;
+    height: auto;
+  }
+
+  /* Graphics - 2 colonnes, linechart full width */
+  main .graphic {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0 2% !important;
+    padding: 0 20px 20px 35px !important;
+    align-items: flex-start;
+  }
+
+  main .graphic .graph,
+  main .graphic .category {
+    width: 49%;
+    height: 380px;
+  }
+
+  main .graphic .graph .dashed {
+    height: 260px;
+  }
+
+  main .graphic .category canvas {
+    height: 300px !important;
+  }
+
+  .linechart-card {
+    width: 100%;
+    margin-top: 18px;
+    padding: 20px;
+  }
+
+  .linechart-card canvas {
+    height: 280px !important;
+    max-height: 320px;
+  }
+
+  /* Table on desktop */
+  .table-container {
+    padding: 0;
+    overflow-x: auto;
+  }
+
+  .table-container table {
+    min-width: 600px;
+    font-size: 14px;
+  }
+
+  .transaction-table th,
+  .transaction-table td {
+    padding: 16px;
+  }
+
+  .recent {
+    margin: 0 20px 20px 35px;
+    padding: 24px;
+  }
+
+  .recent-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0;
+  }
+
+  .recent p {
+    font-size: 18px;
+  }
+
+  .filters {
+    gap: 12px;
+  }
+
+  .filters select {
+    min-width: auto;
+    padding: 10px 14px;
+  }
+
   .content {
     display: flex;
+    gap: 20px;
   }
 
   /* Grid adjustments */
-  .current {
+  main .containt .current {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 16px;

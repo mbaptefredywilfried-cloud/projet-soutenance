@@ -1,0 +1,333 @@
+/* ============================================
+   DASHBOARD MOBILE OPTIMIZATIONS (Extra)
+   ============================================ */
+
+/* Prevent layout shift on scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Improve touch targets */
+@media (max-width: 768px) {
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Increase tap area for notification button */
+  .notification-btn {
+    padding: 12px 14px;
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Better spacing for small screens */
+  main .containt h3 {
+    margin-top: 12px;
+    margin-bottom: 8px;
+  }
+
+  /* Improve card usability */
+  main .containt .current .card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  main .containt .current .card:active {
+    transform: scale(0.98);
+  }
+
+  /* Better graph visibility */
+  main .graphic .graph .dashed,
+  main .graphic .category,
+  .linechart-card {
+    background: var(--card-background, #fff);
+    border-radius: 12px;
+    border: 1px solid var(--border-color, #e2e8f0);
+  }
+
+  /* Improve form inputs */
+  .filters select,
+  #filterType,
+  #filterCategory,
+  #budgetPeriod {
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 20px;
+    padding-right: 28px;
+    cursor: pointer;
+  }
+
+  /* Hide default select arrow on some browsers */
+  .filters select::-ms-expand {
+    display: none;
+  }
+
+  /* Improve notification dropdown on mobile */
+  #notificationDropdown {
+    width: calc(100vw - 32px) !important;
+    max-width: 400px;
+    right: -8px !important;
+  }
+
+  /* Better table row hover */
+  .transaction-table tbody tr:hover {
+    background-color: rgba(54, 162, 235, 0.05);
+  }
+
+  /* Improve badge visibility */
+  .badge {
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  /* Smooth transitions on touch */
+  @media (hover: none) and (pointer: coarse) {
+    button,
+    a,
+    .tab-item {
+      transition: background-color 0.15s ease;
+    }
+
+    button:active,
+    a:active,
+    .tab-item:active {
+      opacity: 0.8;
+    }
+  }
+}
+
+/* ============================================
+   Extra Small Devices Optimization
+   ============================================ */
+
+@media (max-width: 480px) {
+  /* Prevent font scaling on input focus (iOS) */
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+
+  /* Improve readability of small text */
+  body {
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+  }
+
+  /* Better card shadows for depth */
+  main .containt .current .card {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  }
+
+  main .graphic .graph,
+  main .graphic .category,
+  .linechart-card {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  }
+
+  .recent {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  }
+
+  /* Improve section separation */
+  main .graphic {
+    row-gap: 12px;
+  }
+
+  /* Better divider lines */
+  .transaction-table th {
+    border-bottom: 2px solid var(--border-color, #e2e8f0);
+  }
+
+  .transaction-table td {
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+  }
+
+  /* Prevent text selection on buttons */
+  button,
+  .tab-item,
+  .badge {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Optimize image rendering */
+  img {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Better focus states for accessibility */
+  input:focus,
+  select:focus,
+  button:focus {
+    outline: 2px solid var(--primary-color, #36A2EB);
+    outline-offset: 2px;
+  }
+
+  /* High DPI optimization */
+  @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    * {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  }
+}
+
+/* ============================================
+   Landscape Mode Adjustments
+   ============================================ */
+
+@media (max-height: 500px) and (orientation: landscape) {
+  main {
+    padding-bottom: 64px !important;
+  }
+
+  main .containt h3 {
+    margin: 4px 0;
+  }
+
+  .quick-summary {
+    padding: 6px 10px !important;
+    margin: 4px 8px 0 8px !important;
+  }
+
+  main .containt .current {
+    gap: 8px !important;
+    padding: 6px 8px !important;
+  }
+
+  main .containt .current .card {
+    padding: 10px !important;
+    gap: 8px !important;
+  }
+
+  main .graphic {
+    gap: 8px !important;
+    padding: 0 8px 8px 8px !important;
+  }
+
+  main .graphic .graph .dashed,
+  main .graphic .category,
+  .linechart-card {
+    max-height: 200px;
+  }
+
+  main .graphic .graph .dashed {
+    height: 140px !important;
+  }
+
+  main .graphic .category canvas,
+  .linechart-card canvas {
+    height: 120px !important;
+  }
+
+  .recent {
+    margin: 4px;
+    padding: 8px;
+  }
+}
+
+/* ============================================
+   Print Optimization
+   ============================================ */
+
+@media print {
+  main {
+    margin-left: 0 !important;
+    padding: 0 !important;
+  }
+
+  aside,
+  .mobile-top-bar,
+  .tab-nav {
+    display: none !important;
+  }
+
+  main .containt .current {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  main .graphic {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .linechart-card {
+    grid-column: 1 / -1 !important;
+  }
+
+  /* Optimize for print */
+  * {
+    box-shadow: none !important;
+    page-break-inside: avoid !important;
+  }
+}
+
+/* ============================================
+   Dark Mode Responsive
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+  main .containt .current .card::before {
+    opacity: 0.15;
+  }
+
+  .table-container {
+    background-color: var(--card-background, #fff);
+  }
+
+  @media (max-width: 768px) {
+    #notificationDropdown {
+      background-color: #1e293b;
+      border-color: #334155;
+      color: #f1f5f9;
+    }
+
+    .transaction-table {
+      background-color: var(--card-background, #fff);
+      color: var(--text-primary, #1e293b);
+    }
+  }
+}
+
+/* ============================================
+   High Contrast Mode
+   ============================================ */
+
+@media (prefers-contrast: more) {
+  main .containt .current .card {
+    border: 2px solid currentColor;
+  }
+
+  .transaction-table th {
+    border-bottom: 3px solid var(--text-primary);
+  }
+
+  .filters select,
+  #budgetPeriod {
+    border-width: 2px;
+  }
+}
+
+/* ============================================
+   Reduced Motion
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

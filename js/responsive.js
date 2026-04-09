@@ -41,14 +41,29 @@
     const topBarHTML = `
       <header class="mobile-top-bar" id="mobileTopBar">
         <div class="mobile-top-bar-logo">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="currentColor"/>
             <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2"/>
             <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2"/>
           </svg>
-          <span>Numera</span>
         </div>
         <h2 class="mobile-top-bar-title" id="mobilePageTitle">Dashboard</h2>
+        <div class="mobile-top-bar-right" id="mobileTopBarRight">
+          <div class="notification-wrapper-mobile" style="position: relative;">
+            <button id="notificationBtnMobile" class="notification-btn-mobile" title="Afficher les notifications">
+              <i class="fas fa-bell"></i>
+              <span id="notificationBadgeMobile" class="notification-badge-mobile" style="display: none; position: absolute; top: -7px; right: -7px; background-color: #ef4444; color: white; font-size: 10px; font-weight: bold; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; z-index: 10;">0</span>
+            </button>
+            <div id="notificationDropdownMobile" class="notification-dropdown-mobile" style="display: none; position: absolute; top: 100%; right: 0; background: white; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.12); width: 300px; max-height: 400px; overflow: hidden; z-index: 1000; margin-top: 10px; border: 1px solid #f1f5f9;">
+              <div id="notificationListMobile" style="max-height: 400px; overflow-y: auto;">
+                <div style="padding: 30px 20px; text-align: center; color: #94a3b8; font-size: 14px;"><i class="fas fa-bell" style="font-size: 28px; margin-bottom: 10px; opacity: 0.5; display: block;"></i><span data-i18n="noNotifications">Aucune notification</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="profile-circle-mobile">
+            <img id="userPhotoDisplayMobile" src="./assets/default-avatar.png" alt="Profil">
+          </div>
+        </div>
       </header>
     `;
 
@@ -140,6 +155,24 @@
   }
 
   // ============================================
+  // 6-A. SHOW/HIDE NOTIFICATION AND PROFILE ON MOBILE
+  // ============================================
+
+  function toggleMobileTopBarRight() {
+    const currentPage = getCurrentPage();
+    const topBarRight = document.getElementById('mobileTopBarRight');
+
+    if (topBarRight) {
+      // Afficher notification et profil SEULEMENT sur dashboard
+      if (currentPage === 'dasboard') {
+        topBarRight.style.display = 'flex';
+      } else {
+        topBarRight.style.display = 'none';
+      }
+    }
+  }
+
+  // ============================================
   // 7. HELPER: GET TRANSLATION KEY
   // ============================================
 
@@ -165,6 +198,111 @@
         main.style.paddingBottom = '80px';
       }
     }
+  }
+
+  // ============================================
+  // 8-A. SYNC MOBILE PROFILE WITH DESKTOP
+  // ============================================
+
+  function syncMobileProfile() {
+    // Wait a bit for DOM to be fully loaded and images to be set
+    setTimeout(function() {
+      const desktopPhoto = document.getElementById('userPhotoDisplay');
+      const mobilePhoto = document.getElementById('userPhotoDisplayMobile');
+      
+      if (desktopPhoto && mobilePhoto) {
+        // Initial sync
+        mobilePhoto.src = desktopPhoto.src;
+        mobilePhoto.alt = desktopPhoto.alt;
+        
+        // Observe changes on desktop photo to keep mobile synced
+        const photoObserver = new MutationObserver(function() {
+          if (desktopPhoto.src) {
+            mobilePhoto.src = desktopPhoto.src;
+          }
+        });
+        
+        photoObserver.observe(desktopPhoto, {
+          attributes: true,
+          attributeFilter: ['src']
+        });
+
+        // Also listen for load events
+        desktopPhoto.addEventListener('load', function() {
+          mobilePhoto.src = desktopPhoto.src;
+        });
+      }
+    }, 100);
+  }
+
+  // ============================================
+  // 8-B. SYNC MOBILE NOTIFICATIONS WITH DESKTOP
+  // ============================================
+
+  function syncMobileNotifications() {
+    // Sync notification badge
+    const desktopBadge = document.getElementById('notificationBadge');
+    const mobileBadge = document.getElementById('notificationBadgeMobile');
+    
+    if (desktopBadge && mobileBadge) {
+      // Set initial value
+      mobileBadge.textContent = desktopBadge.textContent;
+      mobileBadge.style.display = desktopBadge.style.display;
+      
+      // Observe changes with more comprehensive mutation observer
+      const badgeObserver = new MutationObserver(function() {
+        mobileBadge.textContent = desktopBadge.textContent;
+        mobileBadge.style.display = desktopBadge.style.display;
+      });
+      
+      badgeObserver.observe(desktopBadge, {
+        attributes: true,
+        childList: true,
+        subtree: true,
+        characterData: true
+      });
+    }
+
+    // Sync notification list
+    const desktopList = document.getElementById('notificationList');
+    const mobileList = document.getElementById('notificationListMobile');
+    
+    if (desktopList && mobileList) {
+      // Set initial value
+      mobileList.innerHTML = desktopList.innerHTML;
+      
+      // Observe changes
+      const listObserver = new MutationObserver(function() {
+        mobileList.innerHTML = desktopList.innerHTML;
+      });
+      
+      listObserver.observe(desktopList, {
+        childList: true,
+        subtree: true
+      });
+    }
+
+    // Sync notification button click handlers
+    const desktopBtn = document.getElementById('notificationBtn');
+    const mobileBtn = document.getElementById('notificationBtnMobile');
+    const desktopDropdown = document.getElementById('notificationDropdown');
+    const mobileDropdown = document.getElementById('notificationDropdownMobile');
+    
+    if (mobileBtn) {
+      mobileBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const isVisible = mobileDropdown.style.display !== 'none';
+        mobileDropdown.style.display = isVisible ? 'none' : 'flex';
+        mobileDropdown.style.flexDirection = 'column';
+      });
+    }
+
+    // Close notification dropdown on click outside
+    document.addEventListener('click', function(e) {
+      if (mobileDropdown && mobileBtn && !mobileDropdown.contains(e.target) && !mobileBtn.contains(e.target)) {
+        mobileDropdown.style.display = 'none';
+      }
+    });
   }
 
   // ============================================
@@ -273,10 +411,15 @@
     // Set active states and titles
     setActiveTab();
     updateMobilePageTitle();
+    toggleMobileTopBarRight();
 
     // Apply responsive styles
     setMainPadding();
     hideRedundantElements();
+
+    // Sync mobile profile and notifications with desktop
+    syncMobileProfile();
+    syncMobileNotifications();
 
     // Handle dark mode
     applyDarkModeToMobileElements();

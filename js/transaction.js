@@ -338,7 +338,7 @@ document.addEventListener('DOMContentLoaded', function () {
         
         transactionItem.innerHTML = `
             <div class="transaction-info" style="display:flex;align-items:center;gap:16px;">
-                <div class="transaction-icon" style="background:${iconData.bg};width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;font-size:22px;">
+                <div class="transaction-icon" style="background:${iconData.bg};width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;font-size:22px;flex-shrink:0;">
                     <i class="${iconData.icon}" style="color:${iconData.color};"></i>
                 </div>
                 <div class="transaction-details">
@@ -346,16 +346,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     <p style="margin:0;color:#888;font-size:15px;">${dateStr} • ${cat}</p>
                 </div>
             </div>
-            <div style="display: inline-flex; gap: 35px; align-items: center;">
-                <div class="transaction-amount" style="font-size: 18px; font-weight: 700; color:${amountColor};">
+            <div style="display:inline-flex;gap:12px;align-items:center;flex-shrink:0;">
+                <div class="transaction-amount" style="font-size:18px;font-weight:700;color:${amountColor};white-space:nowrap;">
                     ${sign}${Number(transaction.amount).toLocaleString('fr-FR', {minimumFractionDigits:2, maximumFractionDigits:2})} ${window.appCurrency || 'EUR'}
                 </div>
-                <div style="padding: 0px 10px 0px;">
-                    <button class="edit-btn" onclick="editTransaction(${transaction.id})" style="background-color: #3498db; border: none; color: white; cursor: pointer; margin-right: 10px; padding: 7px; border-radius: 4px;">
-                        <i class="fa-solid fa-pen-to-square"></i>
+                <div style="display:inline-flex;gap:8px;align-items:center;flex-shrink:0;">
+                    <button class="edit-btn" onclick="editTransaction(${transaction.id})" style="background-color:#3498db;border:none;color:white;cursor:pointer;padding:8px;width:38px;height:38px;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <i class="fa-solid fa-pen-to-square" style="font-size:16px;"></i>
                     </button>
-                    <button class="delete-btn" onclick="confirmDeleteTransaction(${transaction.id})" style="background-color: #e74c3c; border: none; color: white; cursor: pointer; padding: 7px; border-radius: 4px;">
-                        <i class="fa-solid fa-trash-can"></i>
+                    <button class="delete-btn" onclick="confirmDeleteTransaction(${transaction.id})" style="background-color:#e74c3c;border:none;color:white;cursor:pointer;padding:8px;width:38px;height:38px;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <i class="fa-solid fa-trash-can" style="font-size:16px;"></i>
                     </button>
                 </div>
             </div>

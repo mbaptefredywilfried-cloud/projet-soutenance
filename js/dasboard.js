@@ -151,7 +151,6 @@ function handleAccountStats() {
     const filterType = document.getElementById('filterType');
     const filterCategory = document.getElementById('filterCategory');
     const timeButtons = document.querySelectorAll('.graphic .button button');
-    const budgetSelect = document.querySelector('.category select');
     const toggleBtn = document.getElementById('toggleTransactions');
     
     let pieChart, barChart;
@@ -451,8 +450,19 @@ function handleAccountStats() {
                 if (chart.config._centerText) {
                     const ctx = chart.ctx;
                     const txt = chart.config._centerText.text;
-                    const fontSize = chart.config._centerText.fontSize || 13;
+                    let fontSize = chart.config._centerText.fontSize || 13;
                     const color = chart.config._centerText.color || '#1e293b';
+                    
+                    // Adapter la taille du texte selon l'écran
+                    const width = window.innerWidth;
+                    if (width <= 479) {
+                        fontSize = Math.max(fontSize * 0.6, 8); // 60% sur petit mobile
+                    } else if (width <= 767) {
+                        fontSize = Math.max(fontSize * 0.75, 9); // 75% sur mobile
+                    } else if (width <= 1024) {
+                        fontSize = Math.max(fontSize * 0.85, 10); // 85% sur tablette
+                    }
+                    
                     ctx.save();
                     ctx.font = `bold ${fontSize}px Inter, Arial, sans-serif`;
                     ctx.fillStyle = color;
@@ -477,6 +487,28 @@ function handleAccountStats() {
                 }
             }
         };
+        const isMobileInit = window.innerWidth <= 768;
+        const isTablet = window.innerWidth > 768 && window.innerWidth <= 1024;
+        
+        let pieLegendPosition = 'right';
+        let pieLegendFontSize = 12;
+        let pieLegendPadding = 15;
+        let pieLegendBoxWidth = 15;
+        let pieCenterFontSize = 13;
+        
+        if (isMobileInit) {
+            pieLegendPosition = 'bottom';
+            pieLegendFontSize = 9;
+            pieLegendPadding = 6;
+            pieLegendBoxWidth = 10;
+            pieCenterFontSize = 10;
+        } else if (isTablet) {
+            pieLegendFontSize = 10;
+            pieLegendPadding = 10;
+            pieLegendBoxWidth = 12;
+            pieCenterFontSize = 11;
+        }
+        
         pieChart = new Chart(pieCtx, { 
             type: 'doughnut', 
             data: { labels: [], datasets: [{ data: [], backgroundColor: [] }] },
@@ -485,35 +517,146 @@ function handleAccountStats() {
                 maintainAspectRatio: false,
                 cutout: '65%',
                 plugins: { 
-                    legend: { position: 'right' }
+                    legend: { 
+                        position: pieLegendPosition,
+                        labels: {
+                            font: { size: pieLegendFontSize },
+                            padding: pieLegendPadding,
+                            boxWidth: pieLegendBoxWidth,
+                            maxWidth: isTablet ? 100 : (isMobileInit ? 150 : 200)
+                        }
+                    }
                 }
             },
             plugins: [centerTextPlugin]
         });
 
         if (barChart) barChart.destroy();
-        barChart = new Chart(barCtx, { type: 'bar', options: { responsive: true, scales: { y: { beginAtZero: true } } } });
-
-        if (lineChart) lineChart.destroy();
-        lineChart = new Chart(lineCtx, { 
-            type: 'line', 
+        barChart = new Chart(barCtx, { 
+            type: 'bar', 
             options: { 
-                responsive: true, 
+                responsive: true,
                 maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        left: 20,
+                        right: 20,
+                        bottom: 40
+                    }
+                },
                 interaction: {
                     intersect: false,
                     mode: 'index'
                 },
                 plugins: {
-                    legend: { position: 'top' }
+                    legend: { 
+                        position: 'top',
+                        labels: {
+                            font: {
+                                family: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+                                size: 12
+                            }
+                        }
+                    }
                 },
-                scales: { y: { beginAtZero: true } } 
+                scales: { 
+                    y: { 
+                        beginAtZero: true,
+                        ticks: {
+                            font: {
+                                family: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+                                size: 12
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: {
+                                family: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            } 
+        });
+
+        if (lineChart) lineChart.destroy();
+        const isMobileLineInit = window.innerWidth <= 768;
+        const isTabletLineInit = window.innerWidth > 768 && window.innerWidth <= 1024;
+        
+        let lineChartLegendPosition = 'top';
+        let lineChartLegendFontSize = 12;
+        let lineChartLegendPadding = 15;
+        let lineChartXAxisFontSize = 12;
+        let lineChartYAxisFontSize = 12;
+        
+        if (isMobileLineInit) {
+            lineChartLegendPosition = 'top';
+            lineChartLegendFontSize = 9;
+            lineChartLegendPadding = 8;
+            lineChartXAxisFontSize = 9;
+            lineChartYAxisFontSize = 9;
+        } else if (isTabletLineInit) {
+            lineChartLegendFontSize = 10;
+            lineChartLegendPadding = 10;
+            lineChartXAxisFontSize = 10;
+            lineChartYAxisFontSize = 10;
+        }
+        
+        lineChart = new Chart(lineCtx, { 
+            type: 'line', 
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        left: 10,
+                        right: 10,
+                        bottom: 15
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                },
+                plugins: {
+                    legend: { 
+                        position: lineChartLegendPosition,
+                        labels: {
+                            font: {
+                                family: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+                                size: lineChartLegendFontSize
+                            },
+                            padding: lineChartLegendPadding
+                        }
+                    }
+                },
+                scales: { 
+                    y: { 
+                        beginAtZero: true,
+                        ticks: {
+                            font: {
+                                family: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+                                size: lineChartYAxisFontSize
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: {
+                                family: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+                                size: lineChartXAxisFontSize
+                            }
+                        }
+                    }
+                }
             } 
         });
 
         // Afficher l'état vide du pie chart par défaut
         showEmptyPieState();
-        updateBarChart('Mois');
+        updateBarChart(); // Afficher les 3 derniers mois par défaut
         updateLineChart();
     }
     // Line Chart Dépense vs Revenu
@@ -776,11 +919,36 @@ function handleAccountStats() {
                 const totalDepense = values.reduce((sum, v) => sum + v, 0);
                 const currencySymbol = window.appCurrency || 'EUR';
                 let centerTextLabel = (translations[currentLang] && translations[currentLang].totalExpenses) ? translations[currentLang].totalExpenses : 'Total dépenses';
+                
+                // Réduire la taille du texte sur mobile
+                const isMobile = window.innerWidth <= 768;
+                const fontSize = isMobile ? 10 : 13;
+                
                 pieChart.config._centerText = {
                     text: `${centerTextLabel}\n${formatAmountDash(totalDepense)} ${currencySymbol}`,
-                    fontSize: 13,
+                    fontSize: fontSize,
                     color: '#1e293b'
                 };
+                
+                // Ajuster la taille et le positionnement de la légende sur mobile
+                if (isMobile) {
+                    pieChart.options.plugins.legend = {
+                        position: 'bottom',
+                        labels: {
+                            font: { size: 10 },
+                            padding: 8,
+                            boxWidth: 12
+                        }
+                    };
+                } else {
+                    pieChart.options.plugins.legend = {
+                        position: 'right',
+                        labels: {
+                            font: { size: 12 }
+                        }
+                    };
+                }
+                
                 pieChart.update();
         } catch (e) {
             showEmptyPieState();
@@ -899,12 +1067,6 @@ function handleAccountStats() {
     window.addEventListener('languageChanged', function() {
         if (typeof updatePieChart === 'function') updatePieChart('7J');
     });
-
-    if (budgetSelect) {
-        budgetSelect.addEventListener('change', function() {
-            updateBarChart(this.value);
-        });
-    }
 
     // 6. LANCEMENT
     loadProfileInfo();

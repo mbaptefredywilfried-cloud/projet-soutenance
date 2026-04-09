@@ -901,6 +901,7 @@ main .category .budget-card{
 .btn-view-more {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
     background-color: white !important;
     color: var(--accent-color, var(--primary-color)) !important;
@@ -913,6 +914,7 @@ main .category .budget-card{
     transition: all 0.18s ease;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     text-decoration: none;
+    text-align: center;
 }
 
 /* Effet au survol (Hover) : utiliser la couleur d'accent, texte blanc */
